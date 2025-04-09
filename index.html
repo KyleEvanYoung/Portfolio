@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multiple Toggle Groups with Memory</title>
+  <style>
+    body {
+      transition: background-color 0.3s;
+    }
+
+    .toggle {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+      border: none;
+      color: white;
+      background-color: gray;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .toggle.on {
+      background-color: green;
+    }
+
+    .group {
+      margin: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Theme styles */
+    .theme-0 .toggle {
+      background-color: #6a0dad;
+      color: white;
+    }
+
+    .theme-1 .toggle {
+      background-color: #0044cc;
+      color: #ffd700;
+    }
+
+    .theme-2 .toggle {
+      background-color: #222;
+      color: #00ffcc;
+    }
+
+    .theme-3 .toggle {
+      background-color: #cc0000;
+      color: white;
+    }
+
+    .theme-0 {
+      background-color: #f3e5ff;
+    }
+
+    .theme-1 {
+      background-color: #e6f0ff;
+    }
+
+    .theme-2 {
+      background-color: #111;
+    }
+
+    .theme-3 {
+      background-color: #ffeeee;
+    }
+
+    /* Layout Styles */
+    .layout-row .group {
+      flex-direction: row;
+      justify-content: flex-start;
+    }
+
+    .layout-column .group {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .layout-center .group {
+      justify-content: center;
+      align-items: center;
+    }
+
+    .layout-grid .group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="layoutWrapper">
+    <div class="group" data-group="group1">
+      <h3>Group 1 – Theme Selector</h3>
+      <button class="toggle">Purple Theme</button>
+      <button class="toggle">Blue Theme</button>
+      <button class="toggle">Dark Theme</button>
+      <button class="toggle">Red Theme</button>
+    </div>
+
+    <div class="group" data-group="group2">
+      <h3>Group 2 – Layout Selector</h3>
+      <button class="toggle">Row</button>
+      <button class="toggle">Column</button>
+      <button class="toggle">Center</button>
+      <button class="toggle">Grid</button>
+    </div>
+  </div>
+
+  <script>
+  const layoutWrapper = document.getElementById('layoutWrapper');
+
+  function applyTheme(index) {
+    document.body.classList.remove("theme-0", "theme-1", "theme-2", "theme-3");
+    if (index !== null) {
+      document.body.classList.add(`theme-${index}`);
+    }
+  }
+
+  function applyLayout(index) {
+    layoutWrapper.classList.remove("layout-row", "layout-column", "layout-center", "layout-grid");
+    if (index !== null) {
+      layoutWrapper.classList.add(`layout-${["row", "column", "center", "grid"][index]}`);
+    }
+  }
+
+  // Initialize each toggle group
+  document.querySelectorAll(".group").forEach((group) => {
+    const buttons = group.querySelectorAll(".toggle");
+    const groupKey = group.getAttribute("data-group");
+    let savedIndex = localStorage.getItem(`activeToggle_${groupKey}`);
+    let activeIndex = savedIndex !== null ? parseInt(savedIndex) : null;
+
+    // Set default theme to purple (index 0) if group1 has no saved theme
+    if (groupKey === "group1" && activeIndex === null) {
+      activeIndex = 0;
+      localStorage.setItem(`activeToggle_${groupKey}`, 0);
+    }
+
+    if (activeIndex !== null && buttons[activeIndex]) {
+      buttons[activeIndex].classList.add("on");
+      if (groupKey === "group1") applyTheme(activeIndex);
+      if (groupKey === "group2") applyLayout(activeIndex);
+    }
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        const isOn = button.classList.contains("on");
+
+        buttons.forEach(btn => btn.classList.remove("on"));
+
+        if (!isOn) {
+          button.classList.add("on");
+          localStorage.setItem(`activeToggle_${groupKey}`, index);
+          if (groupKey === "group1") applyTheme(index);
+          if (groupKey === "group2") applyLayout(index);
+        } else {
+          localStorage.removeItem(`activeToggle_${groupKey}`);
+          if (groupKey === "group1") applyTheme(null);
+          if (groupKey === "group2") applyLayout(null);
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
