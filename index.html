@@ -89,12 +89,12 @@
     }
   </style>
 </head>
-<body>
+<body class="theme-0">
 
   <div id="layoutWrapper">
     <div class="group" data-group="group1">
       <h3>Group 1 – Theme Selector</h3>
-      <button class="toggle">Purple Theme</button>
+      <!-- Purple Theme removed -->
       <button class="toggle">Blue Theme</button>
       <button class="toggle">Dark Theme</button>
       <button class="toggle">Red Theme</button>
@@ -110,61 +110,67 @@
   </div>
 
   <script>
-  const layoutWrapper = document.getElementById('layoutWrapper');
+    const layoutWrapper = document.getElementById('layoutWrapper');
 
-  function applyTheme(index) {
-    document.body.classList.remove("theme-0", "theme-1", "theme-2", "theme-3");
-    if (index !== null) {
-      document.body.classList.add(`theme-${index}`);
-    }
-  }
-
-  function applyLayout(index) {
-    layoutWrapper.classList.remove("layout-row", "layout-column", "layout-center", "layout-grid");
-    if (index !== null) {
-      layoutWrapper.classList.add(`layout-${["row", "column", "center", "grid"][index]}`);
-    }
-  }
-
-  // Initialize each toggle group
-  document.querySelectorAll(".group").forEach((group) => {
-    const buttons = group.querySelectorAll(".toggle");
-    const groupKey = group.getAttribute("data-group");
-    let savedIndex = localStorage.getItem(`activeToggle_${groupKey}`);
-    let activeIndex = savedIndex !== null ? parseInt(savedIndex) : null;
-
-    // Set default theme to purple (index 0) if group1 has no saved theme
-    if (groupKey === "group1" && activeIndex === null) {
-      activeIndex = 0;
-      localStorage.setItem(`activeToggle_${groupKey}`, 0);
+    function applyTheme(index) {
+      document.body.classList.remove("theme-1", "theme-2", "theme-3");
+      // Always keep theme-0 as base
+      if (index === null) return;
+      document.body.classList.add(`theme-${index + 1}`);
     }
 
-    if (activeIndex !== null && buttons[activeIndex]) {
-      buttons[activeIndex].classList.add("on");
-      if (groupKey === "group1") applyTheme(activeIndex);
-      if (groupKey === "group2") applyLayout(activeIndex);
+    function applyLayout(index) {
+      layoutWrapper.classList.remove("layout-row", "layout-column", "layout-center", "layout-grid");
+      if (index !== null) {
+        layoutWrapper.classList.add(`layout-${["row", "column", "center", "grid"][index]}`);
+      }
     }
 
-    buttons.forEach((button, index) => {
-      button.addEventListener("click", () => {
-        const isOn = button.classList.contains("on");
+    // Set default purple theme (theme-0) on page load
+    document.body.classList.add("theme-0");
 
-        buttons.forEach(btn => btn.classList.remove("on"));
+    // Initialize each toggle group
+    document.querySelectorAll(".group").forEach((group) => {
+      const buttons = group.querySelectorAll(".toggle");
+      const groupKey = group.getAttribute("data-group");
+      let savedIndex = localStorage.getItem(`activeToggle_${groupKey}`);
+      let activeIndex = savedIndex !== null ? parseInt(savedIndex) : null;
 
-        if (!isOn) {
-          button.classList.add("on");
-          localStorage.setItem(`activeToggle_${groupKey}`, index);
-          if (groupKey === "group1") applyTheme(index);
-          if (groupKey === "group2") applyLayout(index);
-        } else {
-          localStorage.removeItem(`activeToggle_${groupKey}`);
-          if (groupKey === "group1") applyTheme(null);
-          if (groupKey === "group2") applyLayout(null);
+      if (groupKey === "group1") {
+        // If no saved theme, don't highlight any button, but apply default purple
+        if (activeIndex !== null) {
+          buttons[activeIndex]?.classList.add("on");
+          applyTheme(activeIndex);
         }
+      }
+
+      if (groupKey === "group2" && activeIndex !== null) {
+        buttons[activeIndex]?.classList.add("on");
+        applyLayout(activeIndex);
+      }
+
+      buttons.forEach((button, index) => {
+        button.addEventListener("click", () => {
+          const isOn = button.classList.contains("on");
+
+          buttons.forEach(btn => btn.classList.remove("on"));
+
+          if (!isOn) {
+            button.classList.add("on");
+            localStorage.setItem(`activeToggle_${groupKey}`, index);
+            if (groupKey === "group1") applyTheme(index);
+            if (groupKey === "group2") applyLayout(index);
+          } else {
+            localStorage.removeItem(`activeToggle_${groupKey}`);
+            if (groupKey === "group1") {
+              applyTheme(null); // Revert to purple
+            }
+            if (groupKey === "group2") applyLayout(null);
+          }
+        });
       });
     });
-  });
-</script>
+  </script>
 
 </body>
 </html>
