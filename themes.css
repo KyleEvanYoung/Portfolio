@@ -1,0 +1,142 @@
+/* Base structure */
+.image-grid img { margin: 10px; }
+
+/* Define 12 base class types that each theme will override */
+[class*="class"] {
+  padding: 10px;
+  border-radius: 5px;
+  transition: all 0.3s;
+}
+
+/* Theme 1: Dark */
+.theme1.class1 { background-color: black; margin: -10px; overflow-x: hidden;}
+.theme1.class2 { height: 0px; width: 80%; margin-left: auto; margin-right: auto; margin-top: -10px; background-color: none; border-left: 80px solid transparent; border-right: 80px solid transparent;  border-top: 100px solid #28282B; }
+.theme1.class3 { width: 90%; height: 100px; margin-left: auto; margin-right: auto; margin-top: -100px; background-color: none; }
+.theme1.class4 { color: white; }
+.theme1.class5 { width: 80%; margin: auto; }
+.theme1.class6 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #28282B;}
+.theme1.class6:hover { background-color: #9fc1ef; width: 100%; height: 400px;}
+.theme1.class7 { margin: auto; width: 100px;}
+.theme1.class8 { float: center; margin: auto;}
+.theme1.class9 { color: white; width: 40%; margin: auto; text-decoration: none; text-align: center;}
+.theme1.class10 { margin: auto; width: 300px;}
+.theme1.class11 { margin: auto; width: 300px; height: 180px;}
+/* ... up to class12 */
+.theme1.class12 { border: 2px solid #005577; }
+.theme1.class13 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 200px; background-color: #28282B;}
+.theme1.class13:hover { text-decoration: none; background-color: #9fc1ef;}
+.theme1.class14 { width: 200px; height: 150px;}
+.theme1.class15 { margin: auto; width: 450px;}
+.theme1.class16 { text-decoration: none;}
+.theme1.class17 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: auto; background-color: #28282B;}
+.theme1.class18 { width: 80%; height: 300px; margin: 50px auto; padding: 20px; overflow-y: scroll; line-height: 1.6; font-family: sans-serif; position: relative;}
+.theme1.class19 { display: block; padding: 2px 0; transition: background 0.2s;}
+.theme1.class20 {background: #005577;}
+.theme1.class21 {color: white; font-size: 14px; width: 100%; color: white; margin: 0px; text-decoration: none; text-align: left;}
+.theme1.class22 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: auto; background-color: #28282B;}
+.theme1.class23 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #28282B;}
+.theme1.class23:hover { background-color: #9fc1ef; width: 100%; height: 200px;}
+
+/* Theme 2: Light */
+.theme2.class1 { background-color: white; margin: -10px; overflow-x: hidden;}
+.theme2.class2 { height: 0px; width: 80%; margin-left: auto; margin-right: auto; margin-top: -10px; background-color: none; border-left: 80px solid transparent; border-right: 80px solid transparent;  border-top: 100px solid #b2b2b2; }
+.theme2.class3 { width: 90%; height: 100px; margin-left: auto; margin-right: auto; margin-top: -100px; background-color: none; }
+.theme2.class4 { color: black; }
+.theme2.class5 { width: 80%; margin: auto; }
+.theme2.class6 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #b2b2b2;}
+.theme2.class6:hover { background-color: #b2b2b2; width: 100%; height: 400px;}
+.theme2.class7 { margin: auto; width: 100px;}
+.theme2.class8 { float: center; margin: auto;}
+.theme2.class9 { color: black; width: 40%; margin: auto; text-decoration: none; text-align: center;}
+.theme2.class10 { margin: auto; width: 300px;}
+.theme2.class11 { margin: auto; width: 300px; height: 180px;}
+/* ... up to class12 */
+.theme2.class12 { border: 2px solid #7e8079; }
+.theme2.class13 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #b2b2b2;}
+.theme2.class14 { width: 200px; height: 150px;}
+.theme2.class15 { margin: auto; width: 450px;}
+.theme2.class16 { text-decoration: none;}
+
+
+/* Theme 3: Blue */
+.theme3.class1 { background-color: #49596e; margin: -10px; overflow-x: hidden;}
+.theme3.class2 { height: 0px; width: 80%; margin-left: auto; margin-right: auto; margin-top: -10px; background-color: none; border-left: 80px solid transparent; border-right: 80px solid transparent;  border-top: 100px solid #627794; }
+.theme3.class3 { width: 90%; height: 100px; margin-left: auto; margin-right: auto; margin-top: -100px; background-color: none; }
+.theme3.class4 { color: white; }
+.theme3.class5 { width: 80%; margin: auto; }
+.theme3.class6 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #627794;}
+.theme3.class6:hover { background-color: #627794; width: 100%; height: 400px;}
+.theme3.class7 { margin: auto; width: 100px;}
+.theme3.class8 { float: center; margin: auto;}
+.theme3.class9 { color: white; width: 40%; margin: auto; text-decoration: none; text-align: center;}
+.theme3.class10 { margin: auto; width: 300px;}
+.theme3.class11 { margin: auto; width: 300px; height: 180px;}
+/* ... up to class12 */
+.theme3.class12 { border: 2px solid #627794; }
+.theme3.class13 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #627794;}
+.theme3.class14 { width: 200px; height: 150px;}
+.theme3.class15 { margin: auto; width: 450px;}
+.theme3.class16 { text-decoration: none;}
+
+
+/* Theme 4: Red */
+.theme4.class1 { background-color: #3f220f; margin: -10px; overflow-x: hidden;}
+.theme4.class2 { height: 0px; width: 80%; margin-left: auto; margin-right: auto; margin-top: -10px; background-color: none; border-left: 80px solid transparent; border-right: 80px solid transparent;  border-top: 100px solid #653618; }
+.theme4.class3 { width: 90%; height: 100px; margin-left: auto; margin-right: auto; margin-top: -100px; background-color: none; }
+.theme4.class4 { color: white; }
+.theme4.class5 { width: 80%; margin: auto; }
+.theme4.class6 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #653618;}
+.theme4.class6:hover { background-color: #653618; width: 100%; height: 400px;}
+.theme4.class7 { margin: auto; width: 100px;}
+.theme4.class8 { float: center; margin: auto;}
+.theme4.class9 { color: white; width: 40%; margin: auto; text-decoration: none; text-align: center;}
+.theme4.class10 { margin: auto; width: 300px;}
+.theme4.class11 { margin: auto; width: 300px; height: 180px;}
+/* ... up to class12 */
+.theme4.class12 { border: 2px solid #653618; }
+.theme4.class13 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #653618;}
+.theme4.class14 { width: 200px; height: 150px;}
+.theme4.class15 { margin: auto; width: 450px;}
+.theme4.class16 { text-decoration: none;}
+
+
+/* Theme 5: Green */
+.theme5.class1 { background-color: #095838; margin: -10px; overflow-x: hidden;}
+.theme5.class2 { height: 0px; width: 80%; margin-left: auto; margin-right: auto; margin-top: -10px; background-color: none; border-left: 80px solid transparent; border-right: 80px solid transparent;  border-top: 100px solid #0c7e50; }
+.theme5.class3 { width: 90%; height: 100px; margin-left: auto; margin-right: auto; margin-top: -100px; background-color: none; }
+.theme5.class4 { color: white; }
+.theme5.class5 { width: 80%; margin: auto; }
+.theme5.class6 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #0c7e50;}
+.theme5.class6:hover { background-color: #0c7e50; width: 100%; height: 400px;}
+.theme5.class7 { margin: auto; width: 100px;}
+.theme5.class8 { float: center; margin: auto;}
+.theme5.class9 { color: white; width: 40%; margin: auto; text-decoration: none; text-align: center;}
+.theme5.class10 { margin: auto; width: 300px;}
+.theme5.class11 { margin: auto; width: 300px; height: 180px;}
+/* ... up to class12 */
+.theme5.class12 { border: 2px solid #0c7e50; }
+.theme5.class13 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #0c7e50;}
+.theme5.class14 { width: 200px; height: 150px;}
+.theme5.class15 { margin: auto; width: 450px;}
+.theme5.class16 { text-decoration: none;}
+
+
+/* Theme 6: Basic */
+.theme6.class1 { background-color: black; margin: -10px; overflow-x: hidden;}
+.theme6.class2 { height: 0px; width: 80%; margin-left: auto; margin-right: auto; margin-top: -10px; background-color: none; border-left: 80px solid transparent; border-right: 80px solid transparent;  border-top: 100px solid #005577; }
+.theme6.class3 { width: 90%; height: 100px; margin-left: auto; margin-right: auto; margin-top: -100px; background-color: none; }
+.theme6.class4 { color: white; }
+.theme6.class5 { width: 80%; margin: auto; }
+.theme6.class6 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #005577;}
+.theme6.class6:hover { background-color: #005577; width: 100%; height: 400px;}
+.theme6.class7 { margin: auto; width: 100px;}
+.theme6.class8 { float: center; margin: auto;}
+.theme6.class9 { color: white; width: 40%; margin: auto; text-decoration: none; text-align: center;}
+.theme6.class10 { margin: auto; width: 300px;}
+.theme6.class11 { margin: auto; width: 300px; height: 180px;}
+/* ... up to class12 */
+.theme6.class12 { border: 2px solid #005577; }
+.theme6.class13 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #005577;}
+.theme6.class14 { width: 200px; height: 150px;}
+.theme6.class15 { margin: auto; width: 450px;}
+.theme6.class16 { text-decoration: none;}

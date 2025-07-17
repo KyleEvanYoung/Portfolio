@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kyle Young Settings</title>
+  <link rel="stylesheet" href="themes.css">
+  <link rel="icon" href="assets/png/Logo_White.png">
+</head>
+<body class="class1">
+		<div class="class2">
+			<div class="class3">
+				<a href="3d_printer.html"><div style="height: 80%; float: left; width: 6.25%; margin-left: 3.12%; margin-right: 3.12%;"><img id="img1" src="" style="max-height: 80%; min-height: 10%;"></div></a>
+				<a href="assets.html"><div style="height: 80%; float: left; width: 6.25%; margin-left: 3.12%; margin-right: 3.12%;"><img id="img2" src="" style="max-height: 80%; min-height: 10%;"></div></a>
+				<a href="books.html"><div style="height: 80%; float: left; width: 6.25%; margin-left: 3.12%; margin-right: 3.12%;"><img id="img3" src="" style="max-height: 80%; min-height: 10%;"></div></a>
+				<a href="index.html"><div style="height: 80%; float: left; width: 6.25%; margin-left: 3.12%; margin-right: 3.12%;"><img id="img4" src="" style="max-height: 80%; min-height: 10%;"></div></a>
+				<a href="game.html"><div style="height: 80%; float: left; width: 6.25%; margin-left: 3.12%; margin-right: 3.12%;"><img id="img5" src="" style="max-height: 80%; min-height: 10%;"></div></a>
+				<a href="render_changllenes.html"><div style="height: 80%; float: left; width: 6.25%; margin-left: 3.12%; margin-right: 3.12%;"><img id="img6" src="" style="max-height: 80%; min-height: 10%;"></div></a>
+				<a href="settings.html"><div style="height: 80%; float: left; width: 6.25%; margin-left: 3.12%; margin-right: 3.12%;"><img id="img7" src="" style="max-height: 80%; min-height: 10%;"></div></a>
+				<a href="website.html"><div style="height: 80%; float: left; width: 6.25%; margin-left: 3.12%; margin-right: 3.12%;"><img id="img8" src="" style="max-height: 80%; min-height: 10%;"></div></a>
+			</div>
+		</div>
+
+		<style>
+    holder {
+      background: #1e1e2f;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #f0f0f0;
+    }
+
+    .theme-container {
+      padding: 30px;
+      border-radius: 15px;
+
+      text-align: center;
+    }
+
+    select {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      background: #3c3c5c;
+      color: white;
+      font-size: 16px;
+      margin-right: 10px;
+      transition: background 0.3s;
+    }
+
+    select:hover {
+      background: #505070;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #5a5aff;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #3a3aff;
+    }
+  </style>
+</head>
+<body>
+
+<div class="holder">
+  <div class="theme-container">
+    <h2 class="class4">🎨 Select Your Theme</h2>
+    <select id="themeSelector">
+      <option value="theme1">Dark</option>
+      <option value="theme2">Light</option>
+      <option value="theme3">Blue</option>
+      <option value="theme4">Red</option>
+      <option value="theme5">Green</option>
+     <!-- <option value="theme6">Basic</option> -->
+    </select>
+
+    <button onclick="applyTheme()">Apply Theme</button>
+  </div>
+</div>
+
+  <script>
+    const images = {
+      theme1: ["assets/svg/basic_icons/3d_printer_white.svg", "assets/svg/basic_icons/assets_white.svg"
+	  ,"assets/svg/basic_icons/books_white.svg","assets/svg/basic_icons/contact_me_white.svg","assets/svg/basic_icons/controller_white.svg"
+	  ,"assets/svg/basic_icons/render_changllenes_white.svg","assets/svg/basic_icons/settings_blue.svg","assets/svg/basic_icons/website_white.svg"],
+      theme2: ["assets/svg/basic_icons/3d_printer_black.svg", "assets/svg/basic_icons/assets_black.svg"
+	  ,"assets/svg/basic_icons/books_black.svg","assets/svg/basic_icons/contact_me_black.svg","assets/svg/basic_icons/controller_black.svg"
+	  ,"assets/svg/basic_icons/render_changllenes_black.svg","assets/svg/basic_icons/settings_green.svg","assets/svg/basic_icons/website_black.svg"],
+      theme3: ["assets/svg/basic_icons/3d_printer_blue.svg", "assets/svg/basic_icons/assets_blue.svg"
+	  ,"assets/svg/basic_icons/books_blue.svg","assets/svg/basic_icons/contact_me_blue.svg","assets/svg/basic_icons/controller_blue.svg"
+	  ,"assets/svg/basic_icons/render_changllenes_blue.svg","assets/svg/basic_icons/settings_black.svg","assets/svg/basic_icons/website_blue.svg"],
+      theme4: ["assets/svg/basic_icons/3d_printer_red.svg", "assets/svg/basic_icons/assets_red.svg"
+	  ,"assets/svg/basic_icons/books_red.svg","assets/svg/basic_icons/contact_me_red.svg","assets/svg/basic_icons/controller_red.svg"
+	  ,"assets/svg/basic_icons/render_changllenes_red.svg","assets/svg/basic_icons/settings_white.svg","assets/svg/basic_icons/website_red.svg"],
+      theme5: ["assets/svg/basic_icons/3d_printer_green.svg", "assets/svg/basic_icons/assets_green.svg"
+	  ,"assets/svg/basic_icons/books_green.svg","assets/svg/basic_icons/contact_me_green.svg","assets/svg/basic_icons/controller_green.svg"
+	  ,"assets/svg/basic_icons/render_changllenes_green.svg","assets/svg/basic_icons/settings_white.svg","assets/svg/basic_icons/website_green.svg"],
+      theme6: ["assets/svg/basic_icons/3d_printer.svg", "assets/svg/basic_icons/assets.svg"
+	  ,"assets/svg/basic_icons/books.svg","assets/svg/basic_icons/contact_me.svg","assets/svg/basic_icons/controller.svg"
+	  ,"assets/svg/basic_icons/render_changllenes.svg","assets/svg/basic_icons/settings.svg","assets/svg/basic_icons/website.svg"],
+    };
+
+    function applyTheme() {
+      const theme = document.getElementById("themeSelector").value;
+      localStorage.setItem("selectedTheme", theme);
+      applyThemeClasses(theme);
+      loadImages(theme);
+    }
+
+    function applyThemeClasses(theme) {
+      for (let i = 1; i <= 100; i++) {
+        const els = document.getElementsByClassName(`class${i}`);
+        for (let el of els) {
+          el.className = `class${i} ${theme}`;
+        }
+      }
+    }
+
+    function loadImages(theme) {
+      const imgList = images[theme];
+      for (let i = 0; i < imgList.length; i++) {
+        document.getElementById(`img${i + 1}`).src = imgList[i];
+      }
+    }
+
+    window.onload = () => {
+      const theme = localStorage.getItem("selectedTheme") || "theme1";
+      document.getElementById("themeSelector").value = theme;
+      applyThemeClasses(theme);
+      loadImages(theme);
+    };
+  </script>
+</body>
+</html>
