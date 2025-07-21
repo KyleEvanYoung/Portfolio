@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Random Book Theme</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .random-item {
+      font-size: 1.5em;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Random Themes</h1>
+  <div class="random-item" id="item1"></div>
+  <h1>Random Genres</h1>
+  <div class="random-item" id="item2"></div>
+
+  <script>
+    const list1 = ["Love ", "Friendship", "Good vs. Evil", "Coming of Age", "Identity", "Freedom and Confinement", "Fate vs. Free Will", "Justice and Injustice", "Power and Corruption"];
+    const list2 = ["Romance", "History", "Sci if", "Thriller/Suspense", "Mystery", "Adventure", "Action", "Comedy", "Horror"];
+
+    function getRandomItem(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    document.getElementById("item1").textContent = "List 1: " + getRandomItem(list1);
+    document.getElementById("item2").textContent = "List 2: " + getRandomItem(list2);
+  </script>
+</body>
+</html>

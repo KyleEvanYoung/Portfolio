@@ -8,34 +8,108 @@
   transition: all 0.3s;
 }
 
-/* Theme 1: Dark */
-.theme1.class1 { background-color: black; margin: -10px; overflow-x: hidden;}
-.theme1.class2 { height: 0px; width: 80%; margin-left: auto; margin-right: auto; margin-top: -10px; background-color: none; border-left: 80px solid transparent; border-right: 80px solid transparent;  border-top: 100px solid #28282B; }
-.theme1.class3 { width: 90%; height: 100px; margin-left: auto; margin-right: auto; margin-top: -100px; background-color: none; }
-.theme1.class4 { color: white; }
-.theme1.class5 { width: 80%; margin: auto; }
-.theme1.class6 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #28282B;}
-.theme1.class6:hover { background-color: #9fc1ef; width: 100%; height: 400px;}
-.theme1.class7 { margin: auto; width: 100px;}
-.theme1.class8 { float: center; margin: auto;}
-.theme1.class9 { color: white; width: 40%; margin: auto; text-decoration: none; text-align: center;}
-.theme1.class10 { margin: auto; width: 300px;}
-.theme1.class11 { margin: auto; width: 300px; height: 180px;}
-/* ... up to class12 */
-.theme1.class12 { border: 2px solid #005577; }
-.theme1.class13 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 200px; background-color: #28282B;}
-.theme1.class13:hover { text-decoration: none; background-color: #9fc1ef;}
-.theme1.class14 { width: 200px; height: 150px;}
-.theme1.class15 { margin: auto; width: 450px;}
-.theme1.class16 { text-decoration: none;}
-.theme1.class17 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: auto; background-color: #28282B;}
-.theme1.class18 { width: 80%; height: 300px; margin: 50px auto; padding: 20px; overflow-y: scroll; line-height: 1.6; font-family: sans-serif; position: relative;}
-.theme1.class19 { display: block; padding: 2px 0; transition: background 0.2s;}
-.theme1.class20 {background: #005577;}
-.theme1.class21 {color: white; font-size: 14px; width: 100%; color: white; margin: 0px; text-decoration: none; text-align: left;}
-.theme1.class22 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: auto; background-color: #28282B;}
-.theme1.class23 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #28282B;}
-.theme1.class23:hover { background-color: #9fc1ef; width: 100%; height: 200px;}
+
+
+
+ @media (min-width: 1400px) {
+		/* Theme 1: Dark */
+	.theme1.class1 { background-color: black; margin: -10px; overflow-x: hidden;}
+	.theme1.class2 { height: 0px; width: 80%; margin-left: auto; margin-right: auto; margin-top: -10px; background-color: none; border-left: 80px solid transparent; border-right: 80px solid transparent;  border-top: 100px solid #28282B; }
+	.theme1.class3 { width: 90%; height: 100px; margin-left: auto; margin-top: -120px; background-color: none; }
+	.theme1.class4 { color: white; }
+	.theme1.class5 { width: 80%; margin: auto; }
+	.theme1.class6 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 150px; background-color: #28282B;}
+	.theme1.class6:hover { background-color: #9fc1ef; width: 100%; height: 500px;}
+	.theme1.class7 { margin: auto; width: 100px;}
+	.theme1.class8 { float: center; margin: auto;}
+	.theme1.class9 { color: white; width: 40%; margin: auto; text-decoration: none; text-align: center;}
+	.theme1.class10 { margin: auto; width: 300px;}
+	.theme1.class11 { margin: auto; width: 300px; height: 180px;}
+	/* ... up to class12 */
+	.theme1.class12 { border: 2px solid #005577; }
+	.theme1.class13 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 200px; background-color: #28282B;}
+	.theme1.class13:hover { text-decoration: none; background-color: #9fc1ef;}
+	.theme1.class14 { width: 200px; height: 150px;}
+	.theme1.class15 { margin: auto; width: 450px;}
+	.theme1.class16 { text-decoration: none;}
+	.theme1.class17 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: auto; background-color: #28282B;}
+	.theme1.class18 { width: 80%; height: 300px; margin: 50px auto; padding: 20px; overflow-y: scroll; line-height: 1.6; font-family: sans-serif; position: relative;}
+	.theme1.class19 { display: block; padding: 2px 0; transition: background 0.2s;}
+	.theme1.class20 {background: #005577;}
+	.theme1.class21 {color: white; font-size: 14px; width: 100%; color: white; margin: 0px; text-decoration: none; text-align: left;}
+	.theme1.class22 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: auto; background-color: #28282B;}
+	.theme1.class23 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #28282B;}
+	.theme1.class23:hover { background-color: #9fc1ef; width: 100%; height: auto;}
+	.theme1.class24 { height: 80%; width: 10%; float: left;} /* Logo Div Style*/
+	.theme1.class25 { margin: auto; height: 80%; width: 80%;} /* Logo Images*/
+    }
+
+
+@media (min-width: 1140px) and (max-width: 1400px) {
+	/* Theme 1: Dark */
+	.theme1.class1 { background-color: black; margin: -10px; overflow-x: hidden;}
+	.theme1.class2 { height: 0px; width: 80%; margin-left: auto; margin-right: auto; margin-top: -10px; background-color: none; border-left: 80px solid transparent; border-right: 80px solid transparent;  border-top: 300px solid #28282B; }
+	.theme1.class3 { width: 850px; padding-left: 60px; height: 250px; margin: auto; margin-top: -330px; background-color: none; }
+	.theme1.class4 { color: white; }
+	.theme1.class5 { width: 80%; margin: auto; }
+	.theme1.class6 { width: 100%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 500px; background-color: #28282B;}
+	.theme1.class7 { margin: auto; width: 100px;}
+	.theme1.class8 { float: center; margin: auto;}
+	.theme1.class9 { color: white; width: 40%; margin: auto; text-decoration: none; text-align: center;}
+	.theme1.class10 { margin: auto; width: 300px;}
+	.theme1.class11 { margin: auto; width: 300px; height: 180px;}
+	/* ... up to class12 */
+	.theme1.class12 { border: 2px solid #005577; }
+	.theme1.class13 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 200px; background-color: #28282B;}
+	.theme1.class13:hover { text-decoration: none; background-color: #9fc1ef;}
+	.theme1.class14 { width: 200px; height: 150px;}
+	.theme1.class15 { margin: auto; width: 450px;}
+	.theme1.class16 { text-decoration: none;}
+	.theme1.class17 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: auto; background-color: #28282B;}
+	.theme1.class18 { width: 80%; height: 300px; margin: 50px auto; padding: 20px; overflow-y: scroll; line-height: 1.6; font-family: sans-serif; position: relative;}
+	.theme1.class19 { display: block; padding: 2px 0; transition: background 0.2s;}
+	.theme1.class20 {background: #005577;}
+	.theme1.class21 {color: white; font-size: 14px; width: 100%; color: white; margin: 0px; text-decoration: none; text-align: left;}
+	.theme1.class22 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: auto; background-color: #28282B;}
+	.theme1.class23 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #28282B;}
+	.theme1.class23:hover { background-color: #9fc1ef; width: 100%; height: auto;}
+	.theme1.class24 { height: 140px; float: left; width: 140px; padding: 30px; padding-bottom: 0px; padding-top: 20px} /* Logo Div Style*/
+	.theme1.class25 { height: 60%; margin: auto;} /* Logo Images*/
+ }
+ 
+ @media (max-width: 1140px) {
+	/* Theme 1: Dark */
+	.theme1.class1 { background-color: black; margin: -10px; overflow-x: hidden;}
+	.theme1.class2 { height: 70%; width: 80%; position: fixed; margin-left: auto; margin-right: auto; margin-top: 50px; background-color: none; border-top: 80px solid transparent; border-bottom: 80px solid transparent;  border-left: 100px solid #28282B; }
+	.theme1.class2:hover { border-left: 400px solid #28282B;}
+	.theme1.class3 { width: 400px; height: 100%; margin-left: -400px; background-color: none;}
+	.theme1.class4 { color: white; }
+	.theme1.class5 { width: 80%; margin-left: auto; }
+	.theme1.class6 { width: 100%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 500px; background-color: #28282B;}
+	.theme1.class7 { margin: auto; width: 100px;}
+	.theme1.class8 { float: center; margin: auto;}
+	.theme1.class9 { color: white; width: 40%; margin: auto; text-decoration: none; text-align: center;}
+	.theme1.class10 { margin: auto; width: 300px;}
+	.theme1.class11 { margin: auto; width: 300px; height: 180px;}
+	/* ... up to class12 */
+	.theme1.class12 { border: 2px solid #005577; }
+	.theme1.class13 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 200px; background-color: #28282B;}
+	.theme1.class13:hover { text-decoration: none; background-color: #9fc1ef;}
+	.theme1.class14 { width: 200px; height: 150px;}
+	.theme1.class15 { margin: auto; width: 450px;}
+	.theme1.class16 { text-decoration: none;}
+	.theme1.class17 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: auto; background-color: #28282B;}
+	.theme1.class18 { width: 80%; height: 300px; margin: 50px auto; padding: 20px; overflow-y: scroll; line-height: 1.6; font-family: sans-serif; position: relative;}
+	.theme1.class19 { display: block; padding: 2px 0; transition: background 0.2s;}
+	.theme1.class20 {background: #005577;}
+	.theme1.class21 {color: white; font-size: 14px; width: 100%; color: white; margin: 0px; text-decoration: none; text-align: left;}
+	.theme1.class22 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: auto; background-color: #28282B;}
+	.theme1.class23 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #28282B;}
+	.theme1.class23:hover { background-color: #9fc1ef; width: 100%; height: auto;}
+	.theme1.class24 { height: 140px; float: left; width: 140px;} /* Logo Div Style*/
+	.theme1.class25 { height: 60%; margin: auto;} /* Logo Images*/
+ }
+
 
 /* Theme 2: Light */
 .theme2.class1 { background-color: white; margin: -10px; overflow-x: hidden;}
