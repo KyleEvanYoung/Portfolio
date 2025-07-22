@@ -42,6 +42,10 @@
 	.theme1.class23:hover { background-color: #9fc1ef; width: 100%; height: auto;}
 	.theme1.class24 { height: 80%; width: 10%; float: left;} /* Logo Div Style*/
 	.theme1.class25 { margin: auto; height: 80%; width: 80%;} /* Logo Images*/
+	.theme1.class26 { width: 100%; height: auto; margin: auto;} /* Video 3d Print*/
+	.theme1.class27 { margin: auto; width: 40%;}
+	.theme1.class28 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 350px; background-color: #28282B;}
+	.theme1.class28:hover { background-color: #9fc1ef; width: 100%; height: auto;}
     }
 
 
@@ -75,12 +79,17 @@
 	.theme1.class23:hover { background-color: #9fc1ef; width: 100%; height: auto;}
 	.theme1.class24 { height: 140px; float: left; width: 140px; padding: 30px; padding-bottom: 0px; padding-top: 20px} /* Logo Div Style*/
 	.theme1.class25 { height: 60%; margin: auto;} /* Logo Images*/
+	.theme1.class26 { width:500px; height:230px;  margin: auto;} /* Video 3d Print*/
+	.theme1.class27 { margin: auto; width: 70%;}
+	.theme1.class28 { width: 100%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 500px; background-color: #28282B;}
  }
+ 
+ .theme1.class29 { width: 100%; height: 140%; background-color: #28282b; top: -10%; left: 0px; overflow-y: scroll; line-height: 1.6; font-family: sans-serif; position: absolute;}
  
  @media (max-width: 1140px) {
 	/* Theme 1: Dark */
-	.theme1.class1 { background-color: black; margin: -10px; overflow-x: hidden;}
-	.theme1.class2 { height: 70%; width: 80%; position: fixed; margin-left: auto; margin-right: auto; margin-top: 50px; background-color: none; border-top: 80px solid transparent; border-bottom: 80px solid transparent;  border-left: 100px solid #28282B; }
+	.theme1.class1 { background-color: black; margin-right: -80px; margin-top: -20px; overflow-x: hidden;}
+	.theme1.class2 { height: 70%; width: 100px; position: fixed; margin-left: auto; margin-right: auto; margin-top: 50px; background-color: none; border-top: 80px solid transparent; border-bottom: 80px solid transparent;  border-left: 100px solid #28282B; }
 	.theme1.class26 { height: 70%; width: 80%; position: fixed; margin-left: auto; margin-right: auto; margin-top: 50px; background-color: none; border-top: 80px solid transparent; border-bottom: 80px solid transparent; border-left: 600px solid #28282B;}
 	.theme1.class3 { width: 400px; height: 100%; margin-left: -400px; background-color: none;}
 	.theme1.class4 { color: white; }
@@ -108,6 +117,10 @@
 	.theme1.class23:hover { background-color: #9fc1ef; width: 100%; height: auto;}
 	.theme1.class24 { height: 140px; float: left; width: 140px;} /* Logo Div Style*/
 	.theme1.class25 { height: 60%; margin: auto;} /* Logo Images*/
+	.theme1.class26 { width:500px; height:230px;  margin: auto;} /* Video 3d Print*/
+	.theme1.class27 { margin: auto; width: 70%;}
+	.theme1.class28 { width: 100%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 500px; background-color: #28282B;}
+	.theme1.class29 { width: 100%; position: absolute; left: 0px; top: -25px; height: 100%; z-index: 101;}
  }
 
 

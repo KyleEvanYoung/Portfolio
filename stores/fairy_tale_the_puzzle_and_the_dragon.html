@@ -6,27 +6,27 @@
   <link rel="icon" href="../assets/png/Logo_White.png">
 </head>
 <body class="class1">
-		<div class="class2" onclick="this.classList.toggle('class26')">
+		<div class="class2" id="targetDiv" onclick="this.classList.toggle('class26')">
 			<div class="class3">
 				<a href="../3d_printer.html">			<div class="class24"><img id="img1" src="" class="class25"></div></a>
 				<a href="../assets.html">				<div class="class24"><img id="img2" src="" class="class25"></div></a>
 				<a href="../books.html">				<div class="class24"><img id="img3" src="" class="class25"></div></a>
 				<a href="../index.html">				<div class="class24"><img id="img4" src="" class="class25"></div></a>
-				<a href="../game.html">				<div class="class24"><img id="img5" src="" class="class25"></div></a>
+				<a href="../game.html">					<div class="class24"><img id="img5" src="" class="class25"></div></a>
 				<a href="../render_changllenes.html">	<div class="class24"><img id="img6" src="" class="class25"></div></a>
-				<a href="../settings.html">			<div class="class24"><img id="img7" src="" class="class25"></div></a>
+				<a href="../settings.html">				<div class="class24"><img id="img7" src="" class="class25"></div></a>
 				<a href="../website.html">				<div class="class24"><img id="img8" src="" class="class25"></div></a>
 			</div>
 		</div>
 
 	<div class="class5">
 		<div class="class17">
-			<div class="class15">
+			<div class="class15" id="targetDiv">
 					<img id="img10" src="" class="class14">
 					<img id="img9" src="" class="class14">	
 			</div>
 		
-			<div style="margin: auto; width: 60%; text-align: left;">
+			<div id="targetDiv" style="margin: auto; width: 60%; text-align: left;">
 				<h1 class="class4">About The Story</h1>
 				<p class="class21">I wanted to craft a fairy‑tale–like story—one filled with hope and love, yet mindful of the price of time and how we choose to spend it. It should remind us to cherish what we have now and treasure these moments before they slip through our fingers.</p>
 				<br>
@@ -34,8 +34,7 @@
 			</div>
 		
 			
-		
-			<div class="class18" id="reader">
+			<div class="class18" id="reader" onclick="this.classList.toggle('class29'); toggleBob();">
 			  <span class="class19"><h1 class="class4">The Puzzle And The Dragon</h1></span>
 			  <span class="class19"><p class="class21">Once upon a time, deep within a forest where magical trees sang softly in the wind, there lay </p></span>
 			  <span class="class19"><p class="class21">a mysterious puzzle. It was no ordinary puzzle, for each piece was enchanted, shifting </p></span>
@@ -125,10 +124,35 @@
 			  <span class="class19"><p class="class21">her close, warm against the chill breeze.</p></span>
 			  <span class="class19"><p class="class21">In that tender embrace, hope bloomed eternal, and the dragon rested at last, content </p></span>
 			  <span class="class19"><p class="class21">beneath the sky that sang softly of evermore.</p></span>
-
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
+			  <span class="class19"><p class="class21"></p></span>
 			</div>
-			
-			<div class="class15">
+					
+			<div class="class15" id="targetDiv">
 					<a href="../assets/svg/books/the_puzzle_and_the_dragon/The Puzzle And The Dragon.pdf" download>
 						<img id="img11" src="" class="class14">
 					</a>
@@ -140,14 +164,26 @@
 			
 		</div>
 	</div>
-
+<style>
+.hidden{
+	display: none;
+	overflow: hidden;
+	height: 0px;
+	width: 100%;
+}
+</style>
 <script>
+  function toggleBob() {
+    const bob = document.getElementById("targetDiv");
+    bob.classList.toggle("hidden");
+  }
+
   const reader = document.getElementById('reader');
   const sentences = Array.from(reader.querySelectorAll('.class19'));
 
   function updateHighlight() {
     const readerRect = reader.getBoundingClientRect();
-    const readerCenterY = readerRect.top + readerRect.height / 1.5;
+    const readerCenterY = readerRect.top + readerRect.height / 8.5;
 
     let closest = null;
     let minDistance = Infinity;
