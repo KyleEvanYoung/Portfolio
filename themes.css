@@ -46,6 +46,7 @@
 	.theme1.class27 { margin: auto; width: 40%;}
 	.theme1.class28 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 350px; background-color: #28282B;}
 	.theme1.class28:hover { background-color: #9fc1ef; width: 100%; height: auto;}
+	.theme1.class31 { margin: auto; width: 60%; text-align: left;}
     }
 
 
@@ -82,6 +83,7 @@
 	.theme1.class26 { width:500px; height:230px;  margin: auto;} /* Video 3d Print*/
 	.theme1.class27 { margin: auto; width: 70%;}
 	.theme1.class28 { width: 100%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 500px; background-color: #28282B;}
+	.theme1.class31 { margin: auto; width: 60%; text-align: left;}
  }
  
  .theme1.class29 { width: 100%; height: 140%; background-color: #28282b; top: -10%; left: 0px; overflow-y: scroll; line-height: 1.6; font-family: sans-serif; position: absolute;}
@@ -89,9 +91,9 @@
  @media (max-width: 1140px) {
 	/* Theme 1: Dark */
 	.theme1.class1 { background-color: black; margin-right: -80px; margin-top: -20px; overflow-x: hidden;}
-	.theme1.class2 { height: 70%; width: 100px; position: fixed; margin-left: -20px; margin-right: auto; margin-top: 50px; background-color: none; border-top: 80px solid transparent; border-bottom: 80px solid transparent;  border-left: 100px solid #28282B; }
+	.theme1.class2 { height: 70%; width: 200px; position: fixed; margin-left: -20px; margin-right: auto; margin-top: 50px; background-color: none; border-top: 80px solid transparent; border-bottom: 80px solid transparent;  border-left: 100px solid #28282B; }
 	.theme1.class30 { height: 70%; width: 80%; position: fixed; margin-left: -20px; z-index: 8; margin-right: auto; margin-top: 50px; background-color: none; border-top: 80px solid transparent; border-bottom: 80px solid transparent; border-left: 800px solid #28282B;}
-	.theme1.class3 { width: 600px; height: 100%; margin-left: -800px; background-color: none;}
+	.theme1.class3 { width: 800px; height: 100%; margin-left: -800px; background-color: none;}
 	.theme1.class4 { color: white;}
 	.theme1.class5 { width: 80%; margin-left: auto; }
 	.theme1.class6 { width: 100%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 500px; background-color: #28282B;}
@@ -107,7 +109,7 @@
 	.theme1.class14 { width: 200px; height: 150px;}
 	.theme1.class15 { margin: auto; width: 450px;}
 	.theme1.class16 { text-decoration: none;}
-	.theme1.class17 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: auto; background-color: #28282B;}
+	.theme1.class17 { width: 80%; overflow: hidden; margin-top: 40px; margin-left: auto; margin-right: auto; height: auto; background-color: #28282B;}
 	.theme1.class18 { width: 80%; height: 1000px; margin: 50px auto; padding: 20px; overflow-y: scroll; line-height: 1.6; font-family: sans-serif; position: relative;}
 	.theme1.class19 { display: block; padding: 2px 0; transition: background 0.2s;}
 	.theme1.class20 {background: #005577;}
@@ -115,12 +117,13 @@
 	.theme1.class22 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: auto; background-color: #28282B;}
 	.theme1.class23 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 100px; background-color: #28282B;}
 	.theme1.class23:hover { background-color: #9fc1ef; width: 100%; height: auto;}
-	.theme1.class24 { height: 140px; float: left; width: 140px;} /* Logo Div Style*/
-	.theme1.class25 { height: 60%; margin: auto;} /* Logo Images*/
+	.theme1.class24 { height: 200px; float: left; margin: 50px; width: 180px;} /* Logo Div Style*/
+	.theme1.class25 { width: 80%; height: 80%; margin: auto;} /* Logo Images*/
 	.theme1.class26 { width:500px; height:230px;  margin: auto;} /* Video 3d Print*/
 	.theme1.class27 { margin: auto; width: 70%;}
 	.theme1.class28 { width: 100%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 500px; background-color: #28282B;}
 	.theme1.class29 { width: 100%; position: absolute; left: 0px; top: -25px; height: 100%; z-index: 101;}
+	.theme1.class31 { margin: auto; width: 60%; text-align: left;}
  }
 
 
