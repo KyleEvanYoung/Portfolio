@@ -47,6 +47,13 @@
 	.theme1.class28 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 350px; background-color: #28282B;}
 	.theme1.class28:hover { background-color: #9fc1ef; width: 100%; height: auto;}
 	.theme1.class31 { margin: auto; width: 60%; text-align: left;}
+	.theme1.class32 { width: 45%; height: 100%; float: left; padding: 10px; text-align: center;} /*Text Object on Contact Page*/
+	.theme1.class33 { width: 80%; margin: auto; margin-bottom: 50px; padding-top: 50px; height: 400px;} /*Text and Face Logo Box*/
+	.theme1.class34 { margin: auto; width: 45%; height: 100%; float: left; } /*Logo and Face Logo Box*/
+	.theme1.class35 { height: 60%; float: right; width: auto; border-radius: 75px;} /*Face Logo*/
+	.theme1.class36 { margin: auto; width: 70%; height: auto; float: left;} /*Book Style*/
+	.theme1.class37 { width: 100%; background-color: black; border: none; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; margin-top: 20px; margin-bottom: 20px; cursor: pointer;} /*Button Style*/
+	.theme1.class38 { width: 98%; background-color: black; } /*Input Data Style*/
     }
 
 
@@ -84,6 +91,13 @@
 	.theme1.class27 { margin: auto; width: 70%;}
 	.theme1.class28 { width: 100%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 500px; background-color: #28282B;}
 	.theme1.class31 { margin: auto; width: 60%; text-align: left;}
+	.theme1.class32 { width: 45%; height: 100%; float: left; padding: 10px; text-align: center;} /*Text Object on Contact Page*/
+	.theme1.class33 { width: 80%; margin: auto; margin-bottom: 50px; height: 400px;} /*Text and Face Logo Box*/
+	.theme1.class34 { margin: auto; width: 45%; height: 100%; float: left; } /*Logo and Face Logo Box*/
+	.theme1.class35 { height: 60%; float: right; width: auto; border-radius: 75px;} /*Face Logo*/
+	.theme1.class36 { margin: auto; width: 70%; height: auto; float: left;} /*Book Style*/
+	.theme1.class37 { width: 100%; background-color: black; border: none; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; margin-top: 20px; margin-bottom: 20px; cursor: pointer;} /*Button Style*/
+	.theme1.class38 { width: 98%; background-color: black; } /*Input Data Style*/
  }
  
  .theme1.class29 { width: 100%; height: 140%; background-color: #28282b; top: -10%; left: 0px; overflow-y: scroll; line-height: 1.6; font-family: sans-serif; position: absolute;}
@@ -94,7 +108,7 @@
 	.theme1.class2 { height: 70%; width: 200px; position: fixed; margin-left: -20px; margin-right: auto; margin-top: 50px; background-color: none; border-top: 80px solid transparent; border-bottom: 80px solid transparent;  border-left: 100px solid #28282B; }
 	.theme1.class30 { height: 70%; width: 80%; position: fixed; margin-left: -20px; z-index: 8; margin-right: auto; margin-top: 50px; background-color: none; border-top: 80px solid transparent; border-bottom: 80px solid transparent; border-left: 800px solid #28282B;}
 	.theme1.class3 { width: 800px; height: 100%; margin-left: -800px; background-color: none;}
-	.theme1.class4 { color: white;}
+	.theme1.class4 { color: white; font-size: 80px;}
 	.theme1.class5 { width: 80%; margin-left: auto; }
 	.theme1.class6 { width: 100%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 500px; background-color: #28282B;}
 	.theme1.class7 { margin: auto; width: 100px;}
@@ -124,6 +138,13 @@
 	.theme1.class28 { width: 100%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 500px; background-color: #28282B;}
 	.theme1.class29 { width: 100%; position: absolute; left: 0px; top: -25px; height: 100%; z-index: 101;}
 	.theme1.class31 { margin: auto; width: 60%; text-align: left;}
+	.theme1.class32 { width: 100%; height: 100%; float: left; padding: 10px; text-align: center;} /*Text Object on Contact Page*/
+	.theme1.class33 { width: 90%; margin-top: 100px; height: auto;} /*Text and Face Logo Box*/
+	.theme1.class34 { margin: auto; width: 100%; padding-top: 10px; height: auto; align-items: center; } /*Logo and Face Logo Box*/
+	.theme1.class35 { height: auto; width: 100%;  border-radius: 100%;} /*Face Logo*/
+	.theme1.class36 { margin: auto; width: 70%; height: auto;} /*Book Style*/
+	.theme1.class37 { width: 100%; background-color: black; border: none; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; margin-top: 20px; margin-bottom: 20px; cursor: pointer;} /*Button Style*/
+	.theme1.class38 { width: 98%; height: 80px; font-size: 60px; color: white; background-color: black; } /*Input Data Style*/
  }
 
 

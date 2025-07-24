@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kyle Young Stort Stories</title>
+  <link rel="stylesheet" href="../themes.css">
+  <link rel="icon" href="../assets/png/Logo_White.png">
+</head>
+<body class="class1">
+		<div class="class2" id="targetDiv" onclick="this.classList.toggle('class30')">
+			<div class="class3">
+				<a href="../3d_printer.html">			<div class="class24"><img id="img1" src="" class="class25"></div></a>
+				<a href="../assets.html">				<div class="class24"><img id="img2" src="" class="class25"></div></a>
+				<a href="../books.html">				<div class="class24"><img id="img3" src="" class="class25"></div></a>
+				<a href="../index.html">				<div class="class24"><img id="img4" src="" class="class25"></div></a>
+				<a href="../game.html">					<div class="class24"><img id="img5" src="" class="class25"></div></a>
+				<a href="../render_changllenes.html">	<div class="class24"><img id="img6" src="" class="class25"></div></a>
+				<a href="../settings.html">				<div class="class24"><img id="img7" src="" class="class25"></div></a>
+				<a href="../website.html">				<div class="class24"><img id="img8" src="" class="class25"></div></a>
+			</div>
+		</div>
+
+	<div class="class5" id="targetDiv">
+		<div class="class17">
+			<div class="class15">
+					<img id="img10" src="" class="class14">
+					<img id="img9" src="" class="class14">	
+			</div>
+		
+			<div id="targetDiv" class="class31">
+				<h1 class="class4">About The Story</h1>
+				<p class="class21">I was given the themes Freedom and Confinement and the genre Mystery. I wanted to explore each idea in a unique way—for example, freedom as the ability to make choices or to go anywhere. That led me to imagine four characters, each seeking freedom in their own way:</p>
+				<p class="class21"><b>A fairy who once had the freedom to fly anywhere but now cannot.</b></p>
+				<p class="class21"><b>A knight who has lost the freedom to return home to his kingdom.</b></p>
+				<p class="class21"><b>A wizard who once had the freedom to cast any spell but can no longer do so.</b></p>
+				<p class="class21"><b>A witch trapped within her own kingdom.</b></p>
+				<p class="class21">At first, I wasn’t sure how to turn these ideas into a mystery. Then it hit me—what if one of the characters is lying or betrays the others? That twist could create suspense and make the story feel more like a true mystery.</p>
+				<p class="class21">Initially, these were just scattered ideas, not a complete story. But I kept thinking about how to tie everything together—and eventually, I figured it out.</p>
+				<p class="class21">See how well I did with the story below.</p>
+				<br>
+				<p class="class21">Please Read Below Or Download</p>
+			</div>
+		
+			
+		
+			<div class="class18" id="reader" onclick="this.classList.toggle('class29'); toggleBob();">
+			  <span class="class19"><h1 class="class4">The Forgot Kingdom</h1></span>
+			  <span class="class19"><p  id="sizeincrease" class="class21"></p></span>
+			</div>
+			
+			<div class="class15" id="targetDiv">
+					<a href="../assets/svg/books/the_forgot_kingdom/The Forgot Kingdom.pdf" download>
+						<img id="img11" src="" class="class14">
+					</a>
+					<a href="../assets/svg/books/the_forgot_kingdom/The Forgot Kingdom.epub" download>
+						<img id="img12" src="" class="class14">	
+					</a>
+			</div>
+			
+			
+		</div>
+	</div>
+
+<style>
+.hidden{
+	display: none;
+	overflow: hidden;
+	height: 0px;
+	width: 100%;
+}
+
+.sizeincrease{
+	font-size: 120px;
+}
+</style>
+
+<script>
+function toggleBob() {
+    const bob = document.getElementById("targetDiv");
+    bob.classList.toggle("hidden");
+	const textsize = document.getElementById("targetDiv");
+    textsize.classList.toggle("sizeincrease");
+  }
+
+  const reader = document.getElementById('reader');
+  const sentences = Array.from(reader.querySelectorAll('.class19'));
+
+  function updateHighlight() {
+    const readerRect = reader.getBoundingClientRect();
+    const readerCenterY = readerRect.top + readerRect.height / 8.5;
+
+    let closest = null;
+    let minDistance = Infinity;
+
+    sentences.forEach(span => {
+      const rect = span.getBoundingClientRect();
+      // compute vertical distance from span’s center to reader’s center
+      const spanCenterY = rect.top + rect.height / 1.5;
+      const dist = Math.abs(spanCenterY - readerCenterY);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closest = span;
+      }
+    });
+
+    // clear old highlight
+    sentences.forEach(s => s.classList.remove('class20'));
+    // highlight the closest one
+    if (closest) closest.classList.add('class20');
+  }
+
+  // initialize and wire up scrolling
+  updateHighlight();
+  reader.addEventListener('scroll', () => {
+    requestAnimationFrame(updateHighlight);
+  });
+
+    const images = {
+      theme1: ["../assets/svg/basic_icons/3d_printer_white.svg", "../assets/svg/basic_icons/assets_white.svg"
+	  ,"../assets/svg/basic_icons/books_blue.svg","../assets/svg/basic_icons/contact_me_white.svg","../assets/svg/basic_icons/controller_white.svg"
+	  ,"../assets/svg/basic_icons/render_changllenes_white.svg","../assets/svg/basic_icons/settings_white.svg","../assets/svg/basic_icons/website_white.svg"
+	  ,"../assets/svg/books/the_forgot_kingdom/the_forgot_kingdom_icon_white.svg","../assets/svg/books/class/short_stories_icon_white.svg"
+	  ,"../assets/svg/books/class/pdf_logo_white.svg","../assets/svg/books/class/epub_logo_white.svg"
+	  ],
+      theme2: ["../assets/svg/basic_icons/3d_printer_black.svg", "../assets/svg/basic_icons/assets_black.svg"
+	  ,"../assets/svg/basic_icons/books_green.svg","../assets/svg/basic_icons/contact_me_black.svg","../assets/svg/basic_icons/controller_black.svg"
+	  ,"../assets/svg/basic_icons/render_changllenes_black.svg","../assets/svg/basic_icons/settings_black.svg","../assets/svg/basic_icons/website_black.svg"
+	  ,"../assets/svg/books/the_forgot_kingdom/the_forgot_kingdom_logo_black.svg","../assets/svg/books/class/short_stories_icon_black.svg"
+	  ,"../assets/svg/books/class/pdf_logo_black.svg","../assets/svg/books/class/epub_logo_black.svg"
+	  ],
+      theme3: ["../assets/svg/basic_icons/3d_printer_blue.svg", "../assets/svg/basic_icons/assets_blue.svg"
+	  ,"../assets/svg/basic_icons/books_black.svg","../assets/svg/basic_icons/contact_me_blue.svg","../assets/svg/basic_icons/controller_blue.svg"
+	  ,"../assets/svg/basic_icons/render_changllenes_blue.svg","../assets/svg/basic_icons/settings_blue.svg","../assets/svg/basic_icons/website_blue.svg"
+	  ,"../assets/svg/books/the_forgot_kingdom/the_forgot_kingdom_icon_blue.svg","../assets/svg/books/class/short_stories_icon_blue.svg"
+	  ,"../assets/svg/books/class/pdf_logo_blue.svg","../assets/svg/books/class/epub_logo_blue.svg"
+	  ],
+      theme4: ["../assets/svg/basic_icons/3d_printer_red.svg", "../assets/svg/basic_icons/assets_red.svg"
+	  ,"../assets/svg/basic_icons/books_white.svg","../assets/svg/basic_icons/contact_me_red.svg","../assets/svg/basic_icons/controller_red.svg"
+	  ,"../assets/svg/basic_icons/render_changllenes_red.svg","../assets/svg/basic_icons/settings_red.svg","../assets/svg/basic_icons/website_red.svg"
+ 	  ,"../assets/svg/books/the_forgot_kingdom/the_forgot_kingdom_icon_red.svg","../assets/svg/books/class/short_stories_icon_red.svg"
+	  ,"../assets/svg/books/class/pdf_logo_red.svg","../assets/svg/books/class/epub_logo_red.svg"
+	  ],
+      theme5: ["../assets/svg/basic_icons/3d_printer_green.svg", "../assets/svg/basic_icons/assets_green.svg"
+	  ,"../assets/svg/basic_icons/books_white.svg","../assets/svg/basic_icons/contact_me_green.svg","../assets/svg/basic_icons/controller_green.svg"
+	  ,"../assets/svg/basic_icons/render_changllenes_green.svg","../assets/svg/basic_icons/settings_green.svg","../assets/svg/basic_icons/website_green.svg"
+	  ,"../assets/svg/books/the_forgot_kingdom/the_forgot_kingdom_icon_green.svg","../assets/svg/books/class/short_stories_icon_green.svg"
+	  ,"../assets/svg/books/class/pdf_logo_green.svg","../assets/svg/books/class/epub_logo_green.svg"
+	  ],
+      theme6: ["assets/svg/basic_icons/3d_printer.svg", "assets/svg/basic_icons/assets.svg"
+	  ,"assets/svg/basic_icons/books.svg","assets/svg/basic_icons/contact_me.svg","assets/svg/basic_icons/controller.svg"
+	  ,"assets/svg/basic_icons/render_changllenes.svg","assets/svg/basic_icons/settings.svg","assets/svg/basic_icons/website.svg"
+	  ,"assets/svg/books/the_forgot_kingdom/the_forgot_kingdom_icon.svg","assets/svg/books/class/short_stories_icon.svg"
+	  ],
+    };
+
+    function applyThemeClasses(theme) {
+      for (let i = 1; i <= 100; i++) {
+        const els = document.getElementsByClassName(`class${i}`);
+        for (let el of els) {
+          el.className = `class${i} ${theme}`;
+        }
+      }
+    }
+
+    function loadImages(theme) {
+      const imgList = images[theme];
+      for (let i = 0; i < imgList.length; i++) {
+        document.getElementById(`img${i + 1}`).src = imgList[i];
+      }
+    }
+
+    window.onload = () => {
+      const theme = localStorage.getItem("selectedTheme") || "theme1";
+      applyThemeClasses(theme);
+      loadImages(theme);
+    };
+  </script>
+</body>
+</html>
