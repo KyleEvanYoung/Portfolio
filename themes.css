@@ -42,8 +42,8 @@
 	.theme1.class23:hover { background-color: #9fc1ef; width: 100%; height: auto;}
 	.theme1.class24 { height: 80%; width: 10%; float: left;} /* Logo Div Style*/
 	.theme1.class25 { margin: auto; height: 80%; width: 80%;} /* Logo Images*/
-	.theme1.class26 { width: 100%; height: auto; margin: auto;} /* Video 3d Print*/
-	.theme1.class27 { margin: auto; width: 40%;}
+	.theme1.class26 { width: 400px; padding: auto; height: auto; margin: auto;} /* Video 3d Print*/
+	.theme1.class27 { margin: auto; width: 400px;}
 	.theme1.class28 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 350px; background-color: #28282B;}
 	.theme1.class28:hover { background-color: #9fc1ef; width: 100%; height: auto;}
 	.theme1.class31 { margin: auto; width: 60%; text-align: left;}
@@ -202,8 +202,8 @@
 	.theme2.class23:hover { background-color: #9fc1ef; width: 100%; height: auto;}
 	.theme2.class24 { height: 80%; width: 10%; float: left;} /* Logo Div Style*/
 	.theme2.class25 { margin: auto; height: 80%; width: 80%;} /* Logo Images*/
-	.theme2.class26 { width: 100%; height: auto; margin: auto;} /* Video 3d Print*/
-	.theme2.class27 { margin: auto; width: 40%;}
+	.theme2.class26 { padding: auto; width: 400px; height: auto; margin: auto;} /* Video 3d Print*/
+	.theme2.class27 { margin: auto; width: 400px;}
 	.theme2.class28 { width: 80%; overflow: hidden; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; height: 350px; background-color: #b2b2b2;}
 	.theme2.class28:hover { background-color: #9fc1ef; width: 100%; height: auto;}
 	.theme2.class31 { margin: auto; width: 60%; text-align: left;}
@@ -228,7 +228,7 @@
 
 @media (min-width: 1140px) and (max-width: 1400px) {
 	/* Theme 1: Dark */
-	.theme2.class1 { background-color: black; margin: -10px; overflow-x: hidden;}
+	.theme2.class1 { background-color: white; margin: -10px; overflow-x: hidden;}
 	.theme2.class2 { height: 0px; width: 80%; margin-left: auto; margin-right: auto; margin-top: -10px; background-color: none; border-left: 80px solid transparent; border-right: 80px solid transparent;  border-top: 300px solid #b2b2b2; }
 	.theme2.class3 { width: 850px; padding-left: 60px; height: 250px; margin: auto; margin-top: -330px; background-color: none; }
 	.theme2.class4 { color: black; }
