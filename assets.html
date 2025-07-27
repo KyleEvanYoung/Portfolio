@@ -7,6 +7,8 @@
 
 </head>
 <body class="class1">
+<div id="preloader"></div>
+
 		<div class="class2" id="targetDiv" onclick="this.classList.toggle('class30')">
 			<div class="class3">
 				<a href="3d_printer.html">			<div class="class24"><img id="img1" src="" class="class25"></div></a>
@@ -307,7 +309,6 @@
 	</div>
 
 
-</body>
 
    <script>
     const images = {
@@ -389,5 +390,14 @@
       loadImages(theme);
     };
   </script>
-
+<script>
+  
+  var loader = document.getElementById("preloader");
+  
+  window.addEventListener("load", function(){
+	loader.style.display = "none";
+  })
+  
+  </script>
+</body>
 </html>

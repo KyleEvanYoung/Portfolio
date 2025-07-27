@@ -6,6 +6,7 @@
   <link rel="icon" href="assets/png/Logo_White.png">
 </head>
 <body class="class1">
+<div id="preloader"></div>
 		<div class="class2" id="targetDiv" onclick="this.classList.toggle('class30')">
 			<div class="class3">
 				<a href="3d_printer.html">			<div class="class24"><img id="img1" src="" class="class25"></div></a>
@@ -70,22 +71,25 @@
   </style>
 </head>
 <body>
+	<div class="class5">
+		<div class="class6">
+		<div class="holder">
+			  <div class="theme-container">
+				<h2 class="class4">🎨 Select Your Theme</h2>
+				<select id="themeSelector">
+				  <option value="theme1">Dark</option>
+				  <option value="theme2">Light</option>
+				  <option value="theme3">Blue</option>
+				  <option value="theme4">Red</option>
+				  <option value="theme5">Green</option>
+				 <!-- <option value="theme6">Basic</option> -->
+				</select>
 
-<div class="holder">
-  <div class="theme-container">
-    <h2 class="class4">🎨 Select Your Theme</h2>
-    <select id="themeSelector">
-      <option value="theme1">Dark</option>
-      <option value="theme2">Light</option>
-      <option value="theme3">Blue</option>
-      <option value="theme4">Red</option>
-      <option value="theme5">Green</option>
-     <!-- <option value="theme6">Basic</option> -->
-    </select>
-
-    <button onclick="applyTheme()">Apply Theme</button>
-  </div>
-</div>
+				<button onclick="applyTheme()">Apply Theme</button>
+			  </div>
+		</div>
+		</div>
+	</div>
 
   <script>
     const images = {
@@ -139,5 +143,16 @@
       loadImages(theme);
     };
   </script>
+  
+  <script>
+  
+  var loader = document.getElementById("preloader");
+  
+  window.addEventListener("load", function(){
+	loader.style.display = "none";
+  })
+  
+  </script>
+  
 </body>
 </html>

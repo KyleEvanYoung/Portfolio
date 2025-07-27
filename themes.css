@@ -8,7 +8,16 @@
   transition: all 0.3s;
 }
 
-
+#preloader{
+	background: #000 url(preloader.gif) no-repeat center center;
+	background-size: 30%;
+	margin: -10%;
+	float: center;
+	height: 140vh;
+	width: 120%;
+	position: fixed;
+	z-index: 100;
+}
 
 
  @media (min-width: 1400px) {

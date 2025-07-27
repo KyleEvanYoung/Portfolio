@@ -6,6 +6,9 @@
   <link rel="icon" href="assets/png/Logo_White.png">
 </head>
 <body class="class1">
+
+<div id="preloader"></div>
+
 		<div class="class2" id="targetDiv" onclick="this.classList.toggle('class30')">
 			<div class="class3">
 				<a href="3d_printer.html">			<div class="class24"><img id="img1" src="" class="class25"></div></a>
@@ -221,6 +224,23 @@
       applyThemeClasses(theme);
       loadImages(theme);
     };
+  </script>
+  
+  
+  
+  <script>
+  
+  const loader = document.getElementById("preloader");
+    const mainContent = document.getElementById("main-content");
+
+    window.addEventListener("load", function() {
+      // Adjust delay to match your GIF duration in milliseconds (e.g. 3000 ms = 3 seconds)
+      setTimeout(function() {
+        loader.style.display = "none";
+        mainContent.style.display = "block";
+      }, 5000);
+    });
+  
   </script>
 </body>
 </html>
