@@ -260,7 +260,7 @@ const iconMap = {
 /* Generate a crisp SVG data URI for any label+emoji */
 function svgImageDataURI(label) {
   const emoji = iconMap[label] || "🎲";
-  const safe = (s)=> s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const safe = (s)=> s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
   const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640">
   <defs>
@@ -287,6 +287,7 @@ class Wheel {
     this.rotation = 0;                 // radians
     this.angularVelocity = opts.angularVelocity ?? 2.6; // rad/s (fast-ish)
     this.running = false;
+    this.decelerating = false;         // <-- NEW: easing to stop
     this.colors = opts.colors ?? Wheel.generateColors(this.items.length);
     this._raf = null;
 
@@ -295,7 +296,6 @@ class Wheel {
   }
 
   static generateColors(n) {
-    // even-spaced HSL hues
     const arr = [];
     for (let i=0;i<n;i++) {
       const hue = Math.round((360 * i) / n);
@@ -305,7 +305,6 @@ class Wheel {
   }
 
   resize() {
-    // Fit canvas to container square, with HiDPI scaling
     const rect = this.canvas.getBoundingClientRect();
     const size = Math.min(rect.width, rect.height || rect.width);
     const dpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
@@ -318,12 +317,12 @@ class Wheel {
   start() {
     if (this.running) return;
     this.running = true;
+    this.decelerating = false;
     let last = performance.now();
     const loop = (t) => {
-      if (!this.running) return;
-      const dt = (t - last) / 10;
+      if (!this.running || this.decelerating) return;
+      const dt = (t - last) / 1000; // seconds
       last = t;
-      // constant spin “forever”
       this.rotation = (this.rotation + this.angularVelocity * dt) % (Math.PI*2);
       this.draw();
       this._raf = requestAnimationFrame(loop);
@@ -331,10 +330,60 @@ class Wheel {
     this._raf = requestAnimationFrame(loop);
   }
 
-  stop() {
+  /* Immediate stop (used internally by decelerate) */
+  _stopImmediate() {
     this.running = false;
     if (this._raf) cancelAnimationFrame(this._raf);
-    this.draw(true);
+    this._raf = null;
+  }
+
+  /* NEW: Ease-out to a specific slice index (by center), with extra full turns for drama */
+  decelerateToIndex(targetIdx, opts={}, onDone) {
+    if (this.decelerating) return;
+    const easeOutCubic = (x)=> 1 - Math.pow(1 - x, 3);
+    const n = this.items.length;
+    const arc = (Math.PI * 2) / n;
+    const pointer = -Math.PI / 2;
+    const norm = (a)=>{ a = a % (Math.PI*2); return a<0 ? a + Math.PI*2 : a; };
+
+    // Where should rotation land so targetIdx is centered under the pointer?
+    const targetCenter = pointer - (targetIdx + 0.5) * arc; // absolute angle (mod 2π)
+    const current = this.rotation;
+    const currentMod = norm(current);
+    const toCenterNext = norm(targetCenter - currentMod); // distance to next time that center passes
+
+    // Add extra spins
+    const minTurns = opts.minTurns ?? 2;
+    const maxTurns = opts.maxTurns ?? 5;
+    const extraTurns = Math.floor(minTurns + Math.random() * (maxTurns - minTurns + 1));
+    const totalDelta = toCenterNext + extraTurns * Math.PI * 2;
+    const targetRotation = current + totalDelta;
+
+    const duration = opts.duration ?? (2800 + Math.random()*900); // 2.8–3.7s
+
+    // Prepare animation
+    this._stopImmediate();        // stop constant-spin loop
+    this.decelerating = true;
+    const start = performance.now();
+    const startRot = this.rotation;
+
+    const anim = (t) => {
+      const p = Math.min(1, (t - start) / duration);
+      const eased = easeOutCubic(p);
+      this.rotation = startRot + (targetRotation - startRot) * eased;
+      this.draw(p >= 0.98); // subtle highlight near end
+      if (p < 1) {
+        this._raf = requestAnimationFrame(anim);
+      } else {
+        this.decelerating = false;
+        this.running = false;
+        this._raf = null;
+        this.rotation = targetRotation;
+        this.draw(true); // final highlight
+        if (typeof onDone === 'function') onDone(targetIdx);
+      }
+    };
+    this._raf = requestAnimationFrame(anim);
   }
 
   draw(highlight = false) {
@@ -373,7 +422,6 @@ class Wheel {
       ctx.translate(cx, cy);
       ctx.rotate(mid);
       ctx.textAlign = "center";
-      // dynamic font size based on label length
       const base = Math.max(14, Math.min(20, R*0.08));
       const fontSize = (label.length > 18) ? base - 3 : base;
       ctx.font = `700 ${fontSize}px Inter, Segoe UI, Arial`;
@@ -381,7 +429,6 @@ class Wheel {
       ctx.shadowColor = "rgba(0,0,0,.55)";
       ctx.shadowBlur = 8;
       ctx.shadowOffsetY = 2;
-      // place text at ~60% radius
       ctx.fillText(label, R * 0.60, 0, R * 0.75);
       ctx.restore();
     }
@@ -414,8 +461,7 @@ class Wheel {
   }
 
   indexUnderPointer() {
-    // pointer arrow is at canvas top (12 o’clock) => angle = -PI/2
-    const pointer = -Math.PI / 2;
+    const pointer = -Math.PI / 2; // 12 o’clock
     const n = this.items.length;
     const arc = (Math.PI * 2) / n;
     const norm = (a)=>{ a = a % (Math.PI*2); return a<0 ? a + Math.PI*2 : a; };
@@ -450,6 +496,16 @@ let stage = 'theme'; // 'theme' -> 'genre' -> 'done'
 let wheel = null;
 let pickTheme = null;
 let pickGenre = null;
+
+/* NEW: remember last index per wheel so we never repeat the immediate previous result */
+const lastIdx = { theme: -1, genre: -1 };
+
+function randomIndexExcluding(n, excludeIdx) {
+  if (n <= 1) return 0;
+  let i;
+  do { i = Math.floor(Math.random() * n); } while (i === excludeIdx);
+  return i;
+}
 
 function makeWheel(items) {
   const w = new Wheel(canvas, items);
@@ -486,21 +542,37 @@ function showResultOverlay() {
   overlay.hidden = false;
 }
 
+/* UPDATED: slow down to a stop and then lock the result, avoiding previous pick */
 function lockCurrent() {
-  if (!wheel || !wheel.running) return;
-  wheel.stop();
-  const chosen = wheel.currentItem();
+  if (!wheel || wheel.decelerating || stage === 'done') return;
 
-  if (stage === 'theme') {
-    pickTheme = chosen;
-    statusEl.textContent = `Theme: “${pickTheme}”`;
-    startGenreAfterDelay(3000); // wait 3 seconds before next wheel
-  } else if (stage === 'genre') {
-    pickGenre = chosen;
-    statusEl.textContent = `Genre: “${pickGenre}”`;
-    setStage('done');
-    setTimeout(showResultOverlay, 400); // brief pause for highlight
-  }
+  stopBtn.disabled = true;
+  toast.textContent = 'Slowing to a stop…';
+  statusEl.textContent = 'Slowing…';
+
+  const avoid = (stage === 'theme') ? lastIdx.theme : lastIdx.genre;
+  const targetIdx = randomIndexExcluding(wheel.items.length, avoid);
+
+  wheel.decelerateToIndex(
+    targetIdx,
+    { minTurns: 2, maxTurns: 5, duration: 2800 + Math.random()*900 },
+    (finalIdx) => {
+      stopBtn.disabled = false;
+
+      if (stage === 'theme') {
+        pickTheme = wheel.items[finalIdx];
+        lastIdx.theme = finalIdx;                   // remember to avoid next time
+        statusEl.textContent = `Theme: “${pickTheme}”`;
+        startGenreAfterDelay(3000);
+      } else if (stage === 'genre') {
+        pickGenre = wheel.items[finalIdx];
+        lastIdx.genre = finalIdx;                   // remember to avoid next time
+        statusEl.textContent = `Genre: “${pickGenre}”`;
+        setStage('done');
+        setTimeout(showResultOverlay, 400);
+      }
+    }
+  );
 }
 
 /* ====== Events ====== */
