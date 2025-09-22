@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="stylesheet.css">
+  <link rel="icon" type="image/svg+xml" href="assets/logos.svg">
+  <title>Kyle Young</title>
+</head>
+<body>
+  <!-- Fixed style selector / back button -->
+  <div class="stylebar" role="toolbar" aria-label="Style selector">
+    <button class="back" type="button" id="btnBack">⟵ Back</button>
+    <div class="styles" id="styleDots" aria-label="Styles"></div>
+    <span class="label" id="styleLabel"></span>
+  </div>
+
+  <!-- SECTION 1: Featured / Game / Books -->
+  <section class="section">
+    <div class="grid-tiles">
+      <!-- FEATURED (left) -->
+      <article id="tile-featured" class="tile featured shape-featured" data-shifty="true" title="Open featured.html">
+        <video id="featuredVideo" class="media-fill" autoplay muted loop playsinline></video>
+        <div class="tint"></div>
+        <div class="center-logo">
+          <img id="featuredLogo" class="parallax" alt="Featured logo" />
+        </div>
+        <button class="visually-hidden" aria-label="Open Featured" onclick="location.href='featured.html'"></button>
+      </article>
+
+      <!-- GAME (top-right) -->
+	  <div class="div_phone_adding">
+      <article id="tile-game" class="tile game shape-game" data-shifty="true">
+        <img id="gameBg" class="bg-fill" alt="Game background" />
+        <div class="tint"></div>
+        <div class="center-logo"><img id="gameLogoOverlay" class="parallax" alt="Games logo" /></div>
+
+        <!-- Expanded UI -->
+        <div class="game-ui">
+          <img id="gameDisc" class="game-disc" alt="Game disc" />
+          <div class="game-detail">
+            <img id="gameDetailLogo" class="logo" alt="Game logo" />
+            <div class="left">
+              <video id="gameTrailer" controls></video>
+            </div>
+            <div class="right">
+              <div class="text" id="gameDesc"></div>
+              <div class="btns" id="gameLinks"></div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- BOOKS (bottom-right) -->
+	  <div class="div_phone_adding">
+      <article id="tile-books" class="tile books shape-books" data-shifty="true">
+        <img id="booksBg" class="bg-fill" alt="Stories background" />
+        <div class="tint"></div>
+        <div class="center-logo"><img id="booksLogoOverlay" class="parallax" alt="Stories logo" /></div>
+
+        <!-- Expanded UI -->
+        <div class="books-ui">
+          <div class="books-filters">
+            <strong>Filter:</strong>
+            <div id="genreChips" class="chips" aria-label="Genres"></div>
+            <input id="searchStories" class="search" type="search" placeholder="Search stories by name..." />
+          </div>
+          <div class="book-area">
+            <div class="book-spread" id="bookSpread"></div>
+          </div>
+        </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- SECTION 2 (scroll below): Render Challenges / Assets / Contact) -->
+  <section class="section">
+    <div class="grid-tiles">
+      <!-- RENDER CHALLENGES (left) -->
+      <article id="tile-render" class="tile render shape-render" data-shifty="true">
+        <video id="renderBgVideo" class="media-fill" autoplay muted loop playsinline></video>
+        <div class="tint"></div>
+        <div class="center-logo"><img id="renderLogoOverlay" class="parallax" alt="Render Challenges logo" /></div>
+
+        <div class="render-ui">
+          <div class="carousel">
+            <div class="head">
+              <button class="arw" id="renderPrev" type="button">◂ Prev</button>
+              <img id="renderLogoCurrent" alt="Challenge logo" />
+              <button class="arw" id="renderNext" type="button">Next ▸</button>
+            </div>
+            <div class="render-grid">
+              <video id="renderFinal" controls></video>
+              <video id="renderTemplate" controls></video>
+            </div>
+            <div class="render-foot">
+              <a id="renderMore" class="btn" href="#" target="_blank" rel="noopener">More Info</a>
+              <span id="renderText"></span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ASSETS (top-right) -->
+	  <div class="div_phone_adding">
+      <article id="tile-assets" class="tile assets shape-assets" data-shifty="true">
+        <img id="assetsBg" class="bg-fill" alt="Assets background" />
+        <div class="tint"></div>
+        <div class="center-logo"><img id="assetsLogoOverlay" class="parallax" alt="Assets logo" /></div>
+
+        <div class="assets-ui">
+          <div class="assets-card">
+            <h3 id="assetTitle"></h3>
+            <img id="assetImage" alt="Asset image" />
+            <div class="assets-nav">
+              <button class="arw" id="assetPrev" type="button">◂ Prev</button>
+              <div class="btns">
+                <a id="assetModel" class="btn" href="#" target="_blank" rel="noopener">Model</a>
+                <a id="assetMore" class="btn" href="#" target="_blank" rel="noopener">More Info</a>
+              </div>
+              <button class="arw" id="assetNext" type="button">Next ▸</button>
+            </div>
+          </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- CONTACT (bottom-right) -->
+	  <div class="div_phone_adding">
+      <article id="tile-contact" class="tile contact shape-contact" data-shifty="true">
+        <img id="contactBg" class="bg-fill" alt="Contact background" />
+        <div class="tint"></div>
+        <div class="center-logo"><img id="contactLogoOverlay" class="parallax" alt="Contact logo" /></div>
+
+        <div class="contact-ui">
+          <div class="contact-card">
+            <div class="contact-top">
+              <img src="assets/contact/contact.png" alt="About image" />
+              <div>
+                <div><strong>Email:</strong> <a href="mailto:kyleevanyoung3@gmail.com">kyleevanyoung3@gmail.com</a></div>
+              </div>
+            </div>
+            <div class="contact-body">
+              <p>
+                Ever since I was a child, I’ve been enthralled by stories, myths, and legends that unfolded in movies, video games, and the imaginary adventures I’d create with friends and family. Inspired by these narratives, I started to craft my own tales during quiet moments, each character born from both joyous and challenging times. These stories have always offered me solace, especially during periods of boredom or restlessness. Yet, I found it daunting to share these creations in a way that truly resonated with others. That’s why I turned to writing, hoping to encapsulate just a sliver of the magic these tales have brought into my life. This story, although it navigates the grand themes of time travel and the monumental task of saving kingdoms and other worlds, is fundamentally about the human condition. It’s about individuals doing their best in seemingly impossible situations. Through this narrative, I want to remind readers that life is a mix of good times and bad times. What matters most isn’t what happens around us, but how we choose to react to these situations and treat the people we love. I hope that in reading this story, you find a touch of the joy, comfort, or peace that creating it has given me.
+              </p>
+            </div>
+            <form class="contact-form" id="contactForm">
+              <input type="text" id="firstName" placeholder="First name" required />
+              <input type="text" id="lastName" placeholder="Last name" required />
+              <input type="email" id="email" placeholder="Email" required />
+              <button class="btn" type="submit">Send</button>
+              <small id="contactMsg" style="opacity:.8"></small>
+            </form>
+          </div>
+        </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Story modal and reader (global) -->
+  <div class="modal" id="storyModal" role="dialog" aria-modal="true" aria-labelledby="storyModalTitle">
+    <div class="modal-card">
+      <div style="display:flex; align-items:center; gap:10px; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <img id="storyTypeIcon" alt="Story type icon" style="width:100px;height:100px;object-fit:contain" />
+          <img id="storyLogoPicked" alt="Story logo picked" style="width:160px;height:160px;object-fit:contain" />
+        </div>
+        <button class="btn" type="button" onclick="closeStoryModal()">Close</button>
+      </div>
+      <h3 id="storyModalTitle"></h3>
+      <p id="storyModalSmall"></p>
+      <div class="modal-actions">
+        <a id="btnPdf" class="btn" target="_blank" rel="noopener">Download PDF</a>
+        <a id="btnEpub" class="btn" target="_blank" rel="noopener">Download EPUB</a>
+        <button id="btnReader" class="btn" type="button">Open Reader</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="reader" id="reader">
+    <div class="inner">
+      <div class="toolbar">
+        <button class="btn" onclick="readerSmaller()">A−</button>
+        <button class="btn" onclick="readerBigger()">A+</button>
+        <button class="btn" onclick="closeReader()">Close</button>
+      </div>
+      <article id="readerContent" style="font-size: 18px; line-height: 1.8; white-space: pre-wrap;"></article>
+    </div>
+  </div>
+
+  <script>
+	 const Styles = [
+      {
+        BaseColor: "Black",
+        BackgroundColor: "Black",
+        FontColor: "White",
+        AssetsLogo: "assets/assets/logo_black.svg",
+        AssetsBackground: "assets/assets/background_black.png",
+        GamesLogo: "assets/games/logo_black.svg",
+        GamesBackground: "assets/games/background_black.png",
+        RenderChallenegesLogo: "assets/render_challeneges/logo_black.svg",
+        RenderChallenegesBackground: "assets/render_challeneges/background_black.mp4",
+        ContactLogo: "assets/contact/logo_black.svg",
+        ContactBackground: "assets/contact/background_black.png",
+        FeaturedLogo: "assets/featured/logo_black.svg",
+        FeaturedBackground: "assets/featured/black.mp4",
+        StoriesLogo: "assets/stories/logo_black.svg",
+        StoriesBackground: "assets/stories/background_black.png",
+        Short: "assets/stories/storietypes/short_white.svg",
+        FairyTale: "assets/stories/storietypes/fairy_tale_white.svg",
+        Script: "assets/stories/storietypes/scripts_white.svg",
+        Books: "assets/stories/storietypes/books_white.svg",
+        KineticRush: "assets/render_challeneges/kinetic_rush/logo_black.png",
+        EndlessEngines: "assets/render_challeneges/endless_engines/logo_black.png",
+        EtenalAscent: "assets/render_challeneges/etenal_ascent/logo_black.png",
+		RampageRally: "assets/render_challeneges/rampage_rally/logo_black.png",
+      },
+      {
+        BaseColor: "White",
+        BackgroundColor: "White",
+        FontColor: "Black",
+        AssetsLogo: "assets/assets/logo_white.svg",
+        AssetsBackground: "assets/assets/background_white.png",
+        GamesLogo: "assets/games/logo_white.svg",
+        GamesBackground: "assets/games/background_white.png",
+        RenderChallenegesLogo: "assets/render_challeneges/logo_white.svg",
+        RenderChallenegesBackground: "assets/render_challeneges/background_white.mp4",
+        ContactLogo: "assets/contact/logo_white.svg",
+        ContactBackground: "assets/contact/background_white.png",
+        FeaturedLogo: "assets/featured/logo_white.svg",
+        FeaturedBackground: "assets/featured/white.mp4",
+        StoriesLogo: "assets/stories/logo_white.svg",
+        StoriesBackground: "assets/stories/background_white.png",
+        Short: "assets/stories/storietypes/short_black.svg",
+        FairyTale: "assets/stories/storietypes/fairy_tale_black.svg",
+        Script: "assets/stories/storietypes/scripts_black.svg",
+        Books: "assets/stories/storietypes/books_black.svg",
+        KineticRush: "assets/render_challeneges/kinetic_rush/logo_white.png",
+        EndlessEngines: "assets/render_challeneges/endless_engines/logo_white.png",
+        EtenalAscent: "assets/render_challeneges/etenal_ascent/logo_white.png",
+		RampageRally: "assets/render_challeneges/rampage_rally/logo_white.png",
+      },
+];
+  
+
+    // ===== Globals =====
+    let styleIndex = 0; // default first style
+    let expandedTile = null; // track which tile is expanded
+    const GOOGLE_SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwmcNG8arS-lcgOQNeN1JZ0t5u3rzjUcG0O-gU3l62n_ue3xfqboba9YoSxsd3VWB1r/exec"; // TODO: paste your Apps Script Web App URL here to collect contact form submissions
+
+    // ===== DOM refs =====
+    const btnBack = document.getElementById('btnBack');
+    const styleDots = document.getElementById('styleDots');
+    const styleLabel = document.getElementById('styleLabel');
+
+    const tileFeatured = document.getElementById('tile-featured');
+    const featuredVideo = document.getElementById('featuredVideo');
+    const featuredLogo = document.getElementById('featuredLogo');
+
+    const tileGame = document.getElementById('tile-game');
+    const gameBg = document.getElementById('gameBg');
+    const gameLogoOverlay = document.getElementById('gameLogoOverlay');
+    const gameDisc = document.getElementById('gameDisc');
+    const gameTrailer = document.getElementById('gameTrailer');
+    const gameDetailLogo = document.getElementById('gameDetailLogo');
+    const gameDesc = document.getElementById('gameDesc');
+    const gameLinks = document.getElementById('gameLinks');
+
+    const tileBooks = document.getElementById('tile-books');
+    const booksBg = document.getElementById('booksBg');
+    const booksLogoOverlay = document.getElementById('booksLogoOverlay');
+    const bookSpread = document.getElementById('bookSpread');
+    const genreChips = document.getElementById('genreChips');
+    const searchStories = document.getElementById('searchStories');
+
+    const tileRender = document.getElementById('tile-render');
+    const renderBgVideo = document.getElementById('renderBgVideo');
+    const renderLogoOverlay = document.getElementById('renderLogoOverlay');
+    const renderLogoCurrent = document.getElementById('renderLogoCurrent');
+    const renderPrev = document.getElementById('renderPrev');
+    const renderNext = document.getElementById('renderNext');
+    const renderFinal = document.getElementById('renderFinal');
+    const renderTemplate = document.getElementById('renderTemplate');
+    const renderMore = document.getElementById('renderMore');
+    const renderText = document.getElementById('renderText');
+
+    const tileAssets = document.getElementById('tile-assets');
+    const assetsBg = document.getElementById('assetsBg');
+    const assetsLogoOverlay = document.getElementById('assetsLogoOverlay');
+    const assetTitle = document.getElementById('assetTitle');
+    const assetImage = document.getElementById('assetImage');
+    const assetModel = document.getElementById('assetModel');
+    const assetMore = document.getElementById('assetMore');
+    const assetPrev = document.getElementById('assetPrev');
+    const assetNext = document.getElementById('assetNext');
+
+    const tileContact = document.getElementById('tile-contact');
+    const contactBg = document.getElementById('contactBg');
+    const contactLogoOverlay = document.getElementById('contactLogoOverlay');
+
+    const contactForm = document.getElementById('contactForm');
+    const contactMsg = document.getElementById('contactMsg');
+
+    // Story modal & reader
+    const storyModal = document.getElementById('storyModal');
+    const storyTypeIcon = document.getElementById('storyTypeIcon');
+    const storyLogoPicked = document.getElementById('storyLogoPicked');
+    const storyModalTitle = document.getElementById('storyModalTitle');
+    const storyModalSmall = document.getElementById('storyModalSmall');
+    const btnPdf = document.getElementById('btnPdf');
+    const btnEpub = document.getElementById('btnEpub');
+    const btnReader = document.getElementById('btnReader');
+    const reader = document.getElementById('reader');
+    const readerContent = document.getElementById('readerContent');
+
+    // ===== Helpers =====
+    const setCSSVarsFromStyle = (s) => {
+      document.documentElement.style.setProperty('--bg', s.BackgroundColor);
+      document.documentElement.style.setProperty('--fg', s.FontColor);
+      styleLabel.textContent = `${s.BaseColor} theme`;
+    };
+
+    // pick a contrasting logo variant (prefers contrast vs current text color)
+    function pickLogoVariant(variants) {
+      if (!variants || !variants.length) return '';
+      const s = Styles[styleIndex];
+      const isLightText = (s.FontColor || '').toLowerCase() === 'white';
+      // If text is white, prefer black logo; else prefer white logo.
+      const preferred = isLightText ? 'black' : 'white';
+      const found = variants.find(v => v.toLowerCase().includes(preferred));
+      return found || variants[0];
+    }
+
+    function applyStyle() {
+      const S = Styles[styleIndex];
+      setCSSVarsFromStyle(S);
+
+      // Featured background (video) + centered logo
+      featuredVideo.src = S.FeaturedBackground || '';
+      featuredLogo.src = S.FeaturedLogo || '';
+
+      // Game tile bg + logo overlay
+      gameBg.src = S.GamesBackground || '';
+      gameLogoOverlay.src = S.GamesLogo || '';
+
+      // Books tile
+      booksBg.src = S.StoriesBackground || '';
+      booksLogoOverlay.src = S.StoriesLogo || '';
+
+      // Lower section
+      renderBgVideo.src = S.RenderChallenegesBackground || '';
+      renderLogoOverlay.src = S.RenderChallenegesLogo || '';
+
+      assetsBg.src = S.AssetsBackground || '';
+      assetsLogoOverlay.src = S.AssetsLogo || '';
+
+      contactBg.src = S.ContactBackground || '';
+      contactLogoOverlay.src = S.ContactLogo || '';
+
+      // Update expanded views if open
+      if (expandedTile === tileGame) updateGameUI();
+      if (expandedTile === tileRender) updateRenderUI();
+      if (expandedTile === tileAssets) updateAssetUI();
+      if (expandedTile === tileBooks) buildBook();
+    }
+
+    function buildStyleDots() {
+      styleDots.innerHTML = '';
+      Styles.forEach((s, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'style-dot';
+        dot.title = s.BaseColor;
+        dot.style.background = s.BaseColor;
+        dot.setAttribute('aria-current', i === styleIndex);
+        dot.addEventListener('click', () => { styleIndex = i; applyStyle(); syncDots(); });
+        styleDots.appendChild(dot);
+      });
+    }
+    function syncDots() { [...styleDots.children].forEach((d, i) => d.setAttribute('aria-current', i === styleIndex)); }
+
+    // ===== Parallax & shifty movement =====
+    function addParallax(tileEl) {
+      const logo = tileEl.querySelector('.center-logo img');
+      if (!logo) return;
+      tileEl.addEventListener('mousemove', (e) => {
+        if (tileEl.classList.contains('expanded')) return; // disabled when expanded
+        const r = tileEl.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        logo.style.transform = `translate(${x*16}px, ${y*16}px)`;
+      });
+      tileEl.addEventListener('mouseleave', () => {
+        logo.style.transform = 'translate(0,0)';
+      });
+    }
+
+    [tileFeatured, tileGame, tileBooks, tileRender, tileAssets, tileContact].forEach(addParallax);
+
+    // ===== Expand/Collapse framework =====
+    function expandTile(tile) {
+      if (expandedTile && expandedTile !== tile) collapseTile(expandedTile);
+      expandedTile = tile;
+      tile.classList.add('expanded');
+
+      if (tile === tileGame) {
+        // Show game UI, hide overlay logo
+        gameLogoOverlay.style.opacity = 0;
+        updateGameUI();
+      } else if (tile === tileBooks) {
+        booksLogoOverlay.style.opacity = 0;
+        buildBook();
+      } else if (tile === tileRender) {
+        renderLogoOverlay.style.opacity = 0;
+        updateRenderUI();
+      } else if (tile === tileAssets) {
+        assetsLogoOverlay.style.opacity = 0;
+        updateAssetUI();
+      } else if (tile === tileContact) {
+        contactLogoOverlay.style.opacity = 0;
+        // nothing else to do
+      }
+    }
+
+    function collapseTile(tile) {
+      if (!tile) return;
+      tile.classList.remove('expanded');
+      if (tile === tileGame) {
+        gameLogoOverlay.style.opacity = 1;
+        gameTrailer.pause();
+      } else if (tile === tileBooks) {
+        booksLogoOverlay.style.opacity = 1;
+      } else if (tile === tileRender) {
+        renderLogoOverlay.style.opacity = 1;
+        [renderFinal, renderTemplate].forEach(v => v.pause());
+      } else if (tile === tileAssets) {
+        assetsLogoOverlay.style.opacity = 1;
+      } else if (tile === tileContact) {
+        contactLogoOverlay.style.opacity = 1;
+      }
+      expandedTile = null;
+    }
+
+    btnBack.addEventListener('click', () => collapseTile(expandedTile));
+
+    // ===== FEATURED click -> navigate =====
+    tileFeatured.addEventListener('click', (e) => {
+      if (expandedTile) return; // ignore clicks if something expanded via back
+      window.location.href = 'featured.html';
+    });
+
+    // ===== GAME logic =====
+    let gameIndex = 0;
+    function updateGameUI() {
+      const S = Styles[styleIndex];
+      const G = Games[gameIndex % Games.length];
+      // Background switches to current game's background
+      tileGame.style.backgroundImage = `url('${G.BackgroundImage || ''}')`;
+      tileGame.style.backgroundSize = 'cover';
+      tileGame.style.backgroundPosition = 'center';
+
+      // Disc
+      gameDisc.src = G.DiscImage || '';
+
+      // Detail panel
+      gameTrailer.src = G.Trailer || '';
+      gameDetailLogo.src = pickLogoVariant(G.Logo);
+      gameDesc.textContent = G.Description || '';
+      gameLinks.innerHTML = '';
+      const linkSpecs = [
+        { label: 'Steam', url: G.GameLinkStream },
+        { label: 'Itch.io', url: G.GameLinkItch },
+        { label: 'Play Now', url: G.GamePlayNow },
+      ];
+      linkSpecs.forEach(({label, url}) => {
+        if (url) {
+          const a = document.createElement('a');
+          a.className = 'btn'; a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = label;
+          gameLinks.appendChild(a);
+        }
+      });
+    }
+
+    tileGame.addEventListener('click', () => expandTile(tileGame));
+
+    gameDisc.addEventListener('click', (e) => {
+      e.stopPropagation();
+      gameDisc.classList.remove('spin');
+      // force reflow to restart animation
+      void gameDisc.offsetWidth; 
+      gameDisc.classList.add('spin');
+      gameIndex = (gameIndex + 1) % Games.length;
+      updateGameUI();
+    });
+
+    // ===== BOOKS logic =====
+    function buildBook() {
+      // build filters once
+      const allGenres = new Set();
+      Storys.forEach(s => (s.Genres || []).forEach(g => allGenres.add(g)));
+      if (!genreChips.dataset.built) {
+        [...allGenres].sort().forEach(g => {
+          const b = document.createElement('button');
+          b.className = 'chip'; b.textContent = g; b.setAttribute('aria-pressed', 'false');
+          b.addEventListener('click', () => { b.setAttribute('aria-pressed', b.getAttribute('aria-pressed')==='true' ? 'false' : 'true'); filterStories(); });
+          genreChips.appendChild(b);
+        });
+        genreChips.dataset.built = '1';
+      }
+      if (!searchStories.dataset.bound) {
+        searchStories.addEventListener('input', filterStories);
+        searchStories.dataset.bound = '1';
+      }
+
+      // pages
+      const isPhone = window.matchMedia('(max-width: 800px)').matches;
+      bookSpread.innerHTML = '';
+      Storys.forEach((S, idx) => {
+        const page = document.createElement('div');
+        page.className = 'page';
+        page.dataset.name = (S.Name || S.name || '').toLowerCase();
+        page.dataset.genres = JSON.stringify(S.Genres || []);
+        page.dataset.mode = isPhone ? 'phone' : 'spread';
+
+        // backgrounds
+        const bg = document.createElement('div');
+        bg.className = 'bg';
+        if (!isPhone) bg.style.backgroundImage = `url('${S.Background||''}')`;
+        page.appendChild(bg);
+
+        if (isPhone) {
+          const phoneLandscape = document.createElement('div');
+          phoneLandscape.className = 'phone-landscape';
+          phoneLandscape.style.backgroundImage = `url('${S.LandscapeImage || S.Background || ''}')`;
+          page.appendChild(phoneLandscape);
+        } else {
+          const fore = document.createElement('div');
+          fore.className = 'forefront';
+          fore.style.backgroundImage = `url('${S.Forefront||''}')`;
+          page.appendChild(fore);
+        }
+
+        // centered logos: storytype icon + logo style picked by theme
+        const mid = document.createElement('div'); mid.className = 'middle';
+        const logoImg = document.createElement('img');
+        const styleIsLightText = (Styles[styleIndex].FontColor||'').toLowerCase()==='white';
+        logoImg.src = styleIsLightText ? (S.LogoStyle1||'') : (S.LogoStyle2||S.LogoStyle1||'');
+        mid.appendChild(logoImg);
+        page.appendChild(mid);
+
+        // parallax on mouse for forefront layer
+        page.addEventListener('mousemove', (e) => {
+          if (isPhone) return;
+          const fore = page.querySelector('.forefront');
+          if (!fore) return;
+          const r = page.getBoundingClientRect();
+          const x = (e.clientX - r.left)/r.width - .5;
+          const y = (e.clientY - r.top)/r.height - .5;
+          fore.style.transform = `translate(${x*18}px, ${y*18}px)`;
+        });
+        page.addEventListener('mouseleave', () => {
+          const fore = page.querySelector('.forefront');
+          if (fore) fore.style.transform = 'translate(0,0)';
+        });
+
+        page.addEventListener('click', (e) => openStoryModal(S));
+        bookSpread.appendChild(page);
+      });
+      filterStories();
+    }
+
+    function filterStories() {
+      const query = (searchStories.value||'').toLowerCase().trim();
+      const activeGenres = [...genreChips.querySelectorAll('.chip[aria-pressed="true"]')].map(el => el.textContent);
+      const pages = [...bookSpread.children];
+      pages.forEach(p => {
+        const name = p.dataset.name || '';
+        const genres = JSON.parse(p.dataset.genres || '[]');
+        const matchesText = !query || name.includes(query);
+        const matchesGenres = !activeGenres.length || activeGenres.every(g => genres.includes(g));
+        p.style.display = (matchesText && matchesGenres) ? '' : 'none';
+      });
+    }
+
+    function openStoryModal(S) {
+      const currentStyle = Styles[styleIndex];
+      storyTypeIcon.src = currentStyle[S.storytype] || '';
+      const logos = [S.LogoStyle1, S.LogoStyle2, S.LogoStyle3, S.LogoStyle4, S.LogoStyle5].filter(Boolean);
+      storyLogoPicked.src = pickLogoVariant(logos);
+      storyModalTitle.textContent = S.TitleText || (S.Name || S.name || '');
+      storyModalSmall.textContent = S.SmallText || '';
+      btnPdf.href = S.Pdfstory || '#';
+      btnEpub.href = S.Epub || '#';
+      btnReader.onclick = () => openReader(S.StoryText || '');
+      storyModal.classList.add('open');
+    }
+    function closeStoryModal() { storyModal.classList.remove('open'); }
+
+    function openReader(text) {
+      readerContent.textContent = text;
+      reader.classList.add('open');
+    }
+    function closeReader() { reader.classList.remove('open'); }
+    function readerBigger() { readerContent.style.fontSize = (parseFloat(getComputedStyle(readerContent).fontSize) + 2) + 'px'; }
+    function readerSmaller() { readerContent.style.fontSize = Math.max(12, parseFloat(getComputedStyle(readerContent).fontSize) - 2) + 'px'; }
+
+    // ===== RENDER CHALLENGES logic =====
+    let renderIndex = 0;
+    function updateRenderUI() {
+      const S = Styles[styleIndex];
+      const R = RenderChallenegesList[renderIndex % RenderChallenegesList.length];
+      renderLogoCurrent.src = S[R.ChanglleneName] || '';
+      renderFinal.src = R.FinalVideo || '';
+      renderTemplate.src = R.TemplateVideo || '';
+      renderMore.href = R.LinkToProcess || '#';
+      renderText.textContent = R.Text || '';
+    }
+    renderPrev.addEventListener('click', (e) => { e.stopPropagation(); renderIndex = (renderIndex - 1 + RenderChallenegesList.length) % RenderChallenegesList.length; updateRenderUI(); });
+    renderNext.addEventListener('click', (e) => { e.stopPropagation(); renderIndex = (renderIndex + 1) % RenderChallenegesList.length; updateRenderUI(); });
+
+    // ===== ASSETS logic =====
+    let assetIndex = 0;
+    function updateAssetUI() {
+      const A = AssetsList[assetIndex % AssetsList.length];
+      assetTitle.textContent = A.AssetsName || '';
+      assetImage.src = A.MainImage || '';
+      assetModel.href = A.ModelLink || '#';
+      assetMore.href = A.MoreAboutModel || '#';
+    }
+    assetPrev.addEventListener('click', (e) => { e.stopPropagation(); assetIndex = (assetIndex - 1 + AssetsList.length) % AssetsList.length; updateAssetUI(); });
+    assetNext.addEventListener('click', (e) => { e.stopPropagation(); assetIndex = (assetIndex + 1) % AssetsList.length; updateAssetUI(); });
+
+    // ===== CONTACT form logic =====
+contactForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const payload = {
+    firstName: document.getElementById('firstName').value.trim(),
+    lastName: document.getElementById('lastName').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    ts: new Date().toISOString(),
+  };
+  if (!GOOGLE_SHEETS_WEB_APP_URL) {
+    contactMsg.textContent = 'Form is not connected yet. Add your Google Sheets Web App URL in the code (GOOGLE_SHEETS_WEB_APP_URL).';
+    return;
+  }
+  try {
+    const res = await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      mode: 'no-cors', // keep as-is; the server will still receive it
+    });
+    contactMsg.textContent = 'Thanks! Your info was sent.';
+    contactForm.reset();
+  } catch (err) {
+    console.error(err);
+    contactMsg.textContent = 'Sorry, something went wrong. You can also email me directly at kyleevanyoung3@gmail.com.';
+  }
+});
+
+
+    // ===== Attach expand handlers =====
+    tileGame.addEventListener('click', () => expandTile(tileGame));
+    tileBooks.addEventListener('click', () => expandTile(tileBooks));
+    tileRender.addEventListener('click', () => expandTile(tileRender));
+    tileAssets.addEventListener('click', () => expandTile(tileAssets));
+    tileContact.addEventListener('click', () => expandTile(tileContact));
+
+    // ===== Init =====
+    buildStyleDots();
+    applyStyle();
+  </script>
+  <script defer src="assets.js"></script>
+  <script defer src="games.js"></script>
+  <script defer src="renders.js"></script>
+  <script defer src="stories.js"></script>
+</body>
+</html>

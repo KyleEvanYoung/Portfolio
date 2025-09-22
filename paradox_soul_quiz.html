@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Find Out Your Soul Animal</title>
+  <style>
+    :root {
+      --bg: #000;
+      --fg: #fff;
+      --muted: #fff;
+    }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 56px;
+      display: grid;
+      gap: 20px;
+    }
+    header {
+      text-align: center;
+    }
+    header h1 {
+      margin: 0 0 8px 0;
+      font-size: clamp(22px, 4.5vw, 34px);
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+    header p { margin: 0; opacity: 0.8; font-size: clamp(12px, 2.5vw, 14px); }
+
+    .card {
+      border: 1px solid var(--fg);
+      border-radius: 18px;
+      padding: clamp(16px, 3.5vw, 28px);
+      background: transparent;
+    }
+
+    .qnum { opacity: 0.7; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .question { font-size: clamp(18px, 4vw, 24px); margin: 6px 0 16px; font-weight: 700; }
+
+    .options { display: grid; gap: 10px; }
+    .btn {
+      appearance: none; border: 1px solid var(--fg); background: transparent; color: var(--fg);
+      padding: 14px 16px; border-radius: 14px; font-size: clamp(14px, 2.8vw, 16px); text-align: left;
+      cursor: pointer; transition: transform .05s ease-in-out; width: 100%;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:focus { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+    .controls { display: flex; gap: 10px; justify-content: space-between; margin-top: 16px; }
+    .nav { border: 1px solid var(--fg); background: transparent; color: var(--fg); border-radius: 12px; padding: 12px 14px; cursor: pointer; min-width: 120px; }
+    .nav[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+    .progress { height: 6px; border: 1px solid var(--fg); border-radius: 999px; overflow: hidden; margin: 8px 0 0; }
+    .bar { height: 100%; width: 0%; background: var(--fg); }
+
+    .result h2 { margin: 0 0 8px; font-size: clamp(20px, 4vw, 28px); }
+    .result p { margin: 0 0 14px; }
+    .tagline { opacity: .8; font-size: 13px; }
+
+    .list { margin-top: 22px; border-top: 1px dashed var(--fg); padding-top: 16px; }
+    details { border: 1px solid var(--fg); border-radius: 14px; padding: 12px 14px; }
+    summary { cursor: pointer; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 10px; margin-top: 12px; }
+    .chip { border: 1px solid var(--fg); border-radius: 12px; padding: 10px; font-size: 13px; }
+
+    @media (prefers-reduced-motion: reduce) { .btn:hover { transform: none; } }
+  </style>
+</head>
+<body>
+  <div class="wrap" role="application">
+    <header>
+      <h1>Find Out Your Soul Animal</h1>
+      <p class="tagline">15 quick questions · one at a time · black & white only</p>
+    </header>
+
+    <section class="card" id="quiz" aria-live="polite"></section>
+
+    <section class="card result" id="result" hidden>
+      <h2 id="topName"></h2>
+      <p id="topMeaning"></p>
+      <div id="alts"></div>
+      <div class="controls">
+        <button class="nav" id="restartBtn">Restart</button>
+      </div>
+      <div class="list">
+        <details>
+          <summary>See full soul‑animal index & meanings</summary>
+          <div class="grid" id="allList"></div>
+        </details>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ======= DATA =======
+    // Meaning + trait tags for every requested soul animal (deduped)
+    const ANIMALS = {
+      "Panther": { meaning: "Stealth, night vision, and quiet courage.", tags: ["forest","nocturnal","stealth","courage","solitary"] },
+      "Unicorn": { meaning: "Purity, healing, and incorruptible wonder.", tags: ["spirit","healer","light","gentle","mythic"] },
+      "Jaguar": { meaning: "Powerful presence, underworld travel, decisive action.", tags: ["forest","water","stealth","courage","shamanic","solitary"] },
+      "Yeti": { meaning: "Mystery, endurance, and the call of high places.", tags: ["mountain","ice","solitary","endurance","mythic"] },
+      "Flamingo": { meaning: "Balance, social harmony, and poise.", tags: ["water","colony","beauty","balance","day"] },
+      "Peacock": { meaning: "Radiance, confidence, and truthful display.", tags: ["beauty","leader","day","air","courtship"] },
+      "Wolf": { meaning: "Loyalty, intuition, and the wisdom of the pack.", tags: ["forest","nocturnal","pack","loyalty","guardian"] },
+      "Snake": { meaning: "Shedding, life‑death‑rebirth cycles, kundalini.", tags: ["transform","earth","desert","healer","mystery"] },
+      "Sleep": { meaning: "Rest, recovery, and the wisdom of stillness.", tags: ["rest","gentle","healer","night"] },
+      "Bee": { meaning: "Industry, sweetness, and sacred community.", tags: ["colony","day","work","pollinator","order"] },
+      "Griffin": { meaning: "Guardian of treasures; union of strength and sight.", tags: ["mythic","air","earth","guardian","leader"] },
+      "Koala": { meaning: "Calm presence, comfort, and careful boundaries.", tags: ["forest","gentle","rest","tree","solitary"] },
+      "Sköll": { meaning: "Pursuit of the sun—relentless drive.", tags: ["mythic","wolf","pursuit","fire","day"] },
+      "Hati": { meaning: "Chasing the moon—intuition and cycles.", tags: ["mythic","wolf","pursuit","night","moon"] },
+      "Orangutan": { meaning: "Ingenious problem‑solving and quiet strength.", tags: ["forest","tool","wisdom","solitary","gentle"] },
+      "Snow Leopard": { meaning: "Silent mastery, altitude, and grace.", tags: ["mountain","ice","stealth","solitary","courage"] },
+      "Onmoraki": { meaning: "Dream‑smoke bird; fears take form—face them.", tags: ["mythic","night","air","shadow","dream"] },
+      "Impundulu": { meaning: "Lightning bird; charge, allure, and raw energy.", tags: ["mythic","lightning","storm","air","desire"] },
+      "Seabird Colony": { meaning: "Many voices, shared risk, shared reward.", tags: ["ocean","colony","air","endurance","home"] },
+      "Owl": { meaning: "Deep seeing, silence, and moonlit wisdom.", tags: ["night","air","wisdom","forest","solitary"] },
+      "Thunderbird": { meaning: "Storm power and sky‑borne protection.", tags: ["mythic","storm","air","guardian","leader"] },
+      "Gullinkambi": { meaning: "Rooster of dawn—awakening and omens.", tags: ["day","dawn","air","voice","omen"] },
+      "Phoenix": { meaning: "Rebirth through fire; start anew, brighter.", tags: ["mythic","fire","rebirth","spirit","light"] },
+      "Lion": { meaning: "Sovereignty, courage, and heart‑led rule.", tags: ["leader","sun","savanna","pride","courage"] },
+      "Raven": { meaning: "Magic, messages, and clever transformation.", tags: ["air","trickster","mystery","night","tool"] },
+      "Dolphin": { meaning: "Joy, play, and intelligent empathy.", tags: ["ocean","playful","airbreather","empathy","song"] },
+      "Whale": { meaning: "Ancestral memory and oceanic depth.", tags: ["ocean","song","ancient","gentle","wisdom"] },
+      "Sea Turtle": { meaning: "Long journeys, protection, and patience.", tags: ["ocean","protection","ancient","gentle","endurance"] },
+      "Manta Ray": { meaning: "Gliding grace and quiet presence.", tags: ["ocean","grace","gentle","deepsea","flow"] },
+      "Mermaid / Siren": { meaning: "Thresholds, voice, allure, and choice.", tags: ["mythic","ocean","song","desire","threshold"] },
+      "Kraken": { meaning: "Vast power from unseen depths.", tags: ["mythic","ocean","deepsea","chaos","strength"] },
+      "Leviathan": { meaning: "Primordial waters and awe.", tags: ["mythic","ocean","ancient","chaos","strength"] },
+      "Selkie": { meaning: "Skin‑changing, home/away longing, tenderness.", tags: ["mythic","ocean","threshold","home","gentle"] },
+      "Seahorse": { meaning: "Delicacy, devotion, and protective fatherhood.", tags: ["ocean","gentle","pairbond","care","slow"] },
+      "Shark": { meaning: "Primal focus and honest appetite.", tags: ["ocean","focus","strength","solitary","hunter"] },
+      "Sea Lion": { meaning: "Play, teamwork, and voice.", tags: ["ocean","shore","colony","playful","voice"] },
+      "Walrus": { meaning: "Stamina, elders, and communal warmth.", tags: ["ocean","ice","colony","endurance","elder"] },
+      "Jellyfish": { meaning: "Go with the currents; soft power.", tags: ["ocean","flow","deepsea","boundary","ancient"] },
+      "Octopus": { meaning: "Shape‑shifting smarts and creative escape.", tags: ["ocean","intellect","camouflage","tool","solitary"] },
+      "Bioluminescent Fish": { meaning: "Light your way in darkness.", tags: ["deepsea","ocean","light","night","mystery"] },
+      "Starfish": { meaning: "Regenerate; center yourself and renew.", tags: ["ocean","shore","regenerate","gentle","slow"] },
+      "Eel": { meaning: "Slippery adaptability and hidden power.", tags: ["ocean","river","electric","night","transform"] },
+      "Deep‑sea Anglerfish": { meaning: "Patience, lure, and shadow alchemy.", tags: ["deepsea","ocean","night","mystery","trap"] },
+      "Sea Serpent": { meaning: "Mythic change rising from below.", tags: ["mythic","ocean","transform","chaos","power"] },
+      "Ghost Crab": { meaning: "Edge‑walker; quick retreats and returns.", tags: ["shore","ocean","night","home","boundary"] },
+      "Sparrow": { meaning: "Small joys, resilience, and everyday magic.", tags: ["air","home","colony","day","gentle"] },
+      "Heron": { meaning: "Stillness, strike, and marsh wisdom.", tags: ["water","air","patience","focus","solitary"] },
+      "Swallow": { meaning: "Return, navigation, and loyal bonds.", tags: ["air","home","pairbond","speed","day"] },
+      "Stork": { meaning: "New beginnings and careful stewardship.", tags: ["air","home","guardian","day","gentle"] },
+      "Hawk/Falcon": { meaning: "High focus, swift decisions, and clarity.", tags: ["air","focus","day","hunter","vision"] },
+      "Albatross": { meaning: "Long wayfinder; endurance across oceans.", tags: ["air","ocean","endurance","home","day"] },
+      "Firefly / Glow‑worm": { meaning: "Tiny lights; guidance at night.", tags: ["night","light","forest","summer","gentle"] },
+      "Bat": { meaning: "Liminal sensing, community, and rebirth.", tags: ["night","air","colony","cave","echolocation"] },
+      "Butterfly": { meaning: "Metamorphosis, joy, and soft presence.", tags: ["transform","day","flower","gentle","air"] },
+      "Moth": { meaning: "Drawn to light; quiet transformation.", tags: ["transform","night","air","gentle","moon"] },
+      "Dragonfly": { meaning: "Clarity, agility, and living lightly.", tags: ["air","water","focus","day","transform"] },
+      "Pegasus": { meaning: "Inspiration, uplift, and liberated mind.", tags: ["mythic","air","spirit","poetry","freedom"] },
+      "Hippogriff": { meaning: "Respectful power; dignity in duality.", tags: ["mythic","air","earth","honor","guardian"] },
+      "Simurgh/Roc": { meaning: "Cosmic bird; vast care and fate.", tags: ["mythic","air","wisdom","guardian","ancient"] },
+      "Harpy": { meaning: "Raw winds; fierce truth‑telling.", tags: ["mythic","air","storm","fury","boundary"] },
+      "Bear": { meaning: "Introspection, protection, and seasonal power.", tags: ["forest","strength","rest","healer","guardian"] },
+      "Tiger": { meaning: "Sovereign passion and striped focus.", tags: ["forest","strength","courage","solitary","night"] },
+      "Deer": { meaning: "Gentle awareness and quick grace.", tags: ["forest","gentle","alert","day","care"] },
+      "Stag": { meaning: "Nobility, cycles, and fertile leadership.", tags: ["forest","leader","antlers","dawn","ritual"] },
+      "Elephant": { meaning: "Memory, empathy, and matriarchal wisdom.", tags: ["earth","family","gentle","strength","elder"] },
+      "Horse": { meaning: "Freedom, stamina, and trusted partnership.", tags: ["earth","speed","endurance","ally","dawn"] },
+      "Fox": { meaning: "Clever adaptation and liminal paths.", tags: ["forest","edge","trickster","night","stealth"] },
+      "Rabbit": { meaning: "Creativity, fertility, and quick sensing.", tags: ["earth","gentle","alert","dawn","burrow"] },
+      "Hare": { meaning: "Moon‑quick, wild, and liminal magic.", tags: ["night","moon","speed","field","trickster"] },
+      "Bison": { meaning: "Abundance, prayer, and plains strength.", tags: ["earth","plains","endurance","provision","herd"] },
+      "Buffalo": { meaning: "Gratitude, grounded power, and plenty.", tags: ["earth","plains","herd","provision","spirit"] },
+      "Lizard": { meaning: "Sun basking, dreams, and regeneration.", tags: ["desert","sun","regenerate","stealth","day"] },
+      "Tortoise": { meaning: "Ancient patience and land‑wise protection.", tags: ["earth","slow","ancient","protection","desert"] },
+      "Turtle": { meaning: "World‑carrier; balanced land and water.", tags: ["water","earth","protection","gentle","slow"] },
+      "Spider": { meaning: "Fate‑weaving, patience, and creativity.", tags: ["weaver","patience","night","home","trickster"] },
+      "Scorpion": { meaning: "Boundaries, potency, and shadow work.", tags: ["desert","night","sting","transform","boundary"] },
+      "Ant": { meaning: "Teamwork, patience, and mighty small steps.", tags: ["colony","earth","work","order","day"] },
+      "Dragon": { meaning: "Sovereign power; elemental mastery.", tags: ["mythic","fire","air","earth","leader"] },
+      "Mouse/Rat": { meaning: "Resourceful survivor; reads the details.", tags: ["night","home","clever","urban","small"] },
+      "Hedgehog/Pangolin": { meaning: "Gentle armor; soft heart within.", tags: ["earth","selfcare","protection","night","solitary"] },
+      "Badger": { meaning: "Tenacity, boundaries, and truth digging.", tags: ["earth","burrow","stubborn","night","guardian"] }
+    };
+
+    // 15 questions, one at a time
+    const QUESTIONS = [
+      { q: "Which landscape calls to you most?", options: [
+        { t: "Ocean or shore", tags: ["ocean","water","shore"] },
+        { t: "Forest or jungle", tags: ["forest","tree"] },
+        { t: "Mountains or snow", tags: ["mountain","ice"] },
+        { t: "Open sky or clouds", tags: ["air","sky"] }
+      ]},
+      { q: "Your social style?", options: [
+        { t: "Happy alone", tags: ["solitary"] },
+        { t: "Tight pair or close friend", tags: ["pairbond","ally"] },
+        { t: "Small group / family", tags: ["herd","family"] },
+        { t: "Big pack/colony energy", tags: ["pack","colony"] }
+      ]},
+      { q: "What's your pace of life?", options: [
+        { t: "Slow and steady", tags: ["slow","patience"] },
+        { t: "Sprint then rest", tags: ["speed","rest"] },
+        { t: "Night owl", tags: ["night"] },
+        { t: "Always on the move", tags: ["endurance","day"] }
+      ]},
+      { q: "When conflict appears, you…", options: [
+        { t: "Observe quietly first", tags: ["stealth","focus"] },
+        { t: "Face it head‑on", tags: ["courage","strength"] },
+        { t: "Outsmart and outmaneuver", tags: ["trickster","clever"] },
+        { t: "Transform the situation", tags: ["transform"] }
+      ]},
+      { q: "Which gift feels most like you?", options: [
+        { t: "Healing / caretaking", tags: ["healer","care"] },
+        { t: "Leadership / protection", tags: ["leader","guardian"] },
+        { t: "Creativity / making", tags: ["weaver","creativity"] },
+        { t: "Wayfinding / navigation", tags: ["vision","wayfinder"] }
+      ]},
+      { q: "Pick a time of day:", options: [
+        { t: "Dawn", tags: ["dawn"] },
+        { t: "Day", tags: ["day"] },
+        { t: "Dusk", tags: ["dusk"] },
+        { t: "Night", tags: ["night"] }
+      ]},
+      { q: "What pulls your curiosity most?", options: [
+        { t: "Deep sea mysteries", tags: ["deepsea","mystery"] },
+        { t: "Ancient myths & omens", tags: ["mythic","omen"] },
+        { t: "Birds & flight", tags: ["air","flight"] },
+        { t: "Big cats & predators", tags: ["hunter","strength"] }
+      ]},
+      { q: "Choose a symbol:", options: [
+        { t: "Flame", tags: ["fire"] },
+        { t: "Leaf", tags: ["earth"] },
+        { t: "Wave", tags: ["water"] },
+        { t: "Thunderbolt", tags: ["storm","lightning"] }
+      ]},
+      { q: "How do you recharge?", options: [
+        { t: "Sleep / stillness", tags: ["rest"] },
+        { t: "Movement / play", tags: ["playful","speed"] },
+        { t: "Silence / solitude", tags: ["solitary","stealth"] },
+        { t: "Company / music", tags: ["song","colony"] }
+      ]},
+      { q: "What quality do friends rely on most?", options: [
+        { t: "Loyalty", tags: ["loyalty"] },
+        { t: "Wisdom", tags: ["wisdom"] },
+        { t: "Protection", tags: ["guardian"] },
+        { t: "Humor / cleverness", tags: ["trickster"] }
+      ]},
+      { q: "Pick an element:", options: [
+        { t: "Water", tags: ["water"] },
+        { t: "Air", tags: ["air"] },
+        { t: "Earth", tags: ["earth"] },
+        { t: "Fire", tags: ["fire"] }
+      ]},
+      { q: "Your vibe in one word:", options: [
+        { t: "Mystical", tags: ["spirit","mythic"] },
+        { t: "Fierce", tags: ["courage","strength"] },
+        { t: "Gentle", tags: ["gentle","care"] },
+        { t: "Curious", tags: ["vision","clever"] }
+      ]},
+      { q: "Which boundary feels truest?", options: [
+        { t: "Soft but firm", tags: ["boundary","gentle"] },
+        { t: "Clear and bold", tags: ["boundary","leader"] },
+        { t: "Flexible / shapeshift", tags: ["camouflage","transform"] },
+        { t: "Hidden until needed", tags: ["stealth","trap"] }
+      ]},
+      { q: "Pick a path:", options: [
+        { t: "Guardian of home", tags: ["home","guardian"] },
+        { t: "Explorer of edges", tags: ["edge","wayfinder"] },
+        { t: "Keeper of stories", tags: ["song","ancient"] },
+        { t: "Changer of forms", tags: ["transform"] }
+      ]},
+      { q: "Choose a companion quality:", options: [
+        { t: "Playful joy", tags: ["playful"] },
+        { t: "Focused vision", tags: ["focus","vision"] },
+        { t: "Enduring stamina", tags: ["endurance"] },
+        { t: "Healing presence", tags: ["healer"] }
+      ]}
+    ];
+
+    // ======= STATE =======
+    let idx = 0;
+    const chosen = []; // store chosen option index
+    const bag = {}; // tag counts
+
+    const $quiz = document.getElementById('quiz');
+    const $result = document.getElementById('result');
+    const $topName = document.getElementById('topName');
+    const $topMeaning = document.getElementById('topMeaning');
+    const $alts = document.getElementById('alts');
+    const $allList = document.getElementById('allList');
+
+    function incTags(tags){
+      for(const t of tags){ bag[t] = (bag[t]||0)+1; }
+    }
+
+    function renderQuestion(){
+      $result.hidden = true;
+      $quiz.hidden = false;
+      const q = QUESTIONS[idx];
+      const total = QUESTIONS.length;
+
+      $quiz.innerHTML = `
+        <div class="qnum">Question ${idx+1} / ${total}</div>
+        <div class="question">${q.q}</div>
+        <div class="options">
+          ${q.options.map((o,i)=>`<button class="btn" data-i="${i}">${o.t}</button>`).join('')}
+        </div>
+        <div class="controls">
+          <button class="nav" id="backBtn" ${idx===0?"disabled":""}>Back</button>
+          <div style="flex:1"></div>
+          <button class="nav" id="skipBtn">Skip</button>
+        </div>
+        <div class="progress" aria-hidden="true"><div class="bar" style="width:${((idx)/total)*100}%"></div></div>
+      `;
+
+      [...$quiz.querySelectorAll('.btn')].forEach(btn=>{
+        btn.addEventListener('click', e=>{
+          const i = parseInt(btn.dataset.i,10);
+          chosen[idx] = i;
+          incTags(q.options[i].tags);
+          if(idx < QUESTIONS.length-1){ idx++; renderQuestion(); }
+          else { finish(); }
+        });
+      });
+      const backBtn = document.getElementById('backBtn');
+      const skipBtn = document.getElementById('skipBtn');
+      backBtn?.addEventListener('click', ()=>{
+        if(idx>0){ idx--; renderQuestion(); }
+      });
+      skipBtn?.addEventListener('click', ()=>{
+        chosen[idx] = null; // no tags added
+        if(idx < QUESTIONS.length-1){ idx++; renderQuestion(); }
+        else { finish(); }
+      });
+    }
+
+    function scoreAnimals(){
+      const scores = [];
+      const tagSet = new Set(Object.keys(bag));
+      for(const [name, meta] of Object.entries(ANIMALS)){
+        let s = 0;
+        for(const t of meta.tags){ if(bag[t]) s += bag[t]; }
+        // mild bonus if elemental alignment present
+        if(tagSet.has('water') && meta.tags.includes('ocean')) s += 1;
+        if(tagSet.has('air') && meta.tags.includes('air')) s += 1;
+        if(tagSet.has('earth') && meta.tags.includes('earth')) s += 1;
+        if(tagSet.has('fire') && meta.tags.includes('fire')) s += 1;
+        scores.push([name, s]);
+      }
+      scores.sort((a,b)=> b[1]-a[1] || a[0].localeCompare(b[0]));
+      return scores;
+    }
+
+    function finish(){
+      const scores = scoreAnimals();
+      const top = scores[0];
+      const alt1 = scores[1];
+      const alt2 = scores[2];
+
+      $quiz.hidden = true;
+      $result.hidden = false;
+      $topName.textContent = top[0];
+      $topMeaning.textContent = ANIMALS[top[0]].meaning;
+      $alts.innerHTML = `
+        <p class="tagline">Also resonating: <strong>${alt1[0]}</strong> — ${ANIMALS[alt1[0]].meaning}<br/>
+        <strong>${alt2[0]}</strong> — ${ANIMALS[alt2[0]].meaning}</p>
+      `;
+      renderAllList();
+    }
+
+    function renderAllList(){
+      if($allList.dataset.rendered) return;
+      const frag = document.createDocumentFragment();
+      Object.entries(ANIMALS).forEach(([name, meta])=>{
+        const d = document.createElement('div');
+        d.className = 'chip';
+        d.innerHTML = `<strong>${name}</strong><br/><span style="opacity:.85">${meta.meaning}</span>`;
+        frag.appendChild(d);
+      });
+      $allList.appendChild(frag);
+      $allList.dataset.rendered = '1';
+    }
+
+    document.getElementById('restartBtn')?.addEventListener('click', ()=>{
+      idx = 0; for(const k in bag) delete bag[k]; chosen.length = 0; renderQuestion();
+    });
+
+    // Kick off
+    renderQuestion();
+  </script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Element of Magic Quiz</title>
+  <style>
+    :root {
+      /* Base (match soul‑animal minimalist style) */
+      --bg: #000;         /* background */
+      --fg: #fff;         /* text */
+      --muted: #bbb;      /* secondary text */
+
+      /* Element colors — keep exactly as requested */
+      --reality: #ef4444; /* red */
+      --soul:    #22c55e; /* green */
+      --time:    #3b82f6; /* blue */
+      --life:    #f5f7fb; /* white */
+      --death:   #111827; /* black */
+    }
+
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    }
+
+    .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 56px; display: grid; gap: 20px; }
+
+    header { text-align: center; }
+    .title { font-size: clamp(22px, 4.5vw, 34px); font-weight: 800; letter-spacing: .01em; margin: 0; }
+    .subtitle { margin: 6px 0 0; color: var(--muted); font-size: clamp(12px, 2.5vw, 14px); }
+
+    .card { border: 1px solid var(--fg); border-radius: 18px; padding: clamp(16px, 3.5vw, 28px); background: transparent; }
+
+    .qnum { opacity: .7; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+    .qtext { font-size: clamp(18px, 4vw, 24px); margin: 6px 0 16px; font-weight: 700; }
+
+    .answers { display: grid; gap: 10px; }
+    .answer { display: flex; gap: 12px; align-items: center; border: 1px solid var(--fg); border-radius: 14px; padding: 12px 14px; cursor: pointer; background: transparent; transition: transform .05s ease-in-out, background .15s ease-in-out; }
+    .answer:hover { transform: translateY(-1px); }
+    .answer[data-selected="true"] { outline: 2px solid var(--fg); background: rgba(255,255,255,.06); }
+    .answer input { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+    .anum { flex: 0 0 auto; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,.1); color: var(--fg); font-weight: 800; font-size: 14px; }
+    .alabel { font-size: 15px; }
+
+    .controls { display: flex; gap: 10px; justify-content: space-between; margin-top: 16px; flex-wrap: wrap; }
+    .nav { border: 1px solid var(--fg); background: transparent; color: var(--fg); border-radius: 12px; padding: 12px 14px; cursor: pointer; min-width: 120px; font-weight: 700; }
+    .nav[disabled] { opacity: .4; cursor: not-allowed; }
+
+    .progress { height: 6px; border: 1px solid var(--fg); border-radius: 999px; overflow: hidden; margin: 8px 0 0; }
+    .bar { height: 100%; width: 0%; background: var(--fg); }
+
+    /* Results */
+    .results { display: none; }
+    .results.show { display: grid; gap: 20px; }
+    .grid { display: grid; gap: 18px; grid-template-columns: 1fr; }
+    @media (min-width: 880px) { .grid { grid-template-columns: 420px 1fr; } }
+
+    .legend { display: grid; gap: 8px; margin-top: 10px; }
+    .legend .row { display: flex; gap: 8px; align-items: center; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot.red   { background: var(--reality); }
+    .dot.green { background: var(--soul); }
+    .dot.blue  { background: var(--time); }
+    .dot.white { background: var(--life); outline: 1px solid #cfd5e1; }
+    .dot.black { background: var(--death); outline: 1px solid #334; }
+
+    .summary h3 { margin: 0 0 8px; font-size: clamp(18px, 4vw, 24px); }
+    .summary p { margin: 6px 0; }
+
+    .badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--fg); background: transparent; font-size: 14px; }
+    .badge .swatch { width: 10px; height: 10px; border-radius: 50%; }
+
+    .note { color: var(--muted); font-size: 12px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="wrap" role="application" aria-label="Element of Magic Quiz">
+    <header>
+      <h1 class="title">Element of Magic Quiz</h1>
+      <p class="subtitle">8 questions • one at a time • results show your dominant element</p>
+    </header>
+
+    <section class="card" id="quizCard">
+      <div class="qnum">Question <span id="qNum">1</span> / <span id="qTotal">8</span></div>
+      <div class="qtext" id="qtext"></div>
+      <div class="answers" id="answers" role="list"></div>
+      <div class="controls">
+        <button class="nav" id="backBtn" aria-label="Go back">Back</button>
+        <div style="flex:1"></div>
+        <button class="nav" id="skipBtn" title="Skip this question">Skip</button>
+        <button class="nav" id="nextBtn">Next</button>
+      </div>
+      <div class="progress" aria-hidden="true"><div class="bar" id="bar"></div></div>
+    </section>
+
+    <section class="card results" id="results">
+      <div class="grid">
+        <div>
+          <canvas id="chart" aria-label="Your magic balance chart" role="img"></canvas>
+          <div class="legend" aria-hidden="true">
+            <div class="row"><span class="dot red"></span> Reality</div>
+            <div class="row"><span class="dot green"></span> Soul</div>
+            <div class="row"><span class="dot blue"></span> Time</div>
+            <div class="row"><span class="dot white"></span> Life</div>
+            <div class="row"><span class="dot black"></span> Death</div>
+          </div>
+        </div>
+        <div class="summary">
+          <h3 id="headline">Your Dominant Element</h3>
+          <div id="topBadge" class="badge" style="margin-bottom:8px"></div>
+          <p id="about"></p>
+          <p id="goodAt"></p>
+          <p id="aboutYou"></p>
+          <div class="controls" style="margin-top:8px">
+            <button class="nav" id="restartBtn">Retake</button>
+            <button class="nav" id="reviewBtn">Review Answers</button>
+          </div>
+          <p class="note">Works on phone, tablet, and desktop. Nothing is stored beyond this tab.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Bucket order: 0 Reality (red), 1 Soul (green), 2 Time (blue), 3 Life (white), 4 Death (black)
+    const QUESTIONS = [
+      {
+        q: "You’re given a near-impossible goal with a tight deadline. What’s your first instinct?",
+        a: [
+          {text:"Reconfigure the space/tools to fit the job exactly.", bucket:0},
+          {text:"Borrow a companion creature’s mindset (stag’s calm, hawk’s focus).", bucket:1},
+          {text:"Map the timeline, trim wasted beats, and sequence perfect moments.", bucket:2},
+          {text:"Set a humane pace, keep everyone nourished, prevent burnout.", bucket:3},
+          {text:"Interview the past—what failed before? Let old echoes warn me.", bucket:4},
+        ]
+      },
+      {
+        q: "A door is locked and urgent aid lies inside. How do you get through?",
+        a: [
+          {text:"Morph the metal tumblers to align; door opens.", bucket:0},
+          {text:"Ask my bonded creature to slip through and lift the latch.", bucket:1},
+          {text:"Rewind to two minutes ago—before it was locked.", bucket:2},
+          {text:"Coax the swollen wood to relax and give.", bucket:3},
+          {text:"Ask a lingering spirit how they got in.", bucket:4},
+        ]
+      },
+      {
+        q: "Your friend is injured on a trail.",
+        a: [
+          {text:"Reshape branch and cloth into a firm splint.", bucket:0},
+          {text:"Call a companion creature for steadiness and transport.", bucket:1},
+          {text:"Slow the moment so bleeding stops while we plan.", bucket:2},
+          {text:"Channel life-force for stability and accelerate recovery.", bucket:3},
+          {text:"Seek a warning from nearby echoes to avoid repeat harm.", bucket:4},
+        ]
+      },
+      {
+        q: "You miss a once-a-day ferry.",
+        a: [
+          {text:"Fashion a workable raft from pier junk.", bucket:0},
+          {text:"Ride with a sure‑footed beast along a hidden coastal path.", bucket:1},
+          {text:"Slide the clock back ten minutes and board.", bucket:2},
+          {text:"Organize a cozy camp; keep everyone rested for tomorrow.", bucket:3},
+          {text:"Ask the river’s old sailors which currents turn favorable tonight.", bucket:4},
+        ]
+      },
+      {
+        q: "You inherit a broken heirloom.",
+        a: [
+          {text:"Re‑weave the materials into their original lattice.", bucket:0},
+          {text:"Consult the item’s guardian animal I sense around it.", bucket:1},
+          {text:"Glimpse the moment it broke to learn the exact fix.", bucket:2},
+          {text:"Nurture any living fibers; restore what still grows.", bucket:3},
+          {text:"Confer with the ancestor who used it about its true form.", bucket:4},
+        ]
+      },
+      {
+        q: "You must cross a desert by noon tomorrow.",
+        a: [
+          {text:"Transmute sand into shade pylons and stepping plates.", bucket:0},
+          {text:"Track with a fox’s cunning and a camel’s endurance.", bucket:1},
+          {text:"Compress downtime; travel in the thin cool hours between ticks.", bucket:2},
+          {text:"Manage water, heal blisters, keep bodies thriving.", bucket:3},
+          {text:"Navigate by ruins; the dead remember safe routes.", bucket:4},
+        ]
+      },
+      {
+        q: "Two teammates are in a nasty feud.",
+        a: [
+          {text:"Rearrange the room/roles so the conflict physically can’t persist.", bucket:0},
+          {text:"Mirror emotions like a loyal hound—de‑escalate by bond.", bucket:1},
+          {text:"Rewind to the trigger and show how the first jab landed.", bucket:2},
+          {text:"Mend trust; small acts of care until growth returns.", bucket:3},
+          {text:"Let the ghost of their future fallout speak.", bucket:4},
+        ]
+      },
+      {
+        q: "You find an unfamiliar artifact humming softly.",
+        a: [
+          {text:"Sample a flake; map its structure by remolding a copy.", bucket:0},
+          {text:"Approach only when my creature guide purrs approval.", bucket:1},
+          {text:"Peek at its origin moment to understand purpose.", bucket:2},
+          {text:"Check if it nurtures or harms living things; encourage the gentle.", bucket:3},
+          {text:"Ask imprinted voices within what oath it was bound to.", bucket:4},
+        ]
+      },
+    ];
+
+    const BUCKETS = [
+      { key: "reality", label: "Reality", color: getComputedStyle(document.documentElement).getPropertyValue('--reality').trim() || '#ef4444' },
+      { key: "soul",    label: "Soul",    color: getComputedStyle(document.documentElement).getPropertyValue('--soul').trim()    || '#22c55e' },
+      { key: "time",    label: "Time",    color: getComputedStyle(document.documentElement).getPropertyValue('--time').trim()    || '#3b82f6' },
+      { key: "life",    label: "Life",    color: getComputedStyle(document.documentElement).getPropertyValue('--life').trim()    || '#f5f7fb' },
+      { key: "death",   label: "Death",   color: getComputedStyle(document.documentElement).getPropertyValue('--death').trim()   || '#111827' },
+    ];
+
+    // --- State ---
+    const state = { idx: 0, picks: Array(QUESTIONS.length).fill(null), counts: Array(5).fill(0) };
+
+    // --- Elements ---
+    const qtext = document.getElementById('qtext');
+    const answersWrap = document.getElementById('answers');
+    const bar = document.getElementById('bar');
+    const qNum = document.getElementById('qNum');
+    const qTotal = document.getElementById('qTotal'); qTotal.textContent = QUESTIONS.length;
+    const backBtn = document.getElementById('backBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    const results = document.getElementById('results');
+    const quizCard = document.getElementById('quizCard');
+    const restartBtn = document.getElementById('restartBtn');
+    const reviewBtn = document.getElementById('reviewBtn');
+
+    let chart;
+
+    function renderQuestion(){
+      const total = QUESTIONS.length;
+      const i = state.idx;
+      const q = QUESTIONS[i];
+      qtext.textContent = q.q;
+      qNum.textContent = i + 1;
+      bar.style.width = (i / total * 100) + '%';
+
+      answersWrap.innerHTML = '';
+      q.a.forEach((opt, j)=>{
+        const card = document.createElement('label');
+        card.className = 'answer';
+        card.setAttribute('role','listitem');
+        card.setAttribute('tabindex','0');
+        card.dataset.selected = state.picks[i]===j ? 'true' : 'false';
+        card.addEventListener('click',()=>select(i,j));
+        card.addEventListener('keydown',(e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); select(i,j); } });
+
+        const hid = document.createElement('input'); hid.type='radio'; hid.name='q'+i; hid.value=j; hid.ariaHidden = true;
+        const num = document.createElement('div'); num.className='anum'; num.textContent = (j+1);
+        const lab = document.createElement('div'); lab.className='alabel'; lab.textContent = opt.text;
+
+        card.append(hid, num, lab);
+        answersWrap.appendChild(card);
+      });
+
+      backBtn.disabled = (i===0);
+      nextBtn.disabled = (state.picks[i]===null);
+    }
+
+    function select(i,j){
+      // remove prior selection influence
+      const prev = state.picks[i];
+      if(prev!==null){
+        const prevBucket = QUESTIONS[i].a[prev].bucket;
+        state.counts[prevBucket] = Math.max(0, state.counts[prevBucket]-1);
+      }
+      state.picks[i] = j;
+      const b = QUESTIONS[i].a[j].bucket; state.counts[b]++;
+      [...answersWrap.children].forEach((el, idx)=> el.dataset.selected = (idx===j)?'true':'false');
+      nextBtn.disabled = false;
+    }
+
+    function next(){ if(state.idx < QUESTIONS.length-1){ state.idx++; renderQuestion(); } else { showResults(); } }
+    function back(){ if(state.idx>0){ state.idx--; renderQuestion(); } }
+    function skip(){ if(state.idx < QUESTIONS.length-1){ state.idx++; renderQuestion(); } else { showResults(); } }
+
+    function topBuckets(){
+      const max = Math.max(...state.counts);
+      const tops = []; state.counts.forEach((v, i)=>{ if(v===max) tops.push(i); });
+      return {max, tops};
+    }
+
+    function showResults(){
+      bar.style.width = '100%';
+      quizCard.hidden = true; results.classList.add('show');
+
+      const labels = BUCKETS.map(b=>b.label);
+      const data = state.counts;
+
+      // Chart
+      if(window.Chart){
+        const ctx = document.getElementById('chart').getContext('2d');
+        if(chart) chart.destroy();
+        chart = new Chart(ctx, {
+          type:'doughnut',
+          data:{ labels, datasets:[{ data, borderWidth:0, hoverOffset:8, backgroundColor: BUCKETS.map(b=>b.color) }]},
+          options:{ plugins:{ legend:{ display:false } }, cutout:'60%', responsive:true, maintainAspectRatio:false }
+        });
+        // give canvas a height for layout
+        document.getElementById('chart').style.height = '320px';
+      } else {
+        document.getElementById('chart').replaceWith(Object.assign(document.createElement('div'),{textContent:'[Chart unavailable offline]'}));
+      }
+
+      const { tops } = topBuckets();
+      const headline = document.getElementById('headline');
+      const topBadge = document.getElementById('topBadge');
+      const about = document.getElementById('about');
+      const goodAt = document.getElementById('goodAt');
+      const aboutYou = document.getElementById('aboutYou');
+
+      if(tops.length===1){
+        const b = BUCKETS[tops[0]];
+        headline.textContent = `Your Dominant Element: ${b.label}`;
+        topBadge.innerHTML = `<span class="swatch" style="background:${b.color}; ${b.label==='Life'?'outline:1px solid #cfd7ea':''}"></span><strong>${b.label}</strong>`;
+      } else {
+        const names = tops.map(i=>BUCKETS[i].label).join(' & ');
+        headline.textContent = `You’re Balanced: ${names}`;
+        topBadge.innerHTML = tops.map(i=>`<span class="swatch" style="background:${BUCKETS[i].color}; ${BUCKETS[i].label==='Life'?'outline:1px solid #cfd7ea':''}"></span>`).join('') + ` <strong>${names}</strong>`;
+      }
+
+      const blurbs = {
+        Reality:{ about:"Reality magic shapes matter and space—altering what is into what’s needed.", good:"Great for building, crafting, engineering fixes, and adapting environments.", you:"You’re a practical problem‑solver who likes tangible progress." },
+        Soul:{ about:"Soul magic bonds to living essence and companion creatures.", good:"Great for empathy, guidance, and borrowing traits from bonded companions.", you:"You’re intuitive and relational—grounded in care and connection." },
+        Time:{ about:"Time magic navigates moments, sequencing and occasionally bending them.", good:"Great for planning, sequencing, trimming waste, and strategy.", you:"You’re reflective and systems‑minded, calm under pressure." },
+        Life:{ about:"Life magic nurtures, heals, and restores what grows.", good:"Great for care, recovery, pacing, and sustainable growth.", you:"You’re a guardian of wellbeing with steady compassion." },
+        Death:{ about:"Death magic communes with echoes and endings, trading in memory and consequence.", good:"Great for investigation, risk‑awareness, and reading what the past wants to teach.", you:"You’re unafraid of hard truths—stoic, insightful, and vigilant." },
+      };
+      // pick the first top as the primary blurb
+      const primary = BUCKETS[tops[0]].label;
+      about.textContent = blurbs[primary].about;
+      goodAt.textContent = `Good with: ${blurbs[primary].good}`;
+      aboutYou.textContent = `About you: ${blurbs[primary].you}`;
+    }
+
+    function restart(){
+      state.idx = 0; state.picks.fill(null); state.counts = Array(5).fill(0);
+      results.classList.remove('show'); quizCard.hidden = false; renderQuestion();
+    }
+    function review(){ state.idx = 0; results.classList.remove('show'); quizCard.hidden = false; renderQuestion(); }
+
+    document.getElementById('backBtn').addEventListener('click', back);
+    document.getElementById('nextBtn').addEventListener('click', next);
+    document.getElementById('skipBtn').addEventListener('click', skip);
+    document.getElementById('restartBtn').addEventListener('click', restart);
+    document.getElementById('reviewBtn').addEventListener('click', review);
+
+    // Kick off
+    renderQuestion();
+  </script>
+</body>
+</html>
