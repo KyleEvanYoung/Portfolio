@@ -122,7 +122,7 @@ Making sure everything is, somehow, just as it should be.
         SmallText: "When a genius billionaire unveils a revolutionary technology, reporter Owen, his best friend, and his girlfriend are caught in the explosion—and they come away with powers.",
         LandscapeImage: "assets/stories/the_secret_of_owen_taylor_a_dreamer_story/background.png",
         Pdfstory: "assets/stories/the_secret_of_owen_taylor_a_dreamer_story/pdf.pdf",
-        Epub: "assets/stories/the_secret_of_owen_taylor_a_dreamer_story/The Secret Of Owen Taylor_ A Dreamer Story - Kyle Young",
+        Epub: "assets/stories/the_secret_of_owen_taylor_a_dreamer_story/The Secret Of Owen Taylor_ A Dreamer Story - Kyle Young.epub",
         StoryText: `
 The Secret Of Owen Taylor: A Dreamer Story
 
@@ -1485,7 +1485,7 @@ Blue light blossomed at their backs; they turned as Alatar emerged, wrapped in a
         SmallText: "This Story is about time and how it changes people",
         LandscapeImage: "assets/stories/the_puzzle_and_the_dragon/background.png",
         Pdfstory: "assets/stories/the_puzzle_and_the_dragon/pdf.pdf",
-        Epub: "assets/stories/the_puzzle_and_the_dragon/The Puzzle And The Dragon - Kyle Young",
+        Epub: "assets/stories/the_puzzle_and_the_dragon/The Puzzle And The Dragon - Kyle Young.epub",
         StoryText: `
 The Puzzle And The Dragon
 
