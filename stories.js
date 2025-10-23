@@ -1485,7 +1485,7 @@ Blue light blossomed at their backs; they turned as Alatar emerged, wrapped in a
         SmallText: "This Story is about time and how it changes people",
         LandscapeImage: "assets/stories/the_puzzle_and_the_dragon/background.png",
         Pdfstory: "assets/stories/the_puzzle_and_the_dragon/pdf.pdf",
-        Epub: "assets/stories/the_puzzle_and_the_dragon/The Puzzle And The Dragon - Kyle Young.epub",
+        Epub: "assets/stories/the_puzzle_and_the_dragon/The Puzzle And The Dragon - Kyle Young",
         StoryText: `
 The Puzzle And The Dragon
 
