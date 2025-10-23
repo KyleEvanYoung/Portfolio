@@ -117,6 +117,32 @@
   </style>
 </head>
 <body>
+
+<script>
+  // ...everything above stays the same...
+
+  // --- Add this config flag (optional) ---
+  const SKIP_INTRO_DEFAULT = true; // set to false if you want the intro back
+
+  // Replace this:
+  // window.addEventListener('DOMContentLoaded', run);
+
+  // With this:
+  window.addEventListener('DOMContentLoaded', () => {
+    const url = new URL(location.href);
+    const forceIntro = url.searchParams.has('intro'); // ?intro to force the intro
+    const skip =
+      SKIP_INTRO_DEFAULT ||
+      url.searchParams.has('skip') ||                // ?skip to skip explicitly
+      matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (skip && !forceIntro) {
+      skipAll();   // instantly reveal main & header
+    } else {
+      run();       // keep the original intro flow
+    }
+  });
+</script>
   <!-- Fixed header (appears only after intro completes or is skipped) -->
   <div class="fixed-header" id="fixedHeader" aria-hidden="true">
     <a href="index.html" class="home-link" aria-label="Home">
