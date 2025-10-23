@@ -1,5 +1,5 @@
 const Storys = [
-{//The Old Man At The Bar
+	  {//The Old Man At The Bar
         Name: "The Old Man At The Bar",
         storytype: "Short",
         LogoPostions: "Top",
@@ -15,7 +15,7 @@ const Storys = [
         SmallText: "When a Legend leave behind a broken kingdom a wizard, a fairy and knight go inside looking for peace.",
         LandscapeImage: "assets/stories/the_old_man_at_the_bar/background.png",
         Pdfstory: "assets/stories/the_old_man_at_the_bar/pdf.pdf",
-        Epub: "assets/stories/the_old_man_at_the_bar/epub.epub",
+        Epub: "assets/stories/the_old_man_at_the_bar/The Old Man At The Bar - Kyle Young.epub",
         StoryText: `
 The Old Man At The Bar
 
@@ -122,7 +122,7 @@ Making sure everything is, somehow, just as it should be.
         SmallText: "When a genius billionaire unveils a revolutionary technology, reporter Owen, his best friend, and his girlfriend are caught in the explosion—and they come away with powers.",
         LandscapeImage: "assets/stories/the_secret_of_owen_taylor_a_dreamer_story/background.png",
         Pdfstory: "assets/stories/the_secret_of_owen_taylor_a_dreamer_story/pdf.pdf",
-        Epub: "assets/stories/the_secret_of_owen_taylor_a_dreamer_story/epub.epub",
+        Epub: "assets/stories/the_secret_of_owen_taylor_a_dreamer_story/The Secret Of Owen Taylor_ A Dreamer Story - Kyle Young",
         StoryText: `
 The Secret Of Owen Taylor: A Dreamer Story
 
@@ -635,7 +635,7 @@ The two shared a silent nod — allies, ready for the next hunt.
         SmallText: "Leo, a kid who survives a car crash into an alien spaceship, wakes up to find his imaginary friends coming to life.",
         LandscapeImage: "assets/stories/the_last_prank_of_tomist/background.png",
         Pdfstory: "assets/stories/the_last_prank_of_tomist/pdf.pdf",
-        Epub: "assets/stories/the_last_prank_of_tomist/epub.epub",
+        Epub: "assets/stories/the_last_prank_of_tomist/The Last Prank of Tomist - Kyle Young.epub",
         StoryText: `
 The Last Prank of Tomist
 
@@ -1030,7 +1030,7 @@ Tomorrow, he would begin a new chapter. But he knew—somewhere, somehow—his f
         SmallText: "A Coupe Friend Accuse Other Friend Of Rape.",
         LandscapeImage: "assets/stories/love_lost_and_lost_even_more/background.png",
         Pdfstory: "assets/stories/love_lost_and_lost_even_more/pdf.pdf",
-        Epub: "assets/stories/love_lost_and_lost_even_more/epub.epub",
+        Epub: "assets/stories/love_lost_and_lost_even_more/Love, Lost And Lost Evenmore - Kyle Young.epub",
         StoryText: `
 Love, Lost And Lost Even More
 
@@ -1248,7 +1248,7 @@ Her hand slips away. She passes him, and the room feels colder without the warmt
         SmallText: "When a Legend leave behind a broken kingdom a wizard, a fairy and knight go inside looking for peace.",
         LandscapeImage: "assets/stories/the_forgotten_kingdom/background.png",
         Pdfstory: "assets/stories/the_forgotten_kingdom/pdf.pdf",
-        Epub: "assets/stories/the_forgotten_kingdom/epub.epub",
+        Epub: "assets/stories/the_forgotten_kingdom/The Forgotten Kingdom - Kyle Young.epub",
         StoryText: `
 The Forgotten Kingdom
 The Legend
@@ -1485,7 +1485,7 @@ Blue light blossomed at their backs; they turned as Alatar emerged, wrapped in a
         SmallText: "This Story is about time and how it changes people",
         LandscapeImage: "assets/stories/the_puzzle_and_the_dragon/background.png",
         Pdfstory: "assets/stories/the_puzzle_and_the_dragon/pdf.pdf",
-        Epub: "assets/stories/the_puzzle_and_the_dragon/epub.epub",
+        Epub: "assets/stories/the_puzzle_and_the_dragon/The Puzzle And The Dragon - Kyle Young.epub",
         StoryText: `
 The Puzzle And The Dragon
 
@@ -1575,7 +1575,7 @@ In that tender embrace, hope bloomed eternal, and the dragon rested at last, con
         SmallText: "This Is An Interrogation About Man and Woman Cop",
         LandscapeImage: "assets/stories/the_interrogation/Landscape.png",
         Pdfstory: "assets/stories/the_interrogation/pdf.pdf",
-        Epub: "assets/stories/the_interrogation/epub.epub",
+        Epub: "assets/stories/the_interrogation/The Interrogation - Kyle Young.epub",
         StoryText: `
 The Interrogation
 
@@ -1679,7 +1679,7 @@ Then... nothing.
         SmallText: "In a fusion of destinies and mystical quests, Noah, known as ‘The Traveler,’ embarks on a perilous journey through time in search of magical elements essential for mastering the forces of creation. Alongside him, Joshua, an assassin from the future, grapples with his broken past and the haunting memories that threaten to overshadow his lethal skills. Meanwhile, Edward confronts the loss of his magical prowess and navigates his new existence as a dragon, a form both powerful and alien to him. These three extraordinary characters, each dealing with their own set of challenges, find their fates intertwined as they navigate the complexities of loyalty, power, and identity in a multiverse orchestrated by unseen forces. Together, they face an uncertain future, their paths marked by trials of magic, betrayal, and redemption.",
         LandscapeImage: "assets/stories/paradox_the_traveller/background.png",
         Pdfstory: "assets/stories/paradox_the_traveller/pdf.pdf",
-        Epub: "assets/stories/paradox_the_traveller/epub.epub",
+        Epub: "assets/stories/paradox_the_traveller/Paradox The Traveller Chapter 1 - Kyle Young",
         StoryText: `
 Paradox: The Traveller
 
