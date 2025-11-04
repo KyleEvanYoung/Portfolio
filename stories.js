@@ -1679,7 +1679,7 @@ Then... nothing.
         SmallText: "In a fusion of destinies and mystical quests, Noah, known as ‘The Traveler,’ embarks on a perilous journey through time in search of magical elements essential for mastering the forces of creation. Alongside him, Joshua, an assassin from the future, grapples with his broken past and the haunting memories that threaten to overshadow his lethal skills. Meanwhile, Edward confronts the loss of his magical prowess and navigates his new existence as a dragon, a form both powerful and alien to him. These three extraordinary characters, each dealing with their own set of challenges, find their fates intertwined as they navigate the complexities of loyalty, power, and identity in a multiverse orchestrated by unseen forces. Together, they face an uncertain future, their paths marked by trials of magic, betrayal, and redemption.",
         LandscapeImage: "assets/stories/paradox_the_traveller/background.png",
         Pdfstory: "assets/stories/paradox_the_traveller/pdf.pdf",
-        Epub: "assets/stories/paradox_the_traveller/Paradox The Traveller Chapter 1 - Kyle Young",
+        Epub: "assets/stories/paradox_the_traveller/Paradox The Traveller Chapter 1 - Kyle Young.epub",
         StoryText: `
 Paradox: The Traveller
 
