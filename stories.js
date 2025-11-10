@@ -1470,11 +1470,12 @@ Blue light blossomed at their backs; they turned as Alatar emerged, wrapped in a
 `,
       },
       {//The Puzzle And The Dragon
-        name: "The Puzzle And The Dragon",
+        Name: "The Puzzle And The Dragon",
         storytype: "FairyTale",
         LogoPostions: "Top",
         Genres: ["Fairy Tale", "Fantasy", "Kids", "Time-loop", "Romantic"],
         Forefront: "assets/stories/the_puzzle_and_the_dragon/forfront.png",
+        Mp3: ["assets/stories/the_puzzle_and_the_dragon/chapter_1.mp3", "assets/stories/the_puzzle_and_the_dragon/chapter_2.mp3", "assets/stories/the_puzzle_and_the_dragon/chapter_3.mp3"],
         Background: "assets/stories/the_puzzle_and_the_dragon/background.png",
         LogoStyle1: "assets/stories/the_puzzle_and_the_dragon/logo_black.svg",
         LogoStyle2: "assets/stories/the_puzzle_and_the_dragon/logo_white.svg",

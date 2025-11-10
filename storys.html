@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Stories</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#0b0e11; --panel:#12161b; --muted:#8b95a7; --text:#e8eef7; --accent:#4da3ff; --chip:#1b2330;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background:linear-gradient(180deg,#090c10,#0b0e11 60%);
+      color:var(--text);
+    }
+
+    header{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter:saturate(1.2) blur(8px);
+      background:rgba(11,14,17,.7);
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:20px}
+    .hero{
+      display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:6px 0 10px;
+    }
+    .hero h1{margin:0; font-size:clamp(22px,2.4vw,30px); letter-spacing:.3px}
+    .controls{margin-left:auto; display:flex; gap:10px; flex-wrap:wrap}
+    .input, select{
+      background:var(--panel); color:var(--text); border:1px solid rgba(255,255,255,.08);
+      border-radius:12px; padding:10px 12px; outline:none; min-height:42px;
+    }
+    select{cursor:pointer}
+    .grid{
+      display:grid; gap:16px; grid-template-columns:repeat( auto-fill, minmax(260px, 1fr) );
+      margin-top:16px;
+    }
+    .card{
+      background:var(--panel);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow:0 8px 28px rgba(0,0,0,.25);
+      display:flex; flex-direction:column;
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+    .card:hover{ transform:translateY(-2px); box-shadow:0 10px 36px rgba(0,0,0,.32) }
+    .thumb{
+      position:relative; aspect-ratio:16/9; background:#0f141b; overflow:hidden;
+    }
+    .thumb img{
+      position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:contrast(1.05) saturate(1.05);
+      transition:transform .5s ease; transform:scale(1.03);
+    }
+    .card:hover .thumb img{ transform:scale(1.07); }
+    .logo-wrap{
+      position:absolute; inset:auto 10px 10px 10px; display:flex; gap:8px; align-items:center; justify-content:flex-start;
+    }
+    .logo{
+      max-height:46px; background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.08);
+      padding:6px 8px; border-radius:12px; backdrop-filter:blur(6px);
+    }
+
+    .body{padding:14px 14px 12px}
+    .title{margin:0 0 6px; font-size:18px; line-height:1.25}
+    .meta{display:flex; gap:8px; align-items:center; color:var(--muted); font-size:12px}
+    .chips{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 0}
+    .chip{
+      background:var(--chip); color:#cbd6e6; border:1px solid rgba(255,255,255,.06);
+      padding:6px 8px; border-radius:999px; font-size:12px;
+    }
+    .small{color:#c1ccdd; margin:12px 0 0; font-size:14px; line-height:1.45}
+
+    .actions{
+      display:flex; gap:8px; padding:12px 14px 16px; margin-top:auto; flex-wrap:wrap;
+    }
+    .btn{
+      appearance:none; border:none; cursor:pointer; text-decoration:none; user-select:none;
+      background:#1a2432; color:#eaf2ff; padding:10px 12px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.08); font-weight:600; font-size:14px;
+      transition:background .12s ease, border-color .12s ease, transform .05s ease;
+    }
+    .btn:hover{ background:#203045; border-color:rgba(255,255,255,.14) }
+    .btn:active{ transform:translateY(1px) }
+    .btn.secondary{ background:transparent; color:#cfe3ff }
+    .btn.accent{ background:var(--accent); color:#041426; border:1px solid transparent }
+    .btn[disabled]{opacity:.5; cursor:not-allowed}
+
+    /* Modal reader */
+    dialog{
+      border:none; padding:0; max-width:min(900px, 96vw); width:100%;
+      background:var(--panel); color:var(--text); border-radius:18px;
+      box-shadow:0 20px 60px rgba(0,0,0,.55);
+    }
+    .modal-head{
+      padding:14px 16px; border-bottom:1px solid rgba(255,255,255,.06); display:flex; gap:8px; align-items:center;
+    }
+    .modal-head h3{ margin:0; font-size:18px; line-height:1.2; flex:1 }
+    .modal-body{ padding:0 16px 16px; max-height:min(70vh, 78dvh); overflow:auto }
+    .story{
+      white-space:pre-wrap; line-height:1.6; font-size:15px; color:#dbe6f7;
+      padding:12px 0 4px;
+    }
+    .modal-actions{
+      display:flex; gap:8px; justify-content:flex-end; padding:10px 16px 16px;
+    }
+
+    .empty{ color:var(--muted); padding:40px 0; text-align:center }
+    footer{ color:var(--muted); text-align:center; padding:28px 0 40px }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap hero">
+      <h1>Kyle Young Storys</h1>
+      <div class="controls">
+        <input id="search" class="input" placeholder="Search by title or genre…" />
+        <select id="genre">
+          <option value="">All genres</option>
+        </select>
+        <select id="stype">
+          <option value="">All types</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="grid" class="grid" aria-live="polite"></div>
+    <p id="empty" class="empty" hidden>No stories match your filters.</p>
+  </main>
+
+  <footer>
+    Built from <code>stories.js</code> in the same folder.
+  </footer>
+
+  <!-- Modal for full StoryText -->
+  <dialog id="reader">
+    <div class="modal-head">
+      <h3 id="readerTitle">Story</h3>
+      <button class="btn secondary" id="readerClose" title="Close">Close ✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="readerMeta" class="chips"></div>
+      <div id="readerStory" class="story"></div>
+    </div>
+    <div class="modal-actions" id="readerActions"></div>
+  </dialog>
+
+  <!-- Your data file -->
+  <script src="./stories.js"></script>
+
+  <script>
+    // --- Utilities -----------------------------------------------------------
+    const by = (sel, root=document) => root.querySelector(sel);
+    const el = (tag, props={}, ...children) => {
+      const n = document.createElement(tag);
+      Object.entries(props).forEach(([k,v])=>{
+        if (k === 'class') n.className = v;
+        else if (k === 'dataset') Object.assign(n.dataset, v);
+        else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v);
+        else if (v !== undefined && v !== null) n.setAttribute(k, v);
+      });
+      children.forEach(c=> n.appendChild( typeof c === 'string' ? document.createTextNode(c) : c ));
+      return n;
+    };
+
+    // Defensive: handle typo "Storys" and varied casing/fields
+    const DATA = (typeof Storys !== 'undefined' && Array.isArray(Storys)) ? Storys : [];
+    const safe = (v, fallback='') => (v===undefined || v===null) ? fallback : v;
+
+    function uniqueGenres() {
+      const g = new Set();
+      DATA.forEach(s => (s.Genres||[]).forEach(x => g.add(safe(x,''))));
+      return [...g].filter(Boolean).sort((a,b)=>a.localeCompare(b));
+    }
+    function uniqueTypes() {
+      const t = new Set(DATA.map(s => safe(s.storytype,''))).delete ? [] : null;
+      const arr = [...new Set(DATA.map(s => safe(s.storytype,'')))].filter(Boolean);
+      return arr.sort((a,b)=>a.localeCompare(b));
+    }
+
+    // --- Rendering -----------------------------------------------------------
+    const grid = by('#grid');
+    const empty = by('#empty');
+    const genreSel = by('#genre');
+    const typeSel  = by('#stype');
+    const searchIn = by('#search');
+
+    // populate filters
+    uniqueGenres().forEach(g => genreSel.appendChild(el('option', {value:g}, g)));
+    uniqueTypes().forEach(t => typeSel.appendChild(el('option', {value:t}, t)));
+
+    function matchesFilters(s) {
+      const q = searchIn.value.trim().toLowerCase();
+      const g = genreSel.value;
+      const t = typeSel.value;
+
+      const inSearch = !q ||
+        safe(s.Name,'').toLowerCase().includes(q) ||
+        (s.Genres||[]).some(x => safe(x,'').toLowerCase().includes(q));
+
+      const inGenre = !g || (s.Genres||[]).includes(g);
+      const inType  = !t || safe(s.storytype,'') === t;
+
+      return inSearch && inGenre && inType;
+    }
+
+    function render() {
+      grid.innerHTML = '';
+      const items = DATA.filter(matchesFilters);
+      empty.hidden = items.length > 0;
+
+      items.forEach((s, idx) => grid.appendChild(renderCard(s, idx)));
+    }
+
+    function renderCard(s, idx) {
+      const bg = s.LandscapeImage || s.Background || s.Forefront || '';
+      const logo = s.LogoStyle1 || s.LogoStyle2 || s.LogoStyle3 || s.LogoStyle4 || s.LogoStyle5 || '';
+
+      const thumb = el('div', {class:'thumb'},
+        bg ? el('img', {alt: safe(s.Name,'Background'), src: bg, loading:'lazy'}) : el('div') ,
+        logo ? el('div', {class:'logo-wrap'}, el('img',{class:'logo', alt:'logo', src:logo, loading:'lazy'})) : null
+      );
+
+      const chips = el('div',{class:'chips'},
+        ...(s.Genres||[]).map(g => el('span',{class:'chip'}, g))
+      );
+
+      const actions = el('div',{class:'actions'},
+        el('button',{class:'btn accent', onClick:()=>openReader(s)},'Read Story'),
+        el('a',{class:'btn', href:s.Pdfstory||'#', target:'_blank', rel:'noopener', ...(s.Pdfstory?{}:{'aria-disabled':'true'})},
+          s.Pdfstory ? 'Open PDF' : 'PDF N/A'
+        ),
+        el('a',{class:'btn secondary', href:s.Epub||'#', target:'_blank', rel:'noopener', ...(s.Epub?{}:{'aria-disabled':'true'})},
+          s.Epub ? 'Open EPUB' : 'EPUB N/A'
+        )
+      );
+
+      return el('article',{class:'card', role:'region', 'aria-labelledby':`t-${idx}`},
+        thumb,
+        el('div',{class:'body'},
+          el('h3',{class:'title', id:`t-${idx}`}, safe(s.Name,'Untitled')),
+          el('div',{class:'meta'},
+            el('span',{}, safe(s.storytype,'Unknown type'))
+          ),
+          chips,
+          el('p',{class:'small'}, safe(s.SmallText, safe(s.TitleText,'')))
+        ),
+        actions
+      );
+    }
+
+    // --- Reader Modal --------------------------------------------------------
+    const dlg = by('#reader');
+    const dlgTitle = by('#readerTitle');
+    const dlgText = by('#readerStory');
+    const dlgMeta = by('#readerMeta');
+    const dlgActions = by('#readerActions');
+    by('#readerClose').addEventListener('click', ()=> dlg.close());
+
+    function openReader(s) {
+      dlgTitle.textContent = safe(s.Name,'Story');
+      dlgText.textContent = safe(s.StoryText,'(No text provided.)');
+      dlgMeta.innerHTML = '';
+      (s.Genres||[]).forEach(g => dlgMeta.appendChild(el('span',{class:'chip'}, g)));
+      dlgActions.innerHTML = '';
+      if (s.Pdfstory) dlgActions.appendChild(el('a',{class:'btn', href:s.Pdfstory, target:'_blank', rel:'noopener'},'Open PDF'));
+      if (s.Epub) dlgActions.appendChild(el('a',{class:'btn secondary', href:s.Epub, target:'_blank', rel:'noopener'},'Open EPUB'));
+      dlg.showModal();
+    }
+
+    // --- Events --------------------------------------------------------------
+    [searchIn, genreSel, typeSel].forEach(c => c.addEventListener('input', render));
+
+    // Initial paint
+    render();
+  </script>
+</body>
+</html>
