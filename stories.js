@@ -1665,7 +1665,7 @@ Then... nothing.
 `,
       },
 	  {//Paradox: The Traveller: Chapter 1
-	  Name: "Paradox The Traveller",
+	  Name: "Paradox The Traveller: Chapter 1: Echoes of a Kingdom",
         storytype: "Books",
         LogoPostions: "Top",
         Genres: ["Fantasy", "Sci-Fi", "Myststery"],

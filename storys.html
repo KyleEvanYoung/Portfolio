@@ -76,8 +76,15 @@
     .small{color:#c1ccdd; margin:12px 0 0; font-size:14px; line-height:1.45}
 
     .actions{
-      display:flex; gap:8px; padding:12px 14px 16px; margin-top:auto; flex-wrap:wrap; align-items:center;
+      display:flex; gap:8px; padding:12px 14px 16px; margin-top:auto; flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
     }
+    .actions-buttons{
+      display:flex; flex-wrap:wrap; gap:8px;
+      align-items:center;
+    }
+
     .btn{
       appearance:none; border:none; cursor:pointer; text-decoration:none; user-select:none;
       background:#1a2432; color:#eaf2ff; padding:10px 12px; border-radius:12px;
@@ -90,29 +97,31 @@
     .btn.accent{ background:var(--accent); color:#041426; border:1px solid transparent }
     .btn[disabled]{opacity:.5; cursor:not-allowed}
 
-    /* Like / Dislike rating controls */
-    .rating{
-      margin-left:auto;
+    /* Vote bar */
+    .vote-bar{
       display:flex;
       gap:6px;
-      align-items:center;
       flex-wrap:wrap;
+      align-items:center;
     }
-    .rating .btn{
-      padding:6px 10px;
-      font-size:13px;
+    .vote-btn{
       display:inline-flex;
       align-items:center;
-      gap:4px;
+      gap:6px;
+      font-size:13px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#141c27;
     }
-    .rating .btn.active{
+    .vote-btn .vote-count{
+      font-weight:600;
+      font-size:12px;
+      opacity:.9;
+    }
+    .vote-btn.active{
       background:var(--accent);
       color:#041426;
       border-color:transparent;
-    }
-    .reaction-count{
-      font-variant-numeric:tabular-nums;
-      opacity:.9;
     }
 
     /* Modal reader */
@@ -167,7 +176,7 @@
   <dialog id="reader">
     <div class="modal-head">
       <h3 id="readerTitle">Story</h3>
-      <button class="btn secondary" id="readerClose" type="button" title="Close">Close ✕</button>
+      <button class="btn secondary" id="readerClose" title="Close">Close ✕</button>
     </div>
     <div class="modal-body">
       <div id="readerMeta" class="chips"></div>
@@ -180,6 +189,33 @@
   <script src="./stories.js"></script>
 
   <script>
+    // --- CONFIG: Google Sheet endpoint ---------------------------------------
+    // Replace this with your Google Apps Script Web App URL that writes
+    // to the sheet: column A = story name, column B = choice ("like"/"dislike")
+    const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyK2jlnhb5aR1ymlojn89lTg4m1A-1yEDLgIH6cJ1UYLwvWrMqYGNm98Z_wj0FBLyw7/exec';
+
+    async function sendVoteToSheet(storyName, choice){
+      if (!SHEET_ENDPOINT || SHEET_ENDPOINT.includes('YOUR_GOOGLE_APPS_SCRIPT_URL_HERE')) {
+        console.warn('SHEET_ENDPOINT is not configured yet.');
+        return;
+      }
+      try{
+        // Using no-cors so it works even if CORS is not configured on Apps Script;
+        // we don’t read the response, just fire-and-forget.
+        await fetch(SHEET_ENDPOINT, {
+          method:'POST',
+          mode:'no-cors',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            story: storyName,
+            choice: choice
+          })
+        });
+      }catch(err){
+        console.error('Error sending vote to sheet', err);
+      }
+    }
+
     // --- Utilities -----------------------------------------------------------
     const by = (sel, root=document) => root.querySelector(sel);
     const el = (tag, props={}, ...children) => {
@@ -190,7 +226,7 @@
         else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v);
         else if (v !== undefined && v !== null) n.setAttribute(k, v);
       });
-      children.forEach(c => {
+      children.forEach(c=> {
         if (c === null || c === undefined) return;
         n.appendChild( typeof c === 'string' ? document.createTextNode(c) : c );
       });
@@ -211,100 +247,108 @@
       return arr.sort((a,b)=>a.localeCompare(b));
     }
 
-    // --- Like / Dislike persistence -----------------------------------------
-    const RATING_PREFIX = 'kyleStoriesRating:';
+    // --- Vote state (per-browser, remembered via localStorage) ---------------
+    // Structure: { [storyName]: { choice: "like"|"dislike"|null, like: number, dislike: number } }
+    const VOTE_STORAGE_KEY = 'storyVotes';
+    let votesState = {};
 
-    function getStoryId(story, idx) {
-      return safe(
-        story.Id || story.id || story.Slug || story.slug || story.Name,
-        'story-' + idx
-      );
+    try{
+      const raw = localStorage.getItem(VOTE_STORAGE_KEY);
+      if (raw) votesState = JSON.parse(raw);
+    }catch(e){
+      votesState = {};
     }
 
-    function defaultRating() {
-      return { likes: 0, dislikes: 0, choice: null };
+    function getVote(storyName){
+      const key = safe(storyName,'');
+      if (!key) return { choice:null, like:0, dislike:0 };
+      if (!votesState[key]) votesState[key] = { choice:null, like:0, dislike:0 };
+      return votesState[key];
     }
 
-    function loadRating(id) {
-      if (typeof window === 'undefined' || !('localStorage' in window)) {
-        return defaultRating();
-      }
-      try {
-        const raw = localStorage.getItem(RATING_PREFIX + id);
-        if (!raw) return defaultRating();
-        const parsed = JSON.parse(raw);
-        return {
-          likes: Number(parsed.likes) || 0,
-          dislikes: Number(parsed.dislikes) || 0,
-          choice: parsed.choice === 'like' || parsed.choice === 'dislike' ? parsed.choice : null
-        };
-      } catch (e) {
-        return defaultRating();
+    function setVote(storyName, voteObj){
+      const key = safe(storyName,'');
+      if (!key) return;
+      votesState[key] = voteObj;
+      try{
+        localStorage.setItem(VOTE_STORAGE_KEY, JSON.stringify(votesState));
+      }catch(e){
+        console.warn('Unable to save votes to localStorage', e);
       }
     }
 
-    function saveRating(id, rating) {
-      if (typeof window === 'undefined' || !('localStorage' in window)) return;
-      try {
-        localStorage.setItem(RATING_PREFIX + id, JSON.stringify(rating));
-      } catch (e) {
-        // ignore storage errors
-      }
-    }
+    function handleVoteClick(storyName, newChoice, elements){
+      const state = getVote(storyName);
+      let { choice, like, dislike } = state;
+      const isSameChoice = (choice === newChoice);
 
-    function createRatingControls(storyId) {
-      let state = loadRating(storyId);
-
-      const likeCount = el('span', { class: 'reaction-count' }, String(state.likes));
-      const dislikeCount = el('span', { class: 'reaction-count' }, String(state.dislikes));
-
-      const likeBtn = el('button', { class:'btn secondary', type:'button', 'aria-label':'Like this story' },
-        '👍 ', likeCount
-      );
-      const dislikeBtn = el('button', { class:'btn secondary', type:'button', 'aria-label':'Dislike this story' },
-        '👎 ', dislikeCount
-      );
-
-      function applyState() {
-        likeCount.textContent = String(state.likes);
-        dislikeCount.textContent = String(state.dislikes);
-        likeBtn.classList.toggle('active', state.choice === 'like');
-        dislikeBtn.classList.toggle('active', state.choice === 'dislike');
-      }
-
-      likeBtn.addEventListener('click', () => {
-        if (state.choice === 'like') {
-          state.likes = Math.max(0, state.likes - 1);
-          state.choice = null;
-        } else {
-          state.likes += 1;
-          if (state.choice === 'dislike' && state.dislikes > 0) {
-            state.dislikes -= 1;
-          }
-          state.choice = 'like';
+      // If user clicks the same button again, remove their vote (set to neutral),
+      // but do NOT send another row to the sheet in that case.
+      if (isSameChoice) {
+        if (newChoice === 'like' && like > 0) like--;
+        if (newChoice === 'dislike' && dislike > 0) dislike--;
+        choice = null;
+      } else {
+        // Switching or selecting for the first time
+        if (newChoice === 'like') {
+          if (dislike > 0) dislike--; // remove previous dislike if any
+          like++;
+        } else if (newChoice === 'dislike') {
+          if (like > 0) like--; // remove previous like if any
+          dislike++;
         }
-        saveRating(storyId, state);
-        applyState();
-      });
+        choice = newChoice;
 
-      dislikeBtn.addEventListener('click', () => {
-        if (state.choice === 'dislike') {
-          state.dislikes = Math.max(0, state.dislikes - 1);
-          state.choice = null;
-        } else {
-          state.dislikes += 1;
-          if (state.choice === 'like' && state.likes > 0) {
-            state.likes -= 1;
-          }
-          state.choice = 'dislike';
-        }
-        saveRating(storyId, state);
-        applyState();
-      });
+        // Log this new choice to the Google Sheet
+        sendVoteToSheet(storyName, newChoice);
+      }
 
-      applyState();
+      const updated = { choice, like, dislike };
+      setVote(storyName, updated);
 
-      return el('div', { class:'rating', role:'group', 'aria-label':'Story rating' }, likeBtn, dislikeBtn);
+      // Update UI
+      if (elements.likeCount) elements.likeCount.textContent = like;
+      if (elements.dislikeCount) elements.dislikeCount.textContent = dislike;
+
+      if (elements.likeBtn) {
+        elements.likeBtn.classList.toggle('active', choice === 'like');
+      }
+      if (elements.dislikeBtn) {
+        elements.dislikeBtn.classList.toggle('active', choice === 'dislike');
+      }
+    }
+
+    function createVoteBar(story){
+      const storyName = safe(story.Name, 'Untitled');
+      const state = getVote(storyName);
+
+      const likeCountSpan = el('span', { class:'vote-count', 'data-kind':'like' }, String(state.like || 0));
+      const dislikeCountSpan = el('span', { class:'vote-count', 'data-kind':'dislike' }, String(state.dislike || 0));
+
+      const likeBtn = el('button',
+        {
+          class:`btn secondary vote-btn${state.choice === 'like' ? ' active' : ''}`,
+          type:'button'
+        },
+        '👍 Like ',
+        likeCountSpan
+      );
+
+      const dislikeBtn = el('button',
+        {
+          class:`btn secondary vote-btn${state.choice === 'dislike' ? ' active' : ''}`,
+          type:'button'
+        },
+        '👎 Dislike ',
+        dislikeCountSpan
+      );
+
+      const elements = { likeBtn, dislikeBtn, likeCount: likeCountSpan, dislikeCount: dislikeCountSpan };
+
+      likeBtn.addEventListener('click', () => handleVoteClick(storyName, 'like', elements));
+      dislikeBtn.addEventListener('click', () => handleVoteClick(storyName, 'dislike', elements));
+
+      return el('div', { class:'vote-bar' }, likeBtn, dislikeBtn);
     }
 
     // --- Rendering -----------------------------------------------------------
@@ -344,10 +388,9 @@
     function renderCard(s, idx) {
       const bg = s.LandscapeImage || s.Background || s.Forefront || '';
       const logo = s.LogoStyle1 || s.LogoStyle2 || s.LogoStyle3 || s.LogoStyle4 || s.LogoStyle5 || '';
-      const storyId = getStoryId(s, idx);
 
       const thumb = el('div', {class:'thumb'},
-        bg ? el('img', {alt: safe(s.Name,'Background'), src: bg, loading:'lazy'}) : el('div'),
+        bg ? el('img', {alt: safe(s.Name,'Background'), src: bg, loading:'lazy'}) : el('div') ,
         logo ? el('div', {class:'logo-wrap'}, el('img',{class:'logo', alt:'logo', src:logo, loading:'lazy'})) : null
       );
 
@@ -355,17 +398,21 @@
         ...(s.Genres||[]).map(g => el('span',{class:'chip'}, g))
       );
 
-      const ratingControls = createRatingControls(storyId);
+      const voteBar = createVoteBar(s);
 
-      const actions = el('div',{class:'actions'},
-        el('button',{class:'btn accent', type:'button', onClick:()=>openReader(s)},'Read Story'),
+      const actionsButtons = el('div', { class:'actions-buttons' },
+        el('button',{class:'btn accent', onClick:()=>openReader(s)},'Read Story'),
         el('a',{class:'btn', href:s.Pdfstory||'#', target:'_blank', rel:'noopener', ...(s.Pdfstory?{}:{'aria-disabled':'true'})},
           s.Pdfstory ? 'Open PDF' : 'PDF N/A'
         ),
         el('a',{class:'btn secondary', href:s.Epub||'#', target:'_blank', rel:'noopener', ...(s.Epub?{}:{'aria-disabled':'true'})},
           s.Epub ? 'Open EPUB' : 'EPUB N/A'
-        ),
-        ratingControls
+        )
+      );
+
+      const actions = el('div',{class:'actions'},
+        voteBar,
+        actionsButtons
       );
 
       return el('article',{class:'card', role:'region', 'aria-labelledby':`t-${idx}`},
