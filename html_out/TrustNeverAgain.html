@@ -1,0 +1,1587 @@
+﻿<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Trust Is Never Forgotten</title>
+    <meta charset="UTF-8"/>
+    <style type="text/css">ol{margin:0;padding:0}table td,table th{padding:0}.c10{padding-top:20pt;padding-bottom:6pt;line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left;height:20pt}.c4{padding-top:18pt;padding-bottom:6pt;line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left;height:16pt}.c7{padding-top:20pt;padding-bottom:6pt;line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:center;height:20pt}.c5{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:20pt;font-family:"Arial";font-style:normal}.c6{color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:16pt;font-family:"Arial";font-style:normal}.c9{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:12pt;font-family:"Arial";font-style:normal}.c0{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:"Arial";font-style:normal}.c13{padding-top:20pt;padding-bottom:6pt;line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:center}.c8{padding-top:18pt;padding-bottom:6pt;line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}.c11{padding-top:0pt;padding-bottom:16pt;line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:center}.c2{padding-top:12pt;padding-bottom:12pt;line-height:1.15;orphans:2;widows:2;text-align:left}.c1{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:left}.c14{font-style:italic}.c3{height:11pt}.c12{background-color:#ffffff}.title{padding-top:0pt;color:#000000;font-size:26pt;padding-bottom:3pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}.subtitle{padding-top:0pt;color:#000000;font-size:12pt;padding-bottom:16pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:center}li{color:#000000;font-size:11pt;font-family:"Arial"}p{margin:0;color:#000000;font-size:11pt;font-family:"Arial"}h1{padding-top:20pt;color:#000000;font-size:20pt;padding-bottom:6pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h2{padding-top:18pt;color:#000000;font-weight:700;font-size:16pt;padding-bottom:6pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h3{padding-top:16pt;color:#434343;font-size:14pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h4{padding-top:14pt;color:#666666;font-size:12pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h5{padding-top:12pt;color:#666666;font-size:11pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h6{padding-top:12pt;color:#666666;font-size:11pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;font-style:italic;orphans:2;widows:2;text-align:left}</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  #progressBadge{position:fixed;right:12px;bottom:12px;z-index:99999;background:#111;color:#fff;
+    padding:8px 10px;border-radius:10px;font:12px Arial, sans-serif;opacity:0.85}
+</style>
+<script>
+(function(){
+  const BOOK_ID = "TrustNeverAgain";
+  const STORAGE_KEY = 'progress_' + BOOK_ID;
+  const STORAGE_HEAD = 'heading_' + BOOK_ID;
+  const WEBAPP_URL = "";
+  const badge = document.createElement('div');
+  badge.id = 'progressBadge'; badge.textContent = '0%';
+  document.addEventListener('DOMContentLoaded', () => {
+    document.body.appendChild(badge);
+    // Restore scroll position
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(saved){ try{ const pct = parseFloat(saved); if(!isNaN(pct)){ scrollToPct(pct); } }catch(e){} }
+    // Also show last known heading if present
+    updateBadge();
+  });
+
+  function scrollToPct(pct){
+    const doc = document.documentElement;
+    const max = Math.max(1, doc.scrollHeight - doc.clientHeight);
+    const y = Math.round((pct/100) * max);
+    window.scrollTo(0, y);
+  }
+
+  function getPct(){
+    const doc = document.documentElement;
+    const max = Math.max(1, doc.scrollHeight - doc.clientHeight);
+    return Math.max(0, Math.min(100, (doc.scrollTop / max) * 100));
+  }
+
+  function currentHeading(){
+    const heads = Array.from(document.querySelectorAll('h1[id],h2[id],h3[id]'));
+    if(!heads.length) return null;
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    let best = null;
+    for(const h of heads){
+      const top = h.getBoundingClientRect().top + y;
+      if(top <= y + 60) best = h; else break;
+    }
+    if(!best) best = heads[0];
+    return { id: best.id || '', text: (best.textContent||'').trim().slice(0,200) };
+  }
+
+  function updateBadge(){
+    const pct = getPct();
+    const head = currentHeading();
+    badge.textContent = Math.round(pct) + '%';
+    if(head && head.text){ badge.title = head.text; }
+  }
+
+  let t = null;
+  window.addEventListener('scroll', () => {
+    if(t) return;
+    t = setTimeout(() => {
+      t = null;
+      const pct = getPct();
+      const head = currentHeading();
+      localStorage.setItem(STORAGE_KEY, String(pct));
+      if(head){ localStorage.setItem(STORAGE_HEAD, JSON.stringify(head)); }
+      updateBadge();
+      // Optional: send to Google Sheet if WEBAPP_URL is set
+      if(WEBAPP_URL && WEBAPP_URL.startsWith('http')){
+        const payload = { bookId: BOOK_ID, percent: pct, headingId: head?head.id:'', headingText: head?head.text:'', at: new Date().toISOString() };
+        fetch(WEBAPP_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) }).catch(()=>{});
+      }
+    }, 800);
+  }, {passive:true});
+})();
+</script>
+
+</head>
+  <body data-bookid="TrustNeverAgain" class="c12 doc-content">
+    <h1 class="c7" id="h.qeztk356n0j3">
+      <span class="c5"/>
+    </h1>
+    <h1 class="c7" id="h.hrfa5zz2dxr5">
+      <span class="c5"/>
+    </h1>
+    <h1 class="c7" id="h.98v5obu0nqjr">
+      <span class="c5"/>
+    </h1>
+    <h1 class="c10" id="h.gba9objwoa3g">
+      <span class="c5"/>
+    </h1>
+    <h1 class="c7" id="h.x2bvpj27galy">
+      <span class="c5"/>
+    </h1>
+    <h1 class="c7" id="h.jhk6uxbaga56">
+      <span class="c5"/>
+    </h1>
+    <h1 class="c13" id="h.12qfmyfb2b78">
+      <span class="c5">Trust Is Never Forgotten</span>
+    </h1>
+    <p class="c11 subtitle" id="h.o576kiey7iej">
+      <span>By Kyle E Young</span>
+    </p>
+    <hr style="page-break-before:always;display:none;"/>
+    <h2 class="c4" id="h.c1zcze81celd">
+      <span class="c6"/>
+    </h2>
+    <h2 class="c8" id="h.5df4jkwv4847">
+      <span class="c6">Just A Normal Day, Until It Wasn’t</span>
+    </h2>
+    <p class="c1">
+      <span class="c0">Cole adjusts the weight of the pistol on his hip, the taser on the other side, as he walks through the silent school toward the admin office. His footsteps echo too loudly in the empty corridor. Outside, the last of the sun slants through dusty windows, a dull orange that feels wrong—too thick, too heavy—as it presses heat against his face.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He pushes open the office door.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Lucy is waiting at the front desk, arms folded, red pen tapped against her palm. She looks up and smiles, the fluorescent lights buzzing faintly above her.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“How’s it going, Cole?” she asks.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He forces a smile back. “Not much. Just did my lap of the school. Looks like no one’s here.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Lucy raises a brow, teasing. “Oh, don’t say it like that. You mean it’s just you in this whole school… alone?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He shrugs, trying to shake off the strange weight in the air. “Come on, work wife, just pass me the keys so I can lock up.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">She steps closer, letting the keys dangle between two fingers. “You got somewhere to be with the other woman?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole huffs a quiet laugh. “No. I just want to get out of this place. I’ve already failed here once.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Lucy’s smile softens for a moment. She moves around the desk, the ring of keys cold and heavy as she presses them into his palm. “I don’t think you would’ve failed if you’d had a teacher like me.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He gives her a crooked grin. “No, I would’ve still failed.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">She walks past him toward the door. The air shifts when she opens it, letting in a brief smell of cut grass and hot asphalt before the hall swallows it again.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“I think you underestimate how good a teacher I am,” she says over her shoulder.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole turns, smirking. “I think you underestimate how pretty you are.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Lucy blushes and shakes her head. “Well. I hope you have a good date night with Sophia.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“And you with Michael,” he answers.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Lucy leaves, the door closing with a dull, final click. For a moment, the school feels too quiet—like the building is holding its breath.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole flips the keys in his hand and starts locking up, door by door. The halls seem longer now, the lights dimmer, as if the building is slowly swallowing its own light.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He reaches Lucy’s classroom—Room 13.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The door is slightly ajar.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">There’s a faint murmur coming from inside, like a broken radio just on the edge of tuning in. He pushes the door open.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Inside, five girls sit in a circle on the floor, hands linked, heads bowed. Someone has painted symbols on the ground around them in rough, dark strokes—twisting shapes that make his eyes want to slide off them.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Girls, it’s time to go,” Cole says, stepping into the room.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">They don’t move.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The murmuring gets clearer as he walks closer. It isn’t English. It isn’t anything he recognizes. The words warp in his ears, scraping against something inside his head, like they’re not meant for a human throat—or a human world.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Hey,” he says, placing a hand on the nearest girl’s shoulder. Her skin is cold. “It’s Friday. Go home, enjoy the weekend.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">No response. No flinch. Their bodies sway slightly, but it’s not natural movement—it’s like something else is moving them from inside.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Come on,” he mutters.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He starts to shake the girl gently, then harder. Nothing. Her lips keep moving, shaping those wrong sounds. The others chant with her, voices braiding into one low, humming thread that makes the air vibrate.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole moves to the next girl, gripping her shoulders. “Snap out of it,” he says. “This isn’t funny.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">They ignore him, if ignoring is even the right word. It’s like he doesn’t exist.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The words grow louder. The room feels hotter. The symbols on the floor seem to pulse.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Suddenly, all five girls speak in perfect unison, the chant slamming into the air like a wave. The sound makes his teeth ache.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Enough!” Cole barks, stepping back. He pulls out his taser, holding it up. “All of you stop and get up, or I’ll tase you. I’m not kidding.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The chanting doesn’t falter.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Then, in the same instant, all five girls fall silent.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Their eyes snap open.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Their irises glow a deep, burning red.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Shit,” Cole whispers.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He fires the taser at the closest girl. The prongs hit, the device crackles, but she doesn’t react. None of them do. Instead, thick, dark blood begins to seep from their eyes, tracing slow lines down their cheeks like tears. It seeps from their noses next, heavy drops splashing onto the symbols on the floor.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole fumbles for his phone, hands slick with sweat. He starts dialing 9-1, then hesitates, staring at the scene.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">What is he supposed to say?</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Hi, I’ve got five kids chanting demon words and crying blood.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">His thumb hovers over the screen.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">In the corner of his vision, something moves.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The girls are rising. Not standing—floating. Their feet leave the floor, shoes dangling inches, then a foot, then more above the ground. Their bodies hang limp, heads tilted back, mouths opening wide to release a new sound: a shriek that doesn’t match their throats. It’s too deep, too layered, like multiple voices screaming through each of them at once.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The lights flicker. The symbols on the floor flare red, glowing like hot coals. The paint—if it is paint—seems to crawl, rearranging itself into sharper, more precise shapes. The air stinks of iron and burnt hair.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole rips the taser leads free and shoves the device into his back pocket, hand already going to the gun on his belt.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">In the center of the glowing circle, the air thickens. It distorts like heat haze, then splits, a dark rip opening in the space above the floor. Something pushes through from the other side—two black, curved horns forcing their way into this world.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The girls scream louder, their bodies arching in midair, fingers stretching like claws.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Stop this now!” Cole yells, aiming his gun at the closest girl.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">They don’t stop.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The horns keep emerging, inch by inch, something massive and unseen straining against the tear in reality. The sound in the room is unbearable—screams, buzzing lights, the low rumble of something trying to force its way through.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole swallows hard, throat dry. “God,” he mutters, voice shaking, “forgive me for my sins.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He fires.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The shot cracks through the room, deafening. The nearest girl drops instantly, the scream dying in her throat as her body hits the floor with a heavy thud. The others wail even louder, their voices twisting higher, more inhuman.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He fires again. And again.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Each shot knocks another girl from the air. Each body falls into the circle, limbs collapsing wrong, blood streaking across the glowing symbols. With every impact, the red light dims a little.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">By the time the last girl hits the floor, the symbols have gone dark. The horns shudder, then sink back into the tearing air, vanishing as the rip knits itself shut. The room snaps back into stillness, the shadows flickering one last time before settling.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole’s gun slips from his fingers. He drops to his knees.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">For a long moment, there’s only the buzzing of the lights and the harsh sound of his own breathing. He stares at his shaking hands, then at the bodies.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Five girls.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Five students.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“What have I done?” he whispers.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Footsteps pound down the hallway, fast and uneven.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Lucy bursts into the doorway, panting, her eyes wide. She takes in the scene—the broken circle, the dark splashes across the floor, the bodies, Cole on his knees.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“What the—what happened?” she demands, voice cracking.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole turns his head slowly toward her, eyes empty. He tries to speak, but no words come.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Lucy steps into the room, her face draining of color. “Cole,” she says again, quieter, more frightened, “what happened?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Before he can answer, one of the girls on the floor gasps, sucking in a ragged breath. Then another. And another.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole and Lucy stare as the girls start to move, fingers twitching, chests rising and falling. They reach up, dazed, touching their faces. Their hands come away slick with half-dried blood.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The symbols beneath them stay dark.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The air is still.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">But Cole knows, with a cold certainty settling into his gut, that whatever answered them from the other side…</span>
+    </p>
+    <p class="c1">
+      <span class="c0">is not gone.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <hr style="page-break-before:always;display:none;"/>
+    <h2 class="c4" id="h.f9w8mhk20uhq">
+      <span class="c6"/>
+    </h2>
+    <h2 class="c8" id="h.m97l48qzlso0">
+      <span class="c6">A Shattered Lives</span>
+    </h2>
+    <p class="c1">
+      <span class="c0">Four years later, Cole settles into his seat on a plane and looks out the window. Airport workers load the last bags into the cargo hold, then drive away. When Cole looks around the cabin, he realizes something strange—</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Almost every seat is empty.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He unbuckles and stands, walking up the aisle toward the flight attendant.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Hey,” Cole asks, keeping his voice low, “where is everyone?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The attendant gives him a tired smile. “Hi, sir. Most people on this route are usually connecting from other flights. But no planes have been able to land recently because of the horrible weather, so a lot of passengers couldn’t make it. Today it’s just a handful of people… and I’m the only attendant working this flight. If you could grab your things and come with me, I’ll get you settled.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole nods and follows him. “So what’s your name?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The man turns slightly. “Jason. Like it says on my name tag.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole smirks. “What name tag?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason pauses. He looks down—and realizes the tag isn’t there. He quickly pats his pockets, frowning, then finally finds it and clips it onto his shirt.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Huh. Sorry,” Jason mutters.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole reaches up and opens the overhead compartment, pulling down his luggage.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Alright,” Jason says, gesturing forward. “Follow me.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason leads him toward the front staircase and up to the upper level. As they climb, Jason keeps talking like he’s trying to keep the mood light.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Since there are only nine people on this plane, I’m upgrading everyone to first class. Makes it easier for me to keep an eye on everyone.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole’s eyebrows lift. “Nice. That sounds great.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">They step into the first-class section. Cole scans the cabin.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">A man sits alone with his phone, wired headphones in, completely locked into whatever he’s watching. In the corner, four teenage girls—maybe sixteen to eighteen—huddle together, giggling and whispering like the world can’t touch them.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason stops beside an open seat. “Here you go. This is your new seat. We’ll be taking off soon. Put your bags away and have a seat.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole lifts his luggage into the overhead compartment. As he closes it, he hears an argument a few rows away.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“I don’t even want to go on this holiday,” a little girl says, her voice sharp and miserable.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">A woman answers immediately, stern and exhausted. “Charlotte, Aunty Lucy was kind enough to let us join her on her holiday. Now be thankful.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole freezes.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">That name hits him like a punch.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He turns—and sees a woman leaning over the seats, speaking to a teenage girl.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">And sitting beside them, unmistakable even after four years, is Lucy.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">For a second, the world narrows into a thin, tight tunnel. Cole can’t move. Lucy can’t either. They stare at each other like they’re looking through glass.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">And his mind flashes back—</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The classroom.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Room 13.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The circle.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The blood.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The gun on the floor in front of his knees.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The girls waking up again.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason steps closer, voice suddenly concerned. “Sir? Hey—sir. Can you please sit down?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The spell breaks.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole swallows hard. “Sorry,” he mutters, lowering himself into the seat.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Across the aisle, Lucy sits too, stiff and pale, like she’s just seen a ghost.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason walks to the front of first class and raises his voice slightly. “Alright, everyone—please remain seated while we take off.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He straps himself into his seat. The cabin goes quiet.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Then the plane begins to move.</span>
+    </p>
+    <hr style="page-break-before:always;display:none;"/>
+    <h2 class="c4" id="h.rueot881ae8p">
+      <span class="c6"/>
+    </h2>
+    <h2 class="c8" id="h.yb2rlci56u9e">
+      <span class="c6">The Lost Moments</span>
+    </h2>
+    <p class="c2">
+      <span class="c0">Cole closes his eyes while Jason runs through the safety procedure. The words blur together, turning into background noise. He opens his eyes again and stares out the window at thick clouds drifting past, endless and gray.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Lucy turns toward him. Her voice is quiet, but sharp.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">“You left.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole looks at her, jaw tight. “Can we not? Can we just… not do this?”</span>
+    </p>
+    <p class="c2">
+      <span>Lucy lets out a short, bitter laugh. “Not do this? No. You did </span>
+      <span class="c14">something</span>
+      <span class="c0"> to those girls, and then you quit. You just walked away. What the hell did you do?”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole glances toward the woman sitting beside Lucy. She’s listening now, pretending not to be, but her posture has gone stiff.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole lowers his voice. “I didn’t know what happened that afternoon. And I didn’t do anything.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Jason’s voice comes over the speaker again, brighter this time. “Alright everyone, you’re free to move around the cabin. We’ve got twelve hours until landing.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole exhales like he’s been given permission to escape. “Good. I don’t need this.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">He stands and starts down the aisle, but Lucy immediately follows. Her friend hesitates, then follows too.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">“I’m not letting you walk away from me again,” Lucy says.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole doesn’t slow down. “I don’t care what you want.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">He heads down the stairs to the lower level. The girls’ laughter from earlier echoes somewhere behind them, distant and wrong for how tense everything suddenly feels.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Lucy keeps close. “We’re on a plane, Cole. You can’t avoid me forever.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole keeps walking until he reaches the bar. He stops, grabs a bottle, and pours himself a drink with shaking hands he’s trying hard to control.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Lucy steps in front of him. “Tell me what happened that night. And why you just disappeared.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole takes a long swallow.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Lucy’s friend hangs back near the corner, half-hidden, watching like she’s scared of what she might hear.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole stares into his glass for a moment, then says it anyway—flat and quiet.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">“I shot them.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Lucy’s face tightens.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole’s voice doesn’t. “I shot all of them. All the girls. I fired my gun.” He swallows, throat working like the words are sharp going down. “I became what I was supposed to protect the school from. A shooter. And when they hit the floor, I didn’t know what to do. I didn’t know what to say.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Behind Lucy, her friend clamps a hand over her mouth. Tears spill down her face, silent and panicked—like she’s thinking about her own kid, about what this means. She takes a step back, then another, and slips away down the hallway without a word.</span>
+    </p>
+    <p class="c2">
+      <span>Lucy doesn’t move. “But you </span>
+      <span class="c14">didn’t</span>
+      <span class="c0">,” she says, voice trembling with anger and disbelief. “There were no bullet holes. No wounds. They were fine, Cole. The hospital said they were dehydrated and needed vitamins—Vitamin K and Vitamin C. It took a few days, and they were back to normal.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole drains half the glass in one go, then sets it down hard. “You’re not hearing me.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Lucy’s eyes flash. “I’m hearing you.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">“No,” Cole says, shaking his head. “They were… summoning something. Someone. Their eyes were red. They were floating. The blood on the ground was glowing.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Lucy steps closer and grips his face with both hands, forcing him to look at her. Her voice drops to a furious whisper.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">“Why are you lying to me?”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole jerks back, breath rising. “I’m not! That’s what happened!”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Lucy’s hands fall away. She looks at him like she doesn’t recognize him anymore. “None of the girls remember anything. Do you know what it sounds like? It sounds like you drugged them, stole their blood, and painted symbols all over my classroom. And then you ran.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole moves around the bar, desperate now. “But I didn’t. Those things happened. Why won’t you believe me?”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">He steps toward her, but Lucy takes a step back like she’s afraid he might touch her again.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Then her expression shifts—anger cracking into something softer, sadder.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">“You know what I missed the most at school?” she says quietly.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole stops. His eyes drop to the floor for a second, like he can’t stand the way she’s looking at him. Then he forces himself to meet her gaze.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">“What?”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Lucy’s smile is small, and it doesn’t reach her eyes. “All the little moments. All the times I called you sexy. All the jokes we could make just because we could.” Her voice wavers. “All the days where the first face I saw at work was yours—always smiling like nothing could touch you.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole doesn’t speak. He can’t.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Lucy keeps going, each word heavier than the last. “All the good mornings. Hundreds of them. Maybe thousands.” She blinks hard, trying not to cry. “It could’ve been forever.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole frowns. “What do you mean… it could’ve been forever?”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Lucy exhales shakily. “Three years ago today, Michael broke up with me.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">The confession hangs between them for a beat, raw and unexpected.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Then Lucy turns and walks away.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">Cole reaches out like he might stop her. “Wait—”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">But she doesn’t.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">He stands there at the bar, staring at the drink in front of him. His hand closes around the glass again.</span>
+    </p>
+    <p class="c2">
+      <span class="c0">He whispers to himself, “One more won’t hurt.”</span>
+    </p>
+    <p class="c2">
+      <span class="c0">And he drinks.</span>
+    </p>
+    <hr style="page-break-before:always;display:none;"/>
+    <h2 class="c4" id="h.q3b9vypev9nt">
+      <span class="c6"/>
+    </h2>
+    <h2 class="c8" id="h.dngvjbuw67k8">
+      <span class="c6">To All Forgotten Moments</span>
+    </h2>
+    <p class="c1">
+      <span class="c0">Jason stands at the front of first class, running through the safety procedure. When he finishes, he smiles politely.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“You’re now free to move around the cabin.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole, Lucy, and the other woman unbuckle and leave the first-class area. Jason turns toward the galley, already starting to prepare the meals.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“There’s always one,” he mutters under his breath.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He walks back into first class and stops beside a teenage girl sitting alone. He holds out a menu with a practiced smile.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Hey. Here’s a menu with all the food we’re serving on the flight. I’ll come back in a minute.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The girl looks down at it, eyes narrowing like she’s struggling to make out the words. Jason notices the worry on her face and gently steps in.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“So,” he says, “for lunch we’ve got chicken, beef, vegetarian pasta, and, for the first time, fake chicken.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The girl looks up. “Fake chicken?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason grins. “Yeah. It’s for vegetarians who miss the idea of meat but don’t want the real thing.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The girl laughs. “Who doesn’t like meat?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason tilts his head. “So, the beef then?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Yes, please,” she says.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Great. For sides, we’ve got bread, salad, or pasta. What sounds like you?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">She brightens. “I’m a big pasta fan, so pasta, please.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Excellent. Sounds like a great meal.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason flips to the back page of his order sheet and ticks the boxes. “What’s your name?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Charlotte,” she says, smiling now.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Well, it’s nice to meet you, Charlotte.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">At the back of first class, a man gets up. Jason catches a clear look at his face and freezes. He knows that face.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Everything okay?” Charlotte asks.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason forces a smile. “Yeah. Just gotta check on another passenger.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He walks after the man, following him out of first class and down the short hallway toward the bathroom. The man goes inside, and Jason waits outside, shifting his weight from foot to foot. His leg starts to shake.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He notices the woman from earlier walk past him, heading back toward first class. The bathroom door opens behind him, and the man steps out.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason’s face hardens. “Not you.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The man’s expression mirrors his. “Not you,” he answers.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“You said you’d never fly again,” Jason says quietly.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Yeah, well,” the man replies, “I didn’t want to. But my friend died on holiday, and I’m the one who has to confirm it’s really him.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason’s hand curls into a fist. “Marcus, the same shit that happened two years ago better not happen again.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Marcus exhales through his nose. “Thirteen years ago to the day,” he says slowly, “the same thing happened. A bunch of girls in a circle, blood running from their eyes. But those girls lived. At least pouring salt on the blood stopped the spell and saved them.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason stares at him. “Just promise me it won’t happen again.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Marcus shakes his head. “I would if I could. But we didn’t make it happen. They did it themselves. And they didn’t even remember doing it.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Before Jason can answer, the woman bursts out of first class, panic twisting her voice.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Where is Charlotte? Where is my little girl?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason looks at her, then at Marcus, and rushes back into first class with both of them following.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The cabin is wrong.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The four giggling teenage girls who were there before are gone. Charlotte’s seat is empty. Jason walks quickly to the row where she’d been sitting and finds nothing—no bag, no girl, just an abandoned seat.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He turns back to the others, mind racing.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Lucy walks into first class, frowning. “Why is everyone standing up?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole steps in behind her, holding a drink. “What’s going on?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The woman points straight at Cole, eyes blazing. “This is all your fault!”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Marcus reaches out and gently holds her back as she moves toward him.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole glances down at his glass and realizes it’s empty. When he looks up again, Lucy is staring at him, her face pale.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“What did you do?” she asks.</span>
+    </p>
+    <hr style="page-break-before:always;display:none;"/>
+    <h2 class="c4" id="h.xgm974r6kvpd">
+      <span class="c6"/>
+    </h2>
+    <h2 class="c8" id="h.gn2gbxp6l7lk">
+      <span class="c6">Actions Have Consequences</span>
+    </h2>
+    <p class="c1">
+      <span class="c0">Cole stares at the woman, completely confused. She’s pointing at him like he’s a criminal, her arm shaking with rage. Marcus has both hands on her shoulders, holding her back, and Jason stands behind them, tense and watchful. Lucy looks at Cole with obvious disappointment.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole raises his hands slightly. “I haven’t done anything.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Yes, you have!” the woman screams. “You did before—and now my girl is gone, and it’s your fault!”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole turns to Lucy, trying to ground himself. “I’ve been with Lucy this whole time. I don’t know what she’s talking about.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The woman stops struggling just long enough to spit the words out. “I heard you talking to her. You said you shot five girls at a school.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Marcus snaps his head toward Cole. “You did what?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole feels Lucy’s eyes on him, heavy and accusing. He knows exactly what will happen if he tells the truth—if he describes the chanting, the glowing symbols, the blood, the floating bodies. Lucy already thinks he’s lying. Everyone else will, too.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">So he forces a different story.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“It was paint,” Cole says quickly. “Red paint. No one got hurt. It was… a prank. The girls wanted to freak Lucy out.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Lucy blinks, then lets out a small, relieved smile. “Why didn’t you just tell me that in the first place?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole smiles back, but it’s thin and painful. “Because I promised them I wouldn’t.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The woman—Mila—looks around wildly, like the explanation doesn’t matter at all. “That doesn’t help me find my kid.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Lucy steps forward, voice gentler now. “Mila, maybe Charlotte just went to the bathroom, or she’s hanging out with the other girls. She’s sixteen—she’s probably fine.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason and Marcus exchange a look, both of them instantly uneasy.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Marcus releases Mila, and Lucy continues, “Come on. I’ll come with you. We’ll search the plane together.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Lucy and Mila head out of first class, moving fast.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason nods toward Marcus and tries to sound casual. “I’ve got to grab some supplies from the back. Feel free to look at the menus.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He sits for half a second, then stands again like he can’t stay still.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Marcus turns to Cole. “You okay, mate?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole closes his eyes and wipes his face with his hand. “Yeah. Just… been a long day.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason walks down the aisle, then down the stairs toward the lower sections of the plane. He keeps going—past where passengers normally stop—into the cargo-level access area.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">And that’s where he sees them.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The girls.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Sitting in a circle.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Hands linked.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">A ring of red blood painted across the floor.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason’s stomach drops.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“Shit. Shit. Shit,” he whispers. “Not again. Not again…”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He spins around and rushes back up the stairs.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">When he returns to first class, he heads straight for the food cart. Marcus watches him closely, reading his face like it’s written in bold print. Jason tries to act normal, but his hands are shaking.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He grabs a container and starts stuffing handfuls of salt into his pockets.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Marcus stands immediately. “Jason…”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason doesn’t answer. He moves quickly out of first class. Marcus follows.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole watches them go, then gets up and follows too.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">A moment later, Lucy returns with Mila. One look at the urgency on everyone’s faces and they follow as well.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">They head down the stairs into the lower area together.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">And there they are—Charlotte and the other girls—still in the circle, chanting under their breath. The sound is low and rhythmic, wrong in a way that makes the air feel thicker.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Marcus stares at them, voice tight. “How is this happening again?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole steps up behind them, disbelief in his voice. “How is this happening on a plane?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason’s jaw clenches. Cole pushes forward, speaking fast. “Last time I stopped it, I had a gun. I don’t know how to stop this without—”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason cuts him off, forcing a grim smile as he pulls the salt from his pockets. “We stopped it with salt.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole looks at Marcus. “You’ve seen this before?”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Marcus takes a slow breath. “My last flight. Same date. A few years ago.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole pulls out his phone, checking the screen like he needs proof. “When I saw it at the school… it was this date too. July 13th.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason steps up to the circle and pours salt onto the blood ring.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Nothing happens.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">He pours more. The salt scatters across the red line.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Still nothing.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Jason’s face tightens. “Last time… this worked.”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The chanting grows louder.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Lucy reaches the bottom of the stairs and freezes. Her hand flies to her mouth. She sinks to her knees like her legs have given out.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">“No,” she whispers. “Not again…”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Mila breaks free and runs toward Charlotte. “Charlotte!”</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The moment she gets close, a burst of red energy explodes outward from the circle.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">It slams into all of them like a wave.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">Cole, Lucy, Marcus, Jason—everyone is thrown backward, crashing onto the floor and into the walls. The air rings with the force of it.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">The salt didn’t stop the spell.</span>
+    </p>
+    <p class="c1 c3">
+      <span class="c0"/>
+    </p>
+    <p class="c1">
+      <span class="c0">It pissed it off.</span>
+    </p>
+    <h2 class="c8" id="h.beznfonq9u2">
+      <span>Did We Fail?</span>
+    </h2>
+  </body>
+</html>
