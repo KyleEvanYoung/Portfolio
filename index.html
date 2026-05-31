@@ -3,994 +3,117 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Kyle E Young Porfolio</title>
-
-  <style>
-    :root{
-      --bg-image: none;
-      --glass: rgba(10,20,30,0.55);
-      --glass-soft: rgba(10,20,30,0.35);
-      --text: rgba(255,255,255,0.94);
-      --muted: rgba(255,255,255,0.72);
-      --stroke: rgba(255,255,255,0.18);
-      --radius: 26px;
-      --shadow: 0 20px 60px rgba(0,0,0,0.35);
-    }
-
-    *{ box-sizing: border-box; }
-    html, body { height: 100%; }
-
-    body{
-      margin: 0;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-      color: var(--text);
-      background:
-        linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0)),
-        var(--bg-image);
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      overflow-x: hidden;
-      transition: background 0.6s ease-out;
-    }
-
-    .page{
-      min-height: 100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: clamp(16px,3vw,32px);
-      position: relative;
-      z-index: 1;
-    }
-
-    /* ===== Main blur card ===== */
-    .card{
-      width: min(1200px, 100%);
-      border-radius: var(--radius);
-      padding: 18px;
-      background: radial-gradient(circle at top left, rgba(255,255,255,0.16), transparent 45%),
-                  rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.18);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      position: relative;
-      overflow: hidden;
-
-      transform: translateX(0);
-      opacity: 1;
-
-      transition:
-        transform 2s cubic-bezier(.01,.01,.01,.01), /* ✅ move takes 2 seconds */
-        opacity 0.4s ease,
-        border-radius 0.9s cubic-bezier(.19,1,.22,1),
-        width 0.9s cubic-bezier(.19,1,.22,1),
-        height 0.9s cubic-bezier(.19,1,.22,1),
-        inset 0.9s cubic-bezier(.19,1,.22,1),
-        background 0.9s ease-out,
-        border 0.9s ease-out,
-        box-shadow 0.9s ease-out,
-        backdrop-filter 0.9s ease-out,
-        -webkit-backdrop-filter 0.9s ease-out;
-    }
-
-    /* ✅ slide left OFF the screen */
-    .card.exit-left{
-      transform: translateX(-80vw);
-      opacity: 1;
-    }
-
-    /* Content appears after intro */
-    .cardInner{
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.55s ease-out 0.15s, transform 0.55s ease-out 0.15s;
-    }
-
-    /* ===== Intro states ===== */
-    body.pre-intro{ background: #000; }
-
-    body.pre-intro .page{
-      padding: 0;
-      align-items: stretch;
-      justify-content: stretch;
-    }
-    body.pre-intro .card{
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      border-radius: 0;
-      background: rgba(0,0,0,1);
-      border: none;
-      box-shadow: none;
-      backdrop-filter: blur(0px);
-      -webkit-backdrop-filter: blur(0px);
-      transform: translateX(0);
-      transition: none;
-    }
-    body.pre-intro .cardInner{ opacity: 0; transform: translateY(10px); }
-
-    body.intro-blur .page{
-      padding: 0;
-      align-items: stretch;
-      justify-content: stretch;
-    }
-    body.intro-blur .card{
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      border-radius: 0;
-
-      background:
-        radial-gradient(circle at 15% 10%, rgba(255,255,255,0.14), transparent 35%),
-        radial-gradient(circle at 85% 80%, rgba(255,255,255,0.10), transparent 40%),
-        rgba(15,35,60,0.45);
-
-      border: 1px solid rgba(255,255,255,0.10);
-      box-shadow: none;
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      transform: translateX(0);
-      transition:
-        border-radius 0.9s cubic-bezier(.19,1,.22,1),
-        width 0.9s cubic-bezier(.19,1,.22,1),
-        height 0.9s cubic-bezier(.19,1,.22,1),
-        inset 0.9s cubic-bezier(.19,1,.22,1),
-        background 0.9s ease-out,
-        border 0.9s ease-out,
-        backdrop-filter 0.9s ease-out;
-    }
-    body.intro-blur .cardInner{ opacity: 0; transform: translateY(10px); }
-
-    body.intro-done .page{
-      padding: clamp(16px,3vw,32px);
-      align-items:center;
-      justify-content:center;
-    }
-    body.intro-done .card{
-      position: relative;
-      inset: auto;
-      width: min(1200px, 100%);
-      height: auto;
-      border-radius: var(--radius);
-      background: radial-gradient(circle at top left, rgba(255,255,255,0.16), transparent 45%),
-                  rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.18);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    body.intro-done .cardInner{ opacity: 1; transform: translateY(0); }
-
-    /* ===== Layout ===== */
-    .grid{
-      display:grid;
-      grid-template-columns: 1.25fr 1fr;
-      grid-template-rows: auto auto;
-      gap: 16px;
-    }
-    @media (max-width: 950px){
-      .grid{ grid-template-columns: 1fr; }
-    }
-
-    .panel{
-      border-radius: 22px;
-      background: var(--glass);
-      border: 1px solid var(--stroke);
-      overflow:hidden;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-
-    /* TOP LEFT */
-    .hero{ position:relative; min-height: 280px; }
-    .heroImg{
-      position:absolute; inset:0;
-      background: var(--bg-image);
-      background-size: cover;
-      background-position:center;
-      transform: scale(1.02);
-      filter: saturate(1.05) contrast(1.03);
-    }
-    .heroOverlay{
-      position:absolute; inset:0;
-      background: linear-gradient(135deg, rgba(0,0,0,0.10), rgba(0,0,0,0.45));
-    }
-    .heroTop{
-      position:absolute; top: 14px; left: 16px;
-      padding: 10px 14px;
-      border-radius: 16px;
-      background: rgba(0,0,0,0.55);
-      border: 1px solid rgba(255,255,255,0.18);
-      display:flex; flex-direction:column; gap:4px;
-      max-width: 70%;
-    }
-    .heroTitle{ font-size: 14px; font-weight: 650; letter-spacing: 0.15px; }
-    .heroMeta{
-      font-size: 12px;
-      color: var(--muted);
-      display:flex; gap:6px; flex-wrap:wrap; align-items:center;
-    }
-    .heroDots{
-      position:absolute; bottom: 14px; left: 50%;
-      transform: translateX(-50%);
-      display:flex; gap:8px; opacity:0.85;
-    }
-    .heroDot{
-      width: 7px; height: 7px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.4);
-      border: 1px solid rgba(255,255,255,0.35);
-    }
-    .heroDot:first-child{ background: rgba(255,255,255,0.95); }
-
-    /* TOP RIGHT */
-    .info{ padding: 18px; display:flex; flex-direction:column; gap:14px; }
-    .infoHead{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
-    .infoTitle{
-      margin:0;
-      font-size: clamp(26px,3.1vw,40px);
-      letter-spacing:-0.4px;
-    }
-    .infoBadge{
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: var(--glass-soft);
-      border: 1px solid var(--stroke);
-      font-size: 12px;
-      color: var(--muted);
-      display:flex; gap:8px; align-items:center;
-      white-space: nowrap;
-    }
-    .divider{ height:1px; background: rgba(255,255,255,0.14); }
-
-    .stats{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
-    .stat{ display:flex; flex-direction:column; gap:4px; }
-    .statLabel{ font-size: 12px; color: var(--muted); }
-    .statValue{ font-size: 17px; font-weight: 700; }
-
-    .desc{
-      font-size: 13px;
-      color: rgba(255,255,255,0.82);
-      line-height:1.55;
-      max-width:60ch;
-      margin: 0;
-	  display: none;
-    }
-
-    .controls{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
-
-    .pill{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: var(--glass-soft);
-      border: 1px solid var(--stroke);
-      font-size: 12px;
-      color: var(--muted);
-      flex-wrap: wrap;
-    }
-
-    button{
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.20);
-      background: rgba(0,0,0,0.25);
-      color: var(--text);
-      padding: 8px 12px;
-      font-size: 13px;
-      cursor:pointer;
-      transition: transform .05s ease, background .15s ease;
-    }
-    button:hover{ background: rgba(0,0,0,0.32); }
-    button:active{ transform: translateY(1px); }
-    button.primary{
-      background: rgba(35,140,255,0.40);
-      border-color: rgba(35,140,255,0.55);
-    }
-
-    .miniBtn{
-      padding: 7px 10px;
-      font-size: 12px;
-      background: rgba(255,255,255,0.08);
-    }
-    .miniRow{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-    }
-
-    select, input[type="date"]{
-      background: rgba(0,0,0,0.25);
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.24);
-      color: var(--text);
-      font-size: 12px;
-      padding: 5px 8px;
-      outline:none;
-    }
-
-    /* BOTTOM LEFT */
-    .trail{ padding: 16px; display:flex; flex-direction:column; gap:10px; }
-    .trailHead{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      font-size: 12px;
-      color: var(--muted);
-      flex-wrap:wrap;
-    }
-    .circleNum{
-      width: 26px; height: 26px;
-      border-radius:999px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      border: 1px solid var(--stroke);
-      background: var(--glass-soft);
-      font-weight:700;
-      color: var(--text);
-    }
-    svg{ width: 100%; height: 110px; display:block; }
-
-    /* BOTTOM RIGHT */
-    .profile{
-      padding: 16px;
-      background: rgba(255,255,255,0.92);
-      color: #222;
-      border: 1px solid rgba(255,255,255,0.7);
-    }
-    .profileHead{
-      display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
-    }
-    .profileUser{ display:flex; gap:8px; align-items:center; }
-    .avatar{
-      width: 32px; height: 32px;
-      border-radius: 999px;
-      background: linear-gradient(135deg,#111,#888);
-      border: 1px solid rgba(0,0,0,0.2);
-    }
-    .profileName{ margin:0; font-size: 13px; font-weight:700; }
-    .profileHandle{ margin:0; font-size: 11px; color:#666; }
-
-    .profileGrid{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:10px;
-      margin-top: 10px;
-    }
-    .kpi{
-      text-align:center;
-      background: rgba(255,255,255,0.8);
-      border-radius: 15px;
-      padding: 8px 4px;
-      border: 1px solid rgba(0,0,0,0.06);
-    }
-    .kpiLabel{ margin:0; font-size: 11px; color:#666; font-weight:600; }
-    .kpiValue{ margin:2px 0 0 0; font-size: 17px; font-weight:800; }
-
-    .profileFooter{
-      margin-top: 10px;
-      font-size: 11px;
-      color:#666;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      flex-wrap:wrap;
-      gap:6px;
-    }
-    code{
-      background: rgba(0,0,0,0.07);
-      border-radius: 6px;
-      padding: 1px 4px;
-      font-size: 11px;
-    }
-
-    .disabled{
-      pointer-events: none;
-      user-select: none;
-    }
-  </style>
+  <title>BookFlix</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
 </head>
-
-<body class="pre-intro">
-  <div class="page">
-    <div class="card" id="card">
-      <div class="cardInner" id="cardInner">
-        <div class="grid">
-
-          <section class="panel hero">
-            <div class="heroImg" aria-hidden="true"></div>
-            <div class="heroOverlay" aria-hidden="true"></div>
-
-            <div class="heroTop" style="display: none;">
-              <div class="heroTitle" id="smallThemeName"></div>
-              <div class="heroMeta">
-                <span>📍</span><span id="placeLabel">—</span>
-                <span style="opacity:.5">•</span>
-                <span>🗓️</span><span id="prettyDate">—</span>
-              </div>
-            </div>
-
-            <div class="heroDots" aria-hidden="true" style="display: none;">
-              <span class="heroDot"></span><span class="heroDot"></span><span class="heroDot"></span>
-            </div>
-          </section>
-
-          <section class="panel info">
-            <div class="infoHead">
-              <h1 style="display: none;" class="infoTitle" id="bigThemeName">—</h1>
-              <h1 class="infoTitle">Kyle E Young</h1>
-              <div class="infoBadge">
-                <span style="display: none;" id="matchType">—</span>
-                <span style="display: none;">•</span>
-                <span style="display: none;" id="priorityChip">prio —</span>
-				<img src="assets\contact\contact.png" style="border-radius: 50%; height: 120px;">
-              </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="stats">
-              <div class="stat">
-                <div style="display: none;"  class="statLabel">Season</div>
-                <div style="display: none;"  class="statValue" id="seasonValue">—</div>
-              </div>
-              <div class="stat">
-                <div style="display: none;"  class="statLabel">Place</div>
-                <div style="display: none;"  class="statValue" id="placeShort">—</div>
-              </div>
-              <div class="stat">
-                <div style="display: none;"  class="statLabel">Test date</div>
-                <div style="display: none;"  class="statValue" id="dateShort">—</div>
-              </div>
-            </div>
-
-            <p class="desc" id="themeDescription">—</p>
-
-            <div style="display: none;"  class="controls">
-              <button class="primary" id="prevDay">◀ Prev day</button>
-              <button id="nextDay">Next day ▶</button>
-              <button id="todayBtn">Today</button>
-
-              <span class="pill">
-                Place:
-                <select id="placeSelect">
-                  <option value="NZ">New Zealand (Southern)</option>
-                  <option value="NORTH">Northern Hemisphere</option>
-                </select>
-                Date:
-                <input id="dateInput" type="date" />
-              </span>
-            </div>
-
-            <!-- ✅ Holiday window label -->
-            <div style="display: none;"  class="pill" style="width:100%; justify-content:space-between;">
-              <span>Holiday window</span>
-              <strong>5 days BEFORE</strong>
-              <span style="opacity:.7;">(+ holiday day)</span>
-            </div>
-
-			<p>
-			Ever since I was a child, I’ve been enthralled by stories, myths, and legends that unfolded in movies, video games, and the imaginary adventures I’d create with friends and family. Inspired by these narratives, I started to craft my own tales during quiet moments, each character born from both joyous and challenging times. These stories have always offered me solace, especially during periods of boredom or restlessness. Yet, I found it daunting to share these creations in a way that truly resonated with others. That’s why I turned to writing, hoping to encapsulate just a sliver of the magic these tales have brought into my life. This story, although it navigates the grand themes of time travel and the monumental task of saving kingdoms and other worlds, is fundamentally about the human condition. It’s about individuals doing their best in seemingly impossible situations. Through this narrative, I want to remind readers that life is a mix of good times and bad times. What matters most isn’t what happens around us, but how we choose to react to these situations and treat the people we love. I hope that in reading this story, you find a touch of the joy, comfort, or peace that creating it has given me.
-			</p>
-
-          </section>
-
-          <section class="panel trail">
-		  
-		  <!-- ✅ 6 nav buttons -->
-              <div class="miniRow" style="margin: auto;" id="navButtons">
-                <button style="width: 100px; height: 120px;" class="miniBtn" type="button" data-go="storys.html">
-				<p>EBooks</p>
-				<img style="width: 50px; height: 50px;" src="assets\stories\logo_white.svg">
-				</button>
-				
-				<button style="width: 100px; height: 120px;" class="miniBtn" type="button" data-go="storys.html">
-				<p>Games</p>
-				<img style="width: 50px; height: 50px;" src="assets\games\logo_white.svg">
-				</button>
-				
-				<button style="width: 100px; height: 120px;" class="miniBtn" type="button" data-go="storys.html">
-				<p>3d Assets</p>
-				<img style="width: 50px; height: 50px;" src="assets\assets\logo_white.svg">
-				</button>
-				
-				<button style="width: 100px; height: 120px;" class="miniBtn" type="button" data-go="storys.html">
-				<p>Render Challenege</p>
-				<img style="width: 50px; height: 50px;" src="assets\render_challeneges\logo_white.svg">
-				</button>
-				
-				<button style="width: 100px; height: 120px;" class="miniBtn" type="button" data-go="storys.html">
-				<p>Website</p>
-				<img style="width: 50px; height: 50px;"  src="assets\stories\logo_white.svg">
-				</button>
-				
-              </div>
-
-			
-            <div style="display: none;" class="trailHead">
-              <span>Theme level <span class="circleNum" id="themeLevel">4</span></span>
-              <span class="pill">Estimated “vibe time” <strong id="vibeTime">3 hr 15 min</strong></span>
-            </div>
-
-            <svg style="display: none;" viewBox="0 0 1000 110" preserveAspectRatio="none" aria-hidden="true">
-              <path id="chartPath" d="" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2"></path>
-              <g id="chartDots"></g>
-            </svg>
-
-            <div style="display: none;" style="color:var(--muted); font-size:12px; line-height:1.5;">
-              Decorative area – replace with your real content later.
-            </div>
-          </section>
-
-          <section class="panel trail">
-		  
-			<div style="margin: auto; width: 70%;">
-			<a href="index.html">
-			<img src="assets\featured\logo_white.svg">
-			</a>
-			</div>
-		  
-            <div style="display: none;" class="profileHead">
-              <div class="profileUser">
-                <div class="avatar" aria-hidden="true"></div>
-                <div>
-                  <p class="profileName">Theme Engine</p>
-                  <p class="profileHandle" id="matchExplain">@auto-theme</p>
-                </div>
-              </div>
-              <div style="opacity:.7;">⋯</div>
-            </div>
-
-            <div style="display: none;" class="profileGrid">
-              <div class="kpi">
-                <p class="kpiLabel">Matched rules</p>
-                <p class="kpiValue" id="matchedCount">0</p>
-              </div>
-              <div class="kpi">
-                <p class="kpiLabel">Winner</p>
-                <p class="kpiValue" id="winnerShort">—</p>
-              </div>
-              <div class="kpi">
-                <p class="kpiLabel">Total themes</p>
-                <p class="kpiValue" id="rulesCount">—</p>
-              </div>
-            </div>
-
-            <div style="display: none;" class="profileFooter">
-              <span>Images: <code>assets/background_images</code></span>
-              <span>Edit: <code>THEMES</code></span>
-            </div>
-          </section>
-
-        </div>
-      </div>
-    </div>
+<body>
+  <div id="preloader" class="preloader" aria-label="Loading">
+    <img src="loader.gif" alt="Loading" onerror="this.style.display='none'" />
+    <p>Loading BookFlix...</p>
   </div>
 
-<script>
-/* =============================
-   SETTINGS
-============================= */
-const HOLIDAY_BEFORE_DAYS = 5;   // ✅ 5 days before
-const HOLIDAY_AFTER_DAYS  = 0;   // ✅ no days after
-const IMG_DIR = "assets/background_images";
-const IMG_EXT = "png";
+  <aside id="options_menu" class="side-panel" aria-label="Options menu">
+    <button class="close-panel" data-close-panel>×</button>
+    <h2>Login</h2>
+    <div id="loginBox" class="panel-card">
+      <input id="loginEmail" type="email" placeholder="Email" autocomplete="email" />
+      <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password" />
+      <button id="loginBtn">Login</button>
+      <p id="loginStatus" class="small-status"></p>
+    </div>
 
-/* =============================
-   THEMES (easy to add more)
-   - priority: higher wins
-   - background: file name inside assets/background_images
-============================= */
-const THEMES = [
-  { id:"new_years_day", name:"New Year's Day", background:`new_years_day.${IMG_EXT}`, priority:95, type:"Holiday",
-    match: ({date}) => inHolidayWindow(date, fixedDate(date.getFullYear(), 1, 1)),
-    description:`Jan 1 (active ${HOLIDAY_BEFORE_DAYS} days before + the day).`
-  },
-  { id:"anzac_day", name:"Anzac Day", background:`anzac_day.${IMG_EXT}`, priority:98, type:"Holiday (NZ)",
-    match: ({date, place}) => place==="NZ" && inHolidayWindow(date, fixedDate(date.getFullYear(), 4, 25)),
-    description:`NZ Apr 25 (active ${HOLIDAY_BEFORE_DAYS} days before + the day).`
-  },
-  { id:"halloween", name:"Halloween", background:`halloween.${IMG_EXT}`, priority:80, type:"Holiday",
-    match: ({date}) => inHolidayWindow(date, fixedDate(date.getFullYear(), 10, 31)),
-    description:`Oct 31 (active ${HOLIDAY_BEFORE_DAYS} days before + the day).`
-  },
-  { id:"day_of_the_dead", name:"The Day of the Dead", background:`day_of_the_dead.${IMG_EXT}`, priority:81, type:"Holiday",
-    match: ({date}) => inHolidayWindow(date, fixedDate(date.getFullYear(), 11, 1)),
-    description:`Nov 1 (active ${HOLIDAY_BEFORE_DAYS} days before + the day).`
-  },
-  { id:"christmas", name:"Christmas", background:`christmas.${IMG_EXT}`, priority:99, type:"Holiday",
-    match: ({date}) => inHolidayWindow(date, fixedDate(date.getFullYear(), 12, 25)),
-    description:`Dec 25 (active ${HOLIDAY_BEFORE_DAYS} days before + the day).`
-  },
-  { id:"easter", name:"Easter", background:`easter.${IMG_EXT}`, priority:90, type:"Holiday",
-    match: ({date}) => inHolidayWindow(date, getEasterSunday(date.getFullYear())),
-    description:`Easter Sunday (computed, active ${HOLIDAY_BEFORE_DAYS} days before + the day).`
-  },
-  { id:"kings_official_birthday", name:"King's Official Birthday", background:`kings_official_birthday.${IMG_EXT}`, priority:92, type:"Holiday (NZ)",
-    match: ({date, place}) => {
-      if (place !== "NZ") return false;
-      const firstMonJune = nthWeekdayOfMonth(date.getFullYear(), 6, 1, 1); // Mon = 1
-      return inHolidayWindow(date, firstMonJune);
-    },
-    description:`NZ first Monday in June (active ${HOLIDAY_BEFORE_DAYS} days before + the day).`
-  },
-  { id:"matariki", name:"Matariki", background:`matariki.${IMG_EXT}`, priority:93, type:"Holiday (NZ)",
-    match: ({date, place}) => {
-      if (place !== "NZ") return false;
-      const target = getMatarikiDateNZ(date.getFullYear());
-      if (!target) return false;
-      return inHolidayWindow(date, target);
-    },
-    description:`NZ Matariki (works to 2060; uses known dates when available, otherwise a fallback rule).`
-  },
+    <h2>Make An Account</h2>
+    <div class="panel-card">
+      <input id="signupEmail" type="email" placeholder="Email" autocomplete="email" />
+      <input id="signupPassword" type="password" placeholder="Password" autocomplete="new-password" />
+      <button id="signupBtn">Make Account</button>
+      <button id="forgotBtn" class="ghost-btn">Forgotten password</button>
+      <p id="signupStatus" class="small-status"></p>
+    </div>
 
-  /* Seasons (hemisphere-aware) */
-  { id:"summer", name:"Summer", background:`summer.${IMG_EXT}`, priority:10, type:"Season",
-    match: ({date, place}) => getSeason(date, place) === "Summer",
-    description:"Season theme (hemisphere-aware)."
-  },
-  { id:"autumn", name:"Autumn", background:`autumn.${IMG_EXT}`, priority:10, type:"Season",
-    match: ({date, place}) => getSeason(date, place) === "Autumn",
-    description:"Season theme (hemisphere-aware)."
-  },
-  { id:"winter", name:"Winter", background:`winter.${IMG_EXT}`, priority:10, type:"Season",
-    match: ({date, place}) => getSeason(date, place) === "Winter",
-    description:"Season theme (hemisphere-aware)."
-  },
-  { id:"spring", name:"Spring", background:`spring.${IMG_EXT}`, priority:10, type:"Season",
-    match: ({date, place}) => getSeason(date, place) === "Spring",
-    description:"Season theme (hemisphere-aware)."
-  },
-];
+    <h2>Theme</h2>
+    <div class="panel-card">
+      <select id="themeSelect">
+        <option value="Default">Default</option>
+        <option value="Midnight">Midnight Ebook</option>
+        <option value="Parchment">Parchment Ebook</option>
+        <option value="HighContrast">High Contrast</option>
+        <option value="Ruby">Ruby Dark</option>
+      </select>
+    </div>
 
-/* Known Matariki dates (add more if you want).
-   Fallback still works up to 2060. */
-const MATARIKI_NZ_BY_YEAR = {
-  2022: "2022-06-24",
-  2023: "2023-07-14",
-  2024: "2024-06-28",
-  2025: "2025-06-20",
-  2026: "2026-07-10",
-  2027: "2027-06-25",
-  2028: "2028-07-14",
-  2029: "2029-07-06",
-  2030: "2030-06-21",
-};
+    <h2>Story Types</h2>
+    <div id="storyTypeFilters" class="panel-card check-list"></div>
+  </aside>
 
-/* =============================
-   DOM
-============================= */
-const card = document.getElementById("card");
-const navButtons = document.getElementById("navButtons");
+  <aside id="libraryPanel" class="library-panel" aria-label="Libary">
+    <div class="library-head">
+      <h2>Libary</h2>
+      <button class="close-panel" data-close-library>×</button>
+    </div>
+    <div id="libraryGrid" class="book-grid"></div>
+  </aside>
 
-const placeSelect  = document.getElementById("placeSelect");
-const dateInput    = document.getElementById("dateInput");
-const prevDayBtn   = document.getElementById("prevDay");
-const nextDayBtn   = document.getElementById("nextDay");
-const todayBtn     = document.getElementById("todayBtn");
+  <main id="app" class="app-shell">
+    <header class="topbar">
+      <div class="brand">BookFlix</div>
+      <div class="top-actions">
+        <button id="libraryBtn" class="top-btn">Libary</button>
+        <button id="menuBtn" class="sandwich" aria-label="Open options menu"><span></span><span></span><span></span></button>
+      </div>
+    </header>
 
-const smallThemeName = document.getElementById("smallThemeName");
-const bigThemeName   = document.getElementById("bigThemeName");
-const themeDescription = document.getElementById("themeDescription");
-const prettyDate     = document.getElementById("prettyDate");
-const dateShort      = document.getElementById("dateShort");
-const placeLabel     = document.getElementById("placeLabel");
-const placeShort     = document.getElementById("placeShort");
-const seasonValue    = document.getElementById("seasonValue");
-const priorityChip   = document.getElementById("priorityChip");
-const matchType      = document.getElementById("matchType");
+    <section id="hero" class="hero" aria-label="Featured stories"></section>
+    <div id="heroDots" class="dots"></div>
 
-const matchedCount   = document.getElementById("matchedCount");
-const winnerShort    = document.getElementById("winnerShort");
-const rulesCount     = document.getElementById("rulesCount");
-const matchExplain   = document.getElementById("matchExplain");
+    <section class="filters-row">
+      <label>Series
+        <select id="seriesFilter"><option value="All">All</option></select>
+      </label>
+      <label>Genres
+        <select id="genreFilter"><option value="All">All</option></select>
+      </label>
+    </section>
 
-const themeLevel     = document.getElementById("themeLevel");
-const vibeTime       = document.getElementById("vibeTime");
+    <section id="releaseSection" class="book-section">
+      <div class="section-title"><h2>Sorted By Release Date</h2></div>
+      <div id="releaseGrid" class="book-grid"></div>
+    </section>
 
-const chartPath = document.getElementById("chartPath");
-const chartDots = document.getElementById("chartDots");
+    <section id="genresContainer"></section>
+  </main>
 
-rulesCount.textContent = THEMES.length;
+  <div id="bookModal" class="modal hidden" role="dialog" aria-modal="true">
+    <button class="close-modal" data-close-modal>×</button>
+    <div id="bookModalBody" class="modal-body"></div>
+  </div>
 
-/* =============================
-   INTRO sequence
-============================= */
-window.addEventListener("load", () => {
-  setDateInput(new Date());
-  renderChart();
-  applyTheme(true);
+  <div id="reader" class="reader hidden" role="dialog" aria-modal="true">
+    <div class="reader-toolbar">
+      <button id="closeReader">Close</button>
+      <label>Text Size <input id="readerSize" type="range" min="14" max="28" value="18" /></label>
+      <label>Font
+        <select id="readerFont">
+          <option value="Georgia, serif">Serif</option>
+          <option value="Arial, sans-serif">Sans</option>
+          <option value="Verdana, sans-serif">Verdana</option>
+        </select>
+      </label>
+      <label>Theme
+        <select id="readerTheme">
+          <option value="reader-dark">Dark</option>
+          <option value="reader-paper">Paper</option>
+          <option value="reader-light">Light</option>
+        </select>
+      </label>
+      <span id="readerProgress">0%</span>
+    </div>
+    <article id="readerContent" class="reader-content"></article>
+  </div>
 
-  setTimeout(() => {
-    document.body.classList.remove("pre-intro");
-    document.body.classList.add("intro-blur");
-  }, 250);
-
-  setTimeout(() => {
-    document.body.classList.remove("intro-blur");
-    document.body.classList.add("intro-done");
-  }, 1150);
-});
-
-/* =============================
-   NAV buttons
-   - slide left OFF screen (2 seconds)
-   - then load page
-============================= */
-let isNavigating = false;
-
-navButtons.querySelectorAll("button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    if (isNavigating) return;
-    if (!document.body.classList.contains("intro-done")) return;
-
-    const url = btn.dataset.go || "page2.html";
-    isNavigating = true;
-
-    card.classList.add("disabled");
-    card.classList.add("exit-left");
-
-    // ✅ load page when movement finishes (2 seconds)
-    setTimeout(() => {
-      window.location.href = url;
-    }, 2000);
-  });
-});
-
-/* =============================
-   Day swapper
-============================= */
-placeSelect.addEventListener("change", () => applyTheme(true));
-dateInput.addEventListener("change", () => applyTheme(true));
-prevDayBtn.addEventListener("click", () => shiftDay(-1));
-nextDayBtn.addEventListener("click", () => shiftDay(1));
-todayBtn.addEventListener("click", () => { setDateInput(new Date()); applyTheme(true); });
-
-function shiftDay(delta){
-  const d = getDateInput();
-  d.setDate(d.getDate() + delta);
-  setDateInput(d);
-  applyTheme(true);
-}
-
-/* =============================
-   Theme engine
-============================= */
-function applyTheme(updateExplain){
-  const place = placeSelect.value;
-  const date  = getDateInput();
-
-  // ✅ keep inside 1900..2060 for testing (you can widen)
-  if (date.getFullYear() > 2060) date.setFullYear(2060);
-  if (date.getFullYear() < 1900) date.setFullYear(1900);
-
-  const ctx   = { date, place };
-
-  const matches = THEMES
-    .filter(t => safeMatch(t, ctx))
-    .sort((a,b) => (b.priority ?? 0) - (a.priority ?? 0));
-
-  const winner = matches[0] ?? {
-    id:"default",
-    name:"Default",
-    background:`winter.${IMG_EXT}`,
-    priority:0,
-    type:"Default",
-    description:"No theme matched; using default."
-  };
-
-  document.body.style.setProperty("--bg-image", `url("${IMG_DIR}/${winner.background}")`);
-
-  const pretty = date.toLocaleDateString(undefined, { weekday:"long", year:"numeric", month:"long", day:"numeric" });
-  const short  = date.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"2-digit" });
-  const season = getSeason(date, place);
-
-  smallThemeName.textContent = winner.name;
-  bigThemeName.textContent   = winner.name;
-  themeDescription.textContent = winner.description || "";
-
-  prettyDate.textContent = pretty;
-  dateShort.textContent  = short;
-
-  placeLabel.textContent = (place === "NZ") ? "New Zealand" : "Northern Hemisphere";
-  placeShort.textContent = (place === "NZ") ? "NZ" : "North";
-  seasonValue.textContent = season;
-
-  matchType.textContent = winner.type || "Theme";
-  priorityChip.textContent = `prio ${winner.priority ?? 0}`;
-
-  matchedCount.textContent = matches.length;
-  winnerShort.textContent = (winner.name || "—").split(" ")[0];
-
-  themeLevel.textContent = clamp(1, 5, Math.round((winner.priority ?? 0) / 20));
-  vibeTime.textContent = makeVibeTime(season, winner);
-
-  if (updateExplain){
-    if (matches.length === 0){
-      matchExplain.textContent = "No rules matched (default).";
-    } else if (matches.length === 1){
-      matchExplain.textContent = `Matched: ${matches[0].name}`;
-    } else {
-      matchExplain.textContent = `Matched ${matches.length}. Winner: ${winner.name}`;
-    }
-  }
-}
-
-function safeMatch(theme, ctx){
-  try { return typeof theme.match === "function" ? theme.match(ctx) : false; }
-  catch(e){ console.warn("Match error:", theme?.id, e); return false; }
-}
-
-/* =============================
-   Holiday window: 5 days BEFORE + the day
-============================= */
-function inHolidayWindow(date, target){
-  if (!target) return false;
-  const dayDiff = daysBetween(date, target); // date - target in days
-  // dayDiff negative = before target
-  return dayDiff >= -HOLIDAY_BEFORE_DAYS && dayDiff <= HOLIDAY_AFTER_DAYS;
-}
-
-function daysBetween(a, b){
-  const ua = utcMidnight(a);
-  const ub = utcMidnight(b);
-  return Math.round((ua - ub) / 86400000);
-}
-
-function utcMidnight(d){
-  return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
-}
-
-function fixedDate(year, month1to12, day){
-  return new Date(year, month1to12 - 1, day);
-}
-
-function clamp(min, max, v){ return Math.max(min, Math.min(max, v)); }
-
-function parseISO(iso){
-  if (!iso) return null;
-  const [y,m,d] = iso.split("-").map(Number);
-  return new Date(y, m-1, d);
-}
-
-/* =============================
-   Seasons
-============================= */
-function getSeason(date, place){
-  const m = date.getMonth()+1;
-  const south = (place === "NZ");
-  if (!south){
-    if ([3,4,5].includes(m)) return "Spring";
-    if ([6,7,8].includes(m)) return "Summer";
-    if ([9,10,11].includes(m)) return "Autumn";
-    return "Winter";
-  } else {
-    if ([9,10,11].includes(m)) return "Spring";
-    if ([12,1,2].includes(m)) return "Summer";
-    if ([3,4,5].includes(m)) return "Autumn";
-    return "Winter";
-  }
-}
-
-/* =============================
-   Easter (works any year)
-============================= */
-function getEasterSunday(year){
-  const a = year % 19;
-  const b = Math.floor(year / 100);
-  const c = year % 100;
-  const d = Math.floor(b / 4);
-  const e = b % 4;
-  const f = Math.floor((b + 8) / 25);
-  const g = Math.floor((b - f + 1) / 3);
-  const h = (19*a + b - d - g + 15) % 30;
-  const i = Math.floor(c / 4);
-  const k = c % 4;
-  const l = (32 + 2*e + 2*i - h - k) % 7;
-  const m = Math.floor((a + 11*h + 22*l) / 451);
-  const month = Math.floor((h + l - 7*m + 114) / 31);
-  const day = ((h + l - 7*m + 114) % 31) + 1;
-  return new Date(year, month-1, day);
-}
-
-/* =============================
-   King’s Birthday NZ
-============================= */
-function nthWeekdayOfMonth(year, month1to12, weekday, nth){
-  const first = new Date(year, month1to12 - 1, 1);
-  const offset = (7 + weekday - first.getDay()) % 7;
-  const day = 1 + offset + (nth - 1) * 7;
-  return new Date(year, month1to12 - 1, day);
-}
-
-/* =============================
-   Matariki NZ (to 2060)
-   - uses known table if present
-   - otherwise fallback: first Friday on/after June 20
-============================= */
-function getMatarikiDateNZ(year){
-  if (year > 2060) return null; // user asked up to 2060
-  const known = MATARIKI_NZ_BY_YEAR[year];
-  if (known) return parseISO(known);
-
-  // fallback rule:
-  const base = new Date(year, 5, 20); // June 20
-  return firstWeekdayOnOrAfter(base, 5); // Friday = 5
-}
-
-function firstWeekdayOnOrAfter(date, weekday){
-  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  while (d.getDay() !== weekday){
-    d.setDate(d.getDate() + 1);
-  }
-  return d;
-}
-
-/* =============================
-   Date input helpers
-============================= */
-function getDateInput(){
-  const [y,m,d] = dateInput.value.split("-").map(Number);
-  return new Date(y, m-1, d);
-}
-function setDateInput(date){
-  const y = date.getFullYear();
-  const m = String(date.getMonth()+1).padStart(2,"0");
-  const d = String(date.getDate()).padStart(2,"0");
-  dateInput.value = `${y}-${m}-${d}`;
-}
-
-/* =============================
-   Decorative chart
-============================= */
-function renderChart(){
-  const pts = [
-    {x: 80,  y: 72},
-    {x: 220, y: 92},
-    {x: 360, y: 55},
-    {x: 480, y: 84},
-    {x: 640, y: 58},
-    {x: 780, y: 78},
-    {x: 920, y: 66},
-  ];
-  let d = `M ${pts[0].x} ${pts[0].y}`;
-  for (let i=1;i<pts.length;i++){
-    const p = pts[i], prev = pts[i-1];
-    const cx = (prev.x + p.x) / 2;
-    d += ` C ${cx} ${prev.y}, ${cx} ${p.y}, ${p.x} ${p.y}`;
-  }
-  chartPath.setAttribute("d", d);
-
-  chartDots.innerHTML = "";
-  for (const p of pts){
-    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    c.setAttribute("cx", p.x);
-    c.setAttribute("cy", p.y);
-    c.setAttribute("r", 6);
-    c.setAttribute("fill", "rgba(255,255,255,0.92)");
-    c.setAttribute("stroke", "rgba(0,0,0,0.18)");
-    c.setAttribute("stroke-width", "1");
-    chartDots.appendChild(c);
-  }
-}
-
-function makeVibeTime(season, theme){
-  const base = (season === "Summer") ? 2 : (season === "Winter" ? 4 : 3);
-  const bump = clamp(0, 2, Math.round((theme.priority ?? 0) / 50));
-  return `${base + bump} hr ${15 * bump} min`;
-}
-</script>
+  <script src="stories.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
