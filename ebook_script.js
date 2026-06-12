@@ -358,7 +358,7 @@ function openBookModal(story, locked = false) {
   wrap.className = "modal-model-wrap";
   wrap.innerHTML = `
     <model-viewer class="book-model modal-model"
-      src="${MODEL_URL}"
+      src="${story.model}"
       camera-controls="false"
       disable-zoom
       interaction-prompt="none"
