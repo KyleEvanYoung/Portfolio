@@ -361,9 +361,10 @@ function openBookModal(story, locked = false) {
       src="${story.model}"
       camera-controls="false"
       disable-zoom
+	  disable-pan
       interaction-prompt="none"
       auto-rotate
-      rotation-per-second="45deg"
+      rotation-per-second="0deg"
       shadow-intensity="0.8"
       alt="${escapeAttr(story.Name)}">
     </model-viewer>
