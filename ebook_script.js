@@ -497,9 +497,9 @@ async function openReader(story) {
 
 function cleanReaderImages() {
   $("readerContent").querySelectorAll("img").forEach(img => {
-    img.style.width = "40%";
-    img.style.maxWidth = "300px";
-    img.style.height = "300px";
+    img.style.width = "auto";
+    img.style.maxHeight = "400px";
+    img.style.height = "40%";
     img.style.objectFit = "contain";
   });
 
