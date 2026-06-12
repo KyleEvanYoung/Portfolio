@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bamboozled With Jim Happer Client</title>
+  <link rel="stylesheet" href="Bamboozled With Jim Happer Style.css" />
+</head>
+<body data-page="client">
+  <main class="western-page client-page">
+    <section id="joinPanel" class="poster-card lobby-card">
+      <h1>Bamboozled With Jim Happer Client</h1>
+      <label for="gameCodeInput" class="small-label">Code For Game</label>
+      <input id="gameCodeInput" maxlength="4" class="western-input" placeholder="A7K2" />
+      <button id="enterCodeButton" class="western-button">Enter</button>
+      <p id="joinMessage" class="status-text"></p>
+    </section>
+
+    <section id="namePanel" class="poster-card lobby-card hidden">
+      <h1>Write Your Name on the Wanted Poster</h1>
+      <input id="playerNameInput" class="western-input" placeholder="Player name" />
+      <button id="saveNameButton" class="western-button">Join Game</button>
+      <p id="nameMessage" class="status-text"></p>
+    </section>
+
+    <section id="mvpPanel" class="poster-card lobby-card hidden">
+      <h1>MVP Calgoatys</h1>
+      <p>Pick 5 Calgoatys for the game.</p>
+      <div id="calgoatyDropdowns" class="dropdown-stack"></div>
+      <button id="lockCalgoatysButton" class="western-button">Lock In Calgoatys</button>
+      <p id="mvpMessage" class="status-text"></p>
+    </section>
+
+    <section id="waitingPanel" class="poster-card lobby-card hidden">
+      <h1>Waiting for Your Turn</h1>
+      <p id="waitingMessage">Keep your hat on. The host will call your name.</p>
+      <p id="clientScoreWaiting" class="score-single"></p>
+    </section>
+
+    <section id="clientPlayPanel" class="poster-card game-card hidden">
+      <h1 id="clientPlayerTitle"></h1>
+      <p id="clientOwnScore" class="score-single"></p>
+      <label for="clientCalgoatySelect" class="small-label">Choose a Calgoaty</label>
+      <select id="clientCalgoatySelect" class="western-input"></select>
+      <div id="clientPointButtons" class="point-button-row"></div>
+      <p id="clientPlayMessage" class="status-text"></p>
+    </section>
+
+    <section id="clientQuestionBox" class="question-overlay hidden">
+      <article class="wanted-card">
+        <p id="clientTimer" class="timer-text">60</p>
+        <h2 id="clientQuestionTitle"></h2>
+        <p id="clientQuestionPoints" class="points-text"></p>
+        <p id="clientQuestionText" class="question-text"></p>
+        <div id="clientAnswerButtons" class="answer-grid"></div>
+        <button id="lifelineButton" class="western-button lifeline-button">50 and 50</button>
+        <p id="clientQuestionMessage" class="status-text"></p>
+      </article>
+    </section>
+
+    <section id="clientEndScreen" class="poster-card lobby-card hidden">
+      <h1>Game Over</h1>
+      <p class="thanks-text">Thanks for Playing Bamboozled With Jim Happer</p>
+      <div id="clientFinalScores" class="final-scores"></div>
+    </section>
+  </main>
+
+  <script src="Bamboozled With Jim Happer.js"></script>
+</body>
+</html>

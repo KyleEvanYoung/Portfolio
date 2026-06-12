@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Key Ebook</title>
+  <link rel="icon" type="image/x-icon" href="logo.png">
+  <link rel="stylesheet" href="ebook_style.css" />
+
+  <!-- 3D book viewer. The app hides it and falls back to Wallpaper when it cannot load. -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <!-- Used to display Word .docx files safely as HTML. -->
+  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+
+  <!-- Reads Word .docx files in the browser. -->
+  <script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
+</head>
+<body>
+  <div id="preloader" class="preloader">
+    <img src="loader.gif" alt="Loading" onerror="this.style.display='none'" />
+    <p>Loading your stories...</p>
+  </div>
+
+  <div id="appShell" class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="BookFlix Home">Key Books</a>
+
+      <div class="top-actions">
+        <button id="libraryBtn" class="pill-button" type="button">Libary</button>
+        <button id="menuBtn" class="hamburger" type="button" aria-label="Open options menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </header>
+
+    <main id="mainContent" class="main-content">
+      <section id="hero" class="hero" aria-label="Featured stories">
+        <div class="hero-gradient"></div>
+        <div class="hero-copy">
+          <div id="heroType" class="eyebrow">Featured</div>
+          <h1 id="heroTitle">Loading...</h1>
+          <p id="heroDescription"></p>
+          <div class="hero-buttons">
+            <button id="heroReadBtn" class="primary-button" type="button">▶ Read Now</button>
+            <button id="heroAddBtn" class="round-button" type="button" aria-label="Add to library">＋</button>
+          </div>
+        </div>
+
+        <div class="hero-book-wrap" style="display: none;">
+          <model-viewer
+            id="heroModel"
+            class="book-model hero-model"
+            src="assets/stories/3d_book_for_website.glb"
+            camera-controls="false"
+            disable-zoom
+            interaction-prompt="none"
+            auto-rotate
+            rotation-per-second="18deg"
+            shadow-intensity="0.7"
+            exposure="0.85"
+            alt="3D book">
+          </model-viewer>
+          <img id="heroFallback" class="hero-fallback" alt="" hidden />
+        </div>
+
+        <div id="heroDots" class="hero-dots" aria-label="Slide controls"></div>
+      </section>
+
+      <section class="filters-panel">
+        <div class="filter-row">
+          <label>
+            Search
+            <input id="searchInput" type="search" placeholder="Search stories..." />
+          </label>
+          <label>
+            Genre
+            <select id="genreFilter"><option value="all">All Genres</option></select>
+          </label>
+          <label>
+            Series
+            <select id="seriesFilter"><option value="all">All Series</option></select>
+          </label>
+        </div>
+      </section>
+
+      <section id="upcomingSection" class="story-section" hidden>
+        <div class="section-title-row">
+          <h2>Coming Soon</h2>
+        </div>
+        <div id="upcomingGrid" class="book-row"></div>
+      </section>
+
+      <section id="releaseSection" class="story-section">
+        <div class="section-title-row">
+          <h2>Sorted By Release Date</h2>
+        </div>
+        <div id="releaseGrid" class="book-row"></div>
+      </section>
+
+      <section id="genresContainer"></section>
+    </main>
+
+    <aside id="optionsMenu" class="side-menu" aria-label="options_menu">
+      <div class="side-menu-head">
+        <h2>Options</h2>
+        <button id="closeMenuBtn" type="button" aria-label="Close options menu">×</button>
+      </div>
+
+      <section class="menu-card" id="loginCard">
+        <h3>Login</h3>
+        <input id="loginEmail" type="email" placeholder="Email" autocomplete="email" />
+        <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password" />
+        <button id="loginButton" class="primary-button full" type="button">Login</button>
+        <p id="loginStatus" class="status"></p>
+      </section>
+
+      <section class="menu-card">
+        <h3>Make An Account</h3>
+        <input id="newEmail" type="email" placeholder="Email" autocomplete="email" />
+        <input id="newPassword" type="password" placeholder="Password" autocomplete="new-password" />
+        <button id="makeAccountButton" class="primary-button full" type="button">Make Account</button>
+        <button id="forgotPasswordButton" class="ghost-button full" type="button">Forgotten password</button>
+      </section>
+
+      <section class="menu-card">
+        <h3>Theme</h3>
+        <select id="themeSelect">
+          <option value="Default">Default</option>
+          <option value="Midnight Reader">Midnight Reader</option>
+          <option value="Warm Ebook">Warm Ebook</option>
+          <option value="Paper White">Paper White</option>
+          <option value="Crimson Dark">Crimson Dark</option>
+        </select>
+      </section>
+
+      <section class="menu-card">
+        <h3>Story Types</h3>
+        <label class="toggle"><input type="checkbox" data-type="FlashFiction" checked /> Flash Fiction (1 to 5 pages)</label>
+        <label class="toggle"><input type="checkbox" data-type="ShortStory" checked /> Short Story (5 to 25 pages)</label>
+        <label class="toggle"><input type="checkbox" data-type="Novelette" checked /> Novelette (25 to 60 pages)</label>
+        <label class="toggle"><input type="checkbox" data-type="Novella" checked /> Novella (60 to 150 pages)</label>
+        <label class="toggle"><input type="checkbox" data-type="Novel" checked /> Novel (150 pages)</label>
+      </section>
+
+      <section class="menu-card small-text" style="display: none;">
+        <h3>Device Code</h3>
+        <code id="deviceCodeText">Loading...</code>
+      </section>
+    </aside>
+  </div>
+
+  <section id="libraryOverlay" class="overlay" hidden>
+    <div class="overlay-panel">
+      <div class="overlay-head">
+        <h2>Libary</h2>
+        <button id="closeLibraryBtn" type="button" aria-label="Close library">×</button>
+      </div>
+      <div id="libraryGrid" class="book-grid"></div>
+    </div>
+  </section>
+
+  <section id="bookModal" class="overlay" hidden>
+    <div class="book-modal">
+      <button id="closeBookModalBtn" class="modal-close" type="button" aria-label="Close book">×</button>
+      <div id="modalVisual" class="modal-visual"></div>
+      <div class="modal-copy">
+        <p id="modalType" class="eyebrow"></p>
+        <h2 id="modalTitle"></h2>
+        <p id="modalDesc"></p>
+        <p id="modalMeta" class="muted"></p>
+        <div id="modalCountdown" class="countdown"></div>
+        <div class="modal-buttons">
+          <button id="modalEbookBtn" class="primary-button" type="button">Ebook</button>
+          <button id="modalPdfBtn" class="primary-button" type="button">PDF</button>
+          <button id="modalLibraryBtn" class="ghost-button" type="button">Add To Libary</button>
+          <button id="modalReadBtn" class="primary-button" type="button">Read Now</button>
+          <button id="modalGoogleCalBtn" class="ghost-button" type="button" hidden>Add Google Calendar</button>
+          <button id="modalAppleCalBtn" class="ghost-button" type="button" hidden>Download Apple Calendar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="readerOverlay" class="reader-overlay" hidden>
+    <div class="reader-toolbar">
+      <button id="closeReaderBtn" type="button">← Back</button>
+      <strong id="readerTitle">Reader</strong>
+      <label>Text Size <input id="readerSize" type="range" min="14" max="28" value="18" /></label>
+      <label>Font
+        <select id="readerFont">
+          <option value="Georgia, serif">Serif</option>
+          <option value="Arial, sans-serif">Sans</option>
+          <option value="'Courier New', monospace">Mono</option>
+        </select>
+      </label>
+      <label>Background <input id="readerBg" type="color" value="#111111" /></label>
+      <label>Text <input id="readerColor" type="color" value="#eeeeee" /></label>
+    </div>
+    <article id="readerContent" class="reader-content">
+      <p>Loading story...</p>
+    </article>
+  </section>
+
+  <script src="ebook_stories.js"></script>
+  <script src="ebook_script.js"></script>
+</body>
+</html>

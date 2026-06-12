@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bamboozled With Jim Happer Host</title>
+  <link rel="stylesheet" href="Bamboozled With Jim Happer Style.css" />
+</head>
+<body data-page="host">
+  <main class="western-page host-page">
+    <section id="hostLobby" class="poster-card lobby-card">
+      <h1>Bamboozled With Jim Happer Host</h1>
+      <p class="small-label">Game Code</p>
+      <div id="hostCode" class="game-code">----</div>
+      <p id="hostStatus" class="status-text">Saddling up...</p>
+      <h2>Joined Players</h2>
+      <div id="hostPlayers" class="player-row"></div>
+    </section>
+
+    <img id="hostClientImage" class="corner-image" src="/assets/bamboozled_with_jim/client_image.png" alt="Bamboozled client helper" />
+
+    <section id="introStage" class="intro-stage hidden">
+      <div id="topPlayers" class="player-row top-player-row"></div>
+      <img class="main-logo" src="/assets/bamboozled_with_jim/Logo.png" alt="Bamboozled With Jim Happer logo" />
+      <h2 id="introText" class="intro-text"></h2>
+    </section>
+
+    <section id="gameBoardSection" class="game-section hidden">
+      <div class="score-bar">
+        <div id="boardPlayers" class="player-row"></div>
+        <div id="scoreBoard" class="score-row"></div>
+      </div>
+      <img class="board-logo" src="/assets/bamboozled_with_jim/Logo.png" alt="Bamboozled logo" />
+      <h1>Bamboozled With Jim Happer</h1>
+      <p id="hostBoardStatus" class="status-text"></p>
+      <div id="gameBoard" class="question-board"></div>
+    </section>
+
+    <section id="questionDisplay" class="question-overlay hidden">
+      <article class="wanted-card">
+        <p id="hostTimer" class="timer-text">60</p>
+        <h2 id="questionTitle"></h2>
+        <p id="questionPoints" class="points-text"></p>
+        <p id="questionText" class="question-text"></p>
+        <p id="hostStealNotice" class="steal-notice hidden">Steal Available</p>
+      </article>
+    </section>
+
+    <section id="endGameScreen" class="question-overlay hidden">
+      <article class="wanted-card final-card">
+        <h1>Final Scores</h1>
+        <div id="finalScores" class="final-scores"></div>
+        <h2 id="winnerText"></h2>
+        <p class="thanks-text">Thanks for Playing Bamboozled With Jim Happer</p>
+      </article>
+    </section>
+  </main>
+
+  <script src="Bamboozled With Jim Happer.js"></script>
+</body>
+</html>
