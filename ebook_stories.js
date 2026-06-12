@@ -17,6 +17,7 @@ const Storys = [
     Ebookcover: "assets/stories/the_forgotten_kingdom/bookcover.png",
     Worddoc: "assets/stories/the_forgotten_kingdom/ebook.docx",
     Gif: "assets/stories/the_forgotten_kingdom/bookcover.png",
+	model: "assets/stories/the_forgotten_kingdom/bookmodel.glb",
     Series: "Elseworlds",
     StoryType: "ShortStory",
     ReleaseDate: "2025-01-23"
@@ -35,6 +36,7 @@ const Storys = [
     Gif: "assets/stories/the_ertenral_ones_the_city_of_roanina/bookcover.png",
     Series: "The Ertenral Ones",
     Worddoc: "assets/stories/the_ertenral_ones_the_city_of_roanina/ebook.docx",
+	model: "assets/stories/the_ertenral_ones_the_city_of_roanina/bookmodel.glb",
     StoryType: "ShortStory",
     ReleaseDate: "2025-01-23"
   },
@@ -51,6 +53,7 @@ const Storys = [
     Ebookcover: "assets/stories/the_interrogation/bookcover.png",
     Worddoc: "assets/stories/the_interrogation/ebook.docx",
     Gif: "assets/stories/the_interrogation/bookcover.png",
+	model: "assets/stories/the_interrogation/bookmodel.glb",
     Series: "Elseworlds",
     StoryType: "FlashFiction",
     ReleaseDate: "2027-02-23"
@@ -69,6 +72,7 @@ const Storys = [
     Gif: "assets/stories/the_puzzle_and_the_dragon/bookcover.png",
     Series: "Elseworlds",
     Worddoc: "assets/stories/the_puzzle_and_the_dragon/ebook.docx",
+    model: "assets/stories/the_puzzle_and_the_dragon/bookmodel.glb",
     StoryType: "FlashFiction",
     ReleaseDate: "2025-01-23"
   }
