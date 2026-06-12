@@ -325,7 +325,7 @@ function bookCard(story, options = {}) {
 
   card.innerHTML = `
     <div class="cover-wrap">
-      <img class="cover" src="${escapeAttr(story.Ebookcover || story.Wallpaper)}" alt="${escapeAttr(story.Name)} cover" loading="lazy" />
+      <img class="cover" src="${escapeAttr(story.Port || story.Wallpaper)}" alt="${escapeAttr(story.Name)} cover" loading="lazy" />
       ${inLib ? `<span class="badge">In Libary</span>` : ""}
       ${locked ? `<span class="badge dark">Locked</span>` : ""}
     </div>

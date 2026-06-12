@@ -372,7 +372,7 @@ select {
 
 .cover-wrap {
   position: relative;
-  height: 230px;
+  height: 300px;
   border-radius: 8px;
   overflow: hidden;
   background: var(--panel-2);
