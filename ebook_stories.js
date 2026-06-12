@@ -15,7 +15,7 @@ const Storys = [
     Epub: "assets/stories/the_forgotten_kingdom/Etenral Ones_ The City Of Roanina, The - Kyle Young.epub",
     Ebookcover: "assets/stories/the_forgotten_kingdom/bookcover.png",
     Worddoc: "assets/stories/the_forgotten_kingdom/ebook.docx",
-    Gif: "assets/stories/the_forgotten_kingdom/ebookvid.webm",
+    Gif: "assets/stories/the_forgotten_kingdom/bookcover.png",
     Series: "Elseworlds",
     StoryType: "ShortStory",
     ReleaseDate: "2025-01-23"
