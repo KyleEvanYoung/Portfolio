@@ -256,7 +256,7 @@ function drawHeroSlide() {
   <model-viewer
             id="heroModel"
             class="book-model hero-model"
-            src="${story.model}"
+            src="assets/stories/the_forgotten_kingdom/bookmodel.glb"
             camera-controls="false"
             disable-zoom
             interaction-prompt="none"
