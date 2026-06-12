@@ -252,21 +252,7 @@ function drawHeroSlide() {
 
   $("hero").style.backgroundImage = `url("${story.Wallpaper}")`;
   $("heroType").textContent = story.StoryType || "Featured";
-  $("put3dModel").textContent = `
-  <model-viewer
-            id="heroModel"
-            class="book-model hero-model"
-            src="assets/stories/the_forgotten_kingdom/bookmodel.glb"
-            camera-controls="false"
-            disable-zoom
-            interaction-prompt="none"
-            auto-rotate
-            rotation-per-second="0deg"
-            shadow-intensity="0.7"
-            exposure="0.85"
-            alt="3D book">
-          </model-viewer>
-  `;
+  $("put3dModel").textContent = `<model-viewer id="heroModel" class="book-model hero-model" src="assets/stories/the_forgotten_kingdom/bookmodel.glb" camera-controls="false" disable-zoom interaction-prompt="none" auto-rotate rotation-per-second="0deg" shadow-intensity="0.7" exposure="0.85" alt="3D book"> </model-viewer> `;
   $("heroTitle").textContent = story.Name;
   $("heroDescription").textContent = story.Description || "";
   $("heroFallback").src = story.Ebookcover || story.Wallpaper || "";
