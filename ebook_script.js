@@ -6,7 +6,7 @@
  * Paste your deployed Google Apps Script Web App URL below.
  * Leave it empty to run the website without Google Sheet syncing.
  */
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwUmuj0KB5TApqfXR7nfHIV9j1QYxizFTjKZkJ2Nt3diAYgNkNLfjmGe-aGnsUSiBpFAQ/exec"; // Example: "https://script.google.com/macros/s/AKfycb.../exec"
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwFtVs-FzrBjF-5hy42P0_BGTQF_kH89b9FJpYqDte0KXrb4Qvtub7Qyc-UsuyUqNXZyQ/exec"; // Example: "https://script.google.com/macros/s/AKfycb.../exec"
 
 const MODEL_URL = "assets/stories/3d_book_for_website.glb";
 const PRELOAD_TIMEOUT_MS = 6000;

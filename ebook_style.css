@@ -192,7 +192,7 @@ button {
 .hero {
   position: relative;
   overflow: hidden;
-  min-height: 420px;
+  height: 420px;
   border-radius: 22px;
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
@@ -228,9 +228,9 @@ button {
 
 .hero h1 {
   margin: 10px 0;
-  max-width: 700px;
+  max-width: 80%;
   font-family: Georgia, serif;
-  font-size: clamp(2.6rem, 8vw, 7rem);
+  font-size: 2.6rem;
   line-height: 0.92;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -656,7 +656,7 @@ button:disabled {
   }
 
   .hero h1 {
-    font-size: 3rem;
+    font-size: 40%;
   }
 
   .hero-book-wrap {
