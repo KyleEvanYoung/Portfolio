@@ -250,7 +250,7 @@ const Storys = [
     Port: "assets/stories/paradox_the_traveller/background.png",
     Wallpaper: "assets/stories/paradox_the_traveller/wallpaper.png",
     Pdfstory: "assets/stories/paradox_the_traveller/pdf.pdf",
-    Epub: "assets/stories/paradox_the_traveller/Paradox The Traveller Chapter 1.epub",
+    Epub: "assets/stories/paradox_the_traveller/Paradox The Traveller Echoes Of A Kingdom Chapter 1 - Kyle Young",
     Ebookcover: "assets/stories/paradox_the_traveller/bookcover.png",
     Gif: "assets/stories/paradox_the_traveller/bookcover.png",
     Series: "Paradox",
