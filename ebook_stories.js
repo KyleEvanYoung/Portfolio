@@ -5,51 +5,69 @@
 
 const Storys = [
 	{
+    //The Terribly Long Horrible No Good Night At Memory Lane
+    Name: "The Terribly Long Horrible No Good Night At Memory Lane",
+    Genres: ["Thriller", "Sci-Fi"],
+    Description: "At midnight, Memory Lane Café looks like an ordinary old American-style diner: neon lights, tired customers, late-night fries, and nothing out of place. Then Remi and Nyx walk in with futuristic weapons and a terrible warning: one person in the café will start the chain reaction that burns the world.",
+    Logo: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/logo_black.svg",
+    Port: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/background.png",
+    Wallpaper: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/wallpaper.png",
+    Pdfstory: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/pdf.pdf",
+    Epub: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/.epub",
+    Ebookcover: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/bookcover.png",
+    Gif: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/bookcover.png",
+    Series: "Elseworlds",
+    Worddoc: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/ebook.docx",
+	model: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/bookmodel.glb",
+    StoryType: "Novelette",
+    ReleaseDate: "2098-01-23"
+    },
+	{
     //Paradox: The Haunting Of The Heddal Stave Church
     Name: "Paradox: The Haunting Of The Heddal Stave Church",
-    Genres: ["Fantasy", "Horror"],
-    Description: "",
+    Genres: ["Dark Fantasy", "Supernatural", "Horror"],
+    Description: "In 1909 Norway, Mary’s eighteenth birthday turns into a nightmare when she, her siblings, and their friends become lost in freezing fog after a party. With no safe way home, they enter Heddal Stave Church",
     Logo: "assets/stories/paradox_the_haunting_of_the_heddal_stave_church/logo_black.svg",
     Port: "assets/stories/paradox_the_haunting_of_the_heddal_stave_church/background.png",
     Wallpaper: "assets/stories/paradox_the_haunting_of_the_heddal_stave_church/wallpaper.png",
     Pdfstory: "assets/stories/paradox_the_haunting_of_the_heddal_stave_church/pdf.pdf",
-    Epub: "assets/stories/paradox_the_haunting_of_the_heddal_stave_church/.epub",
+    Epub: "assets/stories/paradox_the_haunting_of_the_heddal_stave_church/The Haunting Of The Heddal Stave Church - Kyle Evan Young.epub",
     Ebookcover: "assets/stories/paradox_the_haunting_of_the_heddal_stave_church/bookcover.png",
     Gif: "assets/stories/paradox_the_haunting_of_the_heddal_stave_church/bookcover.png",
     Series: "Paradox",
     Worddoc: "assets/stories/paradox_the_haunting_of_the_heddal_stave_church/ebook.docx",
 	model: "assets/stories/paradox_the_haunting_of_the_heddal_stave_church/bookmodel.glb",
-    StoryType: "ShortStory",
+    StoryType: "Novelette",
     ReleaseDate: "2098-01-23"
   },
 	{
     //Anatomy Of A Mans Demons
     Name: "Anatomy Of A Mans Demons",
-    Genres: ["Fantasy", "Horror"],
-    Description: "",
+    Genres: ["Mystery", "Thriller", "Horror"],
+    Description: "When the girls vanish and the red circle appears again, the survivors realise this was never random.",
     Logo: "assets/stories/anatomy_of_a_mans_demons/logo_black.svg",
     Port: "assets/stories/anatomy_of_a_mans_demons/background.png",
     Wallpaper: "assets/stories/anatomy_of_a_mans_demons/wallpaper.png",
     Pdfstory: "assets/stories/anatomy_of_a_mans_demons/pdf.pdf",
-    Epub: "assets/stories/anatomy_of_a_mans_demons/.epub",
+    Epub: "assets/stories/anatomy_of_a_mans_demons/Anatomy Of A Mans Demons - Kyle Evan Young, Zack.epub",
     Ebookcover: "assets/stories/anatomy_of_a_mans_demons/bookcover.png",
     Gif: "assets/stories/anatomy_of_a_mans_demons/bookcover.png",
     Series: "Elseworlds",
     Worddoc: "assets/stories/anatomy_of_a_mans_demons/ebook.docx",
 	model: "assets/stories/anatomy_of_a_mans_demons/bookmodel.glb",
-    StoryType: "ShortStory",
+    StoryType: "Novella",
     ReleaseDate: "2098-01-23"
   },
 	{
     //The Etenral Ones: The Impossible Choice
     Name: "The Etenral Ones: The Impossible Choice",
     Genres: ["Fantasy", "Drama"],
-    Description: "",
+    Description: "On a fog-choked road, Michael’s night freezes in place. His car says he is still driving, but the trees, the fog, the music, and even time itself have stopped. Then he meets Janet — another driver trapped in the same impossible moment.",
     Logo: "assets/stories/the_ertenral_ones_the_impossible_choice/logo_black.svg",
     Port: "assets/stories/the_ertenral_ones_the_impossible_choice/background.png",
     Wallpaper: "assets/stories/the_ertenral_ones_the_impossible_choice/wallpaper.png",
     Pdfstory: "assets/stories/the_ertenral_ones_the_impossible_choice/pdf.pdf",
-    Epub: "assets/stories/the_ertenral_ones_the_impossible_choice/.epub",
+    Epub: "assets/stories/the_ertenral_ones_the_impossible_choice/Eternal Ones_ The Impossible Choice - Kyle E Young.epub",
     Ebookcover: "assets/stories/the_ertenral_ones_the_impossible_choice/bookcover.png",
     Gif: "assets/stories/the_ertenral_ones_the_impossible_choice/bookcover.png",
     Series: "The Eternal Ones",
@@ -62,7 +80,7 @@ const Storys = [
     //The Eternal Ones: Cruelty Of Compassion
     Name: "The Eternal Ones: Cruelty Of Compassion",
     Genres: ["Fantasy", "Drama"],
-    Description: "",
+    Description: "After a act of kindness changes a man’s life.",
     Logo: "assets/stories/the_eternal_ones_cruelty_of_compassion/logo_black.svg",
     Port: "assets/stories/the_eternal_ones_cruelty_of_compassion/background.png",
     Wallpaper: "assets/stories/the_eternal_ones_cruelty_of_compassion/wallpaper.png",
@@ -76,24 +94,6 @@ const Storys = [
     StoryType: "ShortStory",
     ReleaseDate: "2098-01-23"
   },
-	{
-    //The Terribly Long Horrible No Good Night At Memory Lane
-    Name: "The Terribly Long Horrible No Good Night At Memory Lane",
-    Genres: ["Action", "Sci-Fi"],
-    Description: "",
-    Logo: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/logo_black.svg",
-    Port: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/background.png",
-    Wallpaper: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/wallpaper.png",
-    Pdfstory: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/pdf.pdf",
-    Epub: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/.epub",
-    Ebookcover: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/bookcover.png",
-    Gif: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/bookcover.png",
-    Series: "Elseworlds",
-    Worddoc: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/ebook.docx",
-	model: "assets/stories/the_terribly_long_horrible_no_good_night_at_memory_lane/bookmodel.glb",
-    StoryType: "ShortStory",
-    ReleaseDate: "2098-01-23"
-  },
   {
     // THe Etenral Ones: The City Of Roanina
     Name: "The City Of Roanina",
@@ -103,15 +103,16 @@ const Storys = [
     Port: "assets/stories/the_ertenral_ones_the_city_of_roanina/background.png",
     Wallpaper: "assets/stories/the_ertenral_ones_the_city_of_roanina/wallpaper.png",
     Pdfstory: "assets/stories/the_ertenral_ones_the_city_of_roanina/pdf.pdf",
-    Epub: "assets/stories/the_ertenral_ones_the_city_of_roanina/Etenral Ones_ The City Of Roanina, The - Kyle Young.epub",
+    Epub: "assets/stories/the_ertenral_ones_the_city_of_roanina/The Etenral Ones_ The City Of Roanina, - Kyle Young.epub",
     Ebookcover: "assets/stories/the_ertenral_ones_the_city_of_roanina/bookcover.png",
     Gif: "assets/stories/the_ertenral_ones_the_city_of_roanina/bookcover.png",
     Series: "The Eternal Ones",
     Worddoc: "assets/stories/the_ertenral_ones_the_city_of_roanina/ebook.docx",
 	model: "assets/stories/the_ertenral_ones_the_city_of_roanina/bookmodel.glb",
-    StoryType: "ShortStory",
+    StoryType: "Novelette",
     ReleaseDate: "2098-01-23"
   },
+  
   
   
   
