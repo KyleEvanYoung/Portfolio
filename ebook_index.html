@@ -16,7 +16,7 @@
   <!-- Reads Word .docx files in the browser. -->
   <script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
 </head>
-<body>
+<body style="overflow-x: hidden; /* Hide scrollbars */">
   <div id="preloader" class="preloader">
     <img src="loader.gif" alt="Loading" onerror="this.style.display='none'" />
     <p>Loading your stories...</p>
@@ -32,6 +32,55 @@
           <span></span><span></span><span></span>
         </button>
       </div>
+	  
+	  <aside id="optionsMenu" class="side-menu" aria-label="options_menu">
+      <div class="side-menu-head">
+        <h2>Options</h2>
+        <button id="closeMenuBtn" type="button" aria-label="Close options menu">×</button>
+      </div>
+
+      <section class="menu-card" id="loginCard">
+        <h3>Login</h3>
+        <input id="loginEmail" type="email" placeholder="Email" autocomplete="email" />
+        <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password" />
+        <button id="loginButton" class="primary-button full" type="button">Login</button>
+        <p id="loginStatus" class="status"></p>
+      </section>
+
+      <section class="menu-card">
+        <h3>Make An Account</h3>
+        <input id="newEmail" type="email" placeholder="Email" autocomplete="email" />
+        <input id="newPassword" type="password" placeholder="Password" autocomplete="new-password" />
+        <button id="makeAccountButton" class="primary-button full" type="button">Make Account</button>
+        <button id="forgotPasswordButton" class="ghost-button full" type="button">Forgotten password</button>
+      </section>
+
+      <section class="menu-card">
+        <h3>Theme</h3>
+        <select id="themeSelect">
+          <option value="Default">Default</option>
+          <option value="Midnight Reader">Midnight Reader</option>
+          <option value="Warm Ebook">Warm Ebook</option>
+          <option value="Paper White">Paper White</option>
+          <option value="Crimson Dark">Crimson Dark</option>
+        </select>
+      </section>
+
+      <section class="menu-card">
+        <h3>Story Types</h3>
+        <label class="toggle"><input type="checkbox" data-type="FlashFiction" checked /> Flash Fiction (1 to 5 pages)</label>
+        <label class="toggle"><input type="checkbox" data-type="ShortStory" checked /> Short Story (5 to 25 pages)</label>
+        <label class="toggle"><input type="checkbox" data-type="Novelette" checked /> Novelette (25 to 60 pages)</label>
+        <label class="toggle"><input type="checkbox" data-type="Novella" checked /> Novella (60 to 150 pages)</label>
+        <label class="toggle"><input type="checkbox" data-type="Novel" checked /> Novel (150 pages)</label>
+      </section>
+
+      <section class="menu-card small-text" style="display: none;">
+        <h3>Device Code</h3>
+        <code id="deviceCodeText">Loading...</code>
+      </section>
+    </aside>
+	  
     </header>
 
     <main id="mainContent" class="main-content">
@@ -90,53 +139,7 @@
       <section id="genresContainer"></section>
     </main>
 
-    <aside id="optionsMenu" class="side-menu" aria-label="options_menu">
-      <div class="side-menu-head">
-        <h2>Options</h2>
-        <button id="closeMenuBtn" type="button" aria-label="Close options menu">×</button>
-      </div>
-
-      <section class="menu-card" id="loginCard">
-        <h3>Login</h3>
-        <input id="loginEmail" type="email" placeholder="Email" autocomplete="email" />
-        <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password" />
-        <button id="loginButton" class="primary-button full" type="button">Login</button>
-        <p id="loginStatus" class="status"></p>
-      </section>
-
-      <section class="menu-card">
-        <h3>Make An Account</h3>
-        <input id="newEmail" type="email" placeholder="Email" autocomplete="email" />
-        <input id="newPassword" type="password" placeholder="Password" autocomplete="new-password" />
-        <button id="makeAccountButton" class="primary-button full" type="button">Make Account</button>
-        <button id="forgotPasswordButton" class="ghost-button full" type="button">Forgotten password</button>
-      </section>
-
-      <section class="menu-card">
-        <h3>Theme</h3>
-        <select id="themeSelect">
-          <option value="Default">Default</option>
-          <option value="Midnight Reader">Midnight Reader</option>
-          <option value="Warm Ebook">Warm Ebook</option>
-          <option value="Paper White">Paper White</option>
-          <option value="Crimson Dark">Crimson Dark</option>
-        </select>
-      </section>
-
-      <section class="menu-card">
-        <h3>Story Types</h3>
-        <label class="toggle"><input type="checkbox" data-type="FlashFiction" checked /> Flash Fiction (1 to 5 pages)</label>
-        <label class="toggle"><input type="checkbox" data-type="ShortStory" checked /> Short Story (5 to 25 pages)</label>
-        <label class="toggle"><input type="checkbox" data-type="Novelette" checked /> Novelette (25 to 60 pages)</label>
-        <label class="toggle"><input type="checkbox" data-type="Novella" checked /> Novella (60 to 150 pages)</label>
-        <label class="toggle"><input type="checkbox" data-type="Novel" checked /> Novel (150 pages)</label>
-      </section>
-
-      <section class="menu-card small-text" style="display: none;">
-        <h3>Device Code</h3>
-        <code id="deviceCodeText">Loading...</code>
-      </section>
-    </aside>
+    
   </div>
 
   <section id="libraryOverlay" class="overlay" hidden>
