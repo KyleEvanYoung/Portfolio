@@ -1,0 +1,1554 @@
+<!doctype html>
+<html lang="en">
+
+<style>
+* {box-sizing: border-box;}
+
+.img-comp-container {
+  position: relative;
+  height: 200px; /*should be the same height as the images*/
+}
+
+.img-comp-img {
+  position: absolute;
+  width: auto;
+  height: auto;
+  overflow:hidden;
+}
+
+.img-comp-img img {
+  display:block;
+  vertical-align:middle;
+}
+
+.img-comp-slider {
+  position: absolute;
+  z-index:9;
+  cursor: ew-resize;
+  /*set the appearance of the slider:*/
+  width: 40px;
+  height: 40px;
+  background-color: #2196F3;
+  opacity: 0.7;
+  border-radius: 50%;
+}
+</style>
+<script>
+function initComparisons() {
+  var x, i;
+  /*find all elements with an "overlay" class:*/
+  x = document.getElementsByClassName("img-comp-overlay");
+  for (i = 0; i < x.length; i++) {
+    /*once for each "overlay" element:
+    pass the "overlay" element as a parameter when executing the compareImages function:*/
+    compareImages(x[i]);
+  }
+  function compareImages(img) {
+    var slider, img, clicked = 0, w, h;
+    /*get the width and height of the img element*/
+    w = img.offsetWidth;
+    h = img.offsetHeight;
+    /*set the width of the img element to 50%:*/
+    img.style.width = (w / 2) + "px";
+    /*create slider:*/
+    slider = document.createElement("DIV");
+    slider.setAttribute("class", "img-comp-slider");
+    /*insert slider*/
+    img.parentElement.insertBefore(slider, img);
+    /*position the slider in the middle:*/
+    slider.style.top = (h / 2) - (slider.offsetHeight / 2) + "px";
+    slider.style.left = (w / 2) - (slider.offsetWidth / 2) + "px";
+    /*execute a function when the mouse button is pressed:*/
+    slider.addEventListener("mousedown", slideReady);
+    /*and another function when the mouse button is released:*/
+    window.addEventListener("mouseup", slideFinish);
+    /*or touched (for touch screens:*/
+    slider.addEventListener("touchstart", slideReady);
+    /*and released (for touch screens:*/
+    window.addEventListener("touchend", slideFinish);
+    function slideReady(e) {
+      /*prevent any other actions that may occur when moving over the image:*/
+      e.preventDefault();
+      /*the slider is now clicked and ready to move:*/
+      clicked = 1;
+      /*execute a function when the slider is moved:*/
+      window.addEventListener("mousemove", slideMove);
+      window.addEventListener("touchmove", slideMove);
+    }
+    function slideFinish() {
+      /*the slider is no longer clicked:*/
+      clicked = 0;
+    }
+    function slideMove(e) {
+      var pos;
+      /*if the slider is no longer clicked, exit this function:*/
+      if (clicked == 0) return false;
+      /*get the cursor's x position:*/
+      pos = getCursorPos(e)
+      /*prevent the slider from being positioned outside the image:*/
+      if (pos < 0) pos = 0;
+      if (pos > w) pos = w;
+      /*execute a function that will resize the overlay image according to the cursor:*/
+      slide(pos);
+    }
+    function getCursorPos(e) {
+      var a, x = 0;
+      e = (e.changedTouches) ? e.changedTouches[0] : e;
+      /*get the x positions of the image:*/
+      a = img.getBoundingClientRect();
+      /*calculate the cursor's x coordinate, relative to the image:*/
+      x = e.pageX - a.left;
+      /*consider any page scrolling:*/
+      x = x - window.pageXOffset;
+      return x;
+    }
+    function slide(x) {
+      /*resize the image:*/
+      img.style.width = x + "px";
+      /*position the slider:*/
+      slider.style.left = img.offsetWidth - (slider.offsetWidth / 2) + "px";
+    }
+  }
+}
+</script>
+
+
+<style>
+
+	.logobackground {
+      width: 30%;
+      background-image: url("assets/ui_elements/logo.svg");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+	
+	.roof {
+	  width: 100%;
+	  height: 800px;
+	  margin: 0px;
+
+		clip-path:polygon(
+			100% 0, 
+			100% 100%, 
+			50% 75%, 
+			0 100%, 
+			0 0);
+	  );
+	}
+	
+	.contact {
+	  width: 100%;
+	  height: 800px;
+	  margin: 0px;
+	  
+
+	  clip-path: polygon(50% 0%, 100% 21%, 100% 100%, 0 100%, 0 20%);
+	  );
+	}
+	
+	#box {
+		background-color: red;
+    }
+</style>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    :root {
+        /*
+         * Extra space added to:
+         * - bottom of outgoing element
+         * - top of incoming element
+         */
+        --transition-padding: 200px;
+
+        /*
+         * Shape is twice the padding because half sits
+         * over each element.
+         */
+        --shape-height: 400px;
+
+        --shape-color: rgba(15, 15, 15, 0.94);
+    }
+
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #111;
+    }
+
+
+    /* =========================================
+       NAVIGATION
+       ========================================= */
+
+    nav {
+        position: fixed;
+
+        top: 20px;
+        left: 50%;
+
+        transform: translateX(-50%);
+
+        display: flex;
+        gap: 8px;
+
+        padding: 8px;
+
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(15px);
+
+        border-radius: 100px;
+
+        z-index: 1000;
+    }
+
+    nav button {
+        border: 0;
+
+        padding: 12px 18px;
+
+        border-radius: 100px;
+
+        background: transparent;
+        color: white;
+
+        cursor: pointer;
+
+        font-size: 15px;
+    }
+
+    nav button:hover {
+        background: rgba(255,255,255,0.15);
+    }
+
+    nav button.active {
+        background: white;
+        color: black;
+    }
+
+
+    /* =========================================
+       PAGE CONTAINER
+       ========================================= */
+
+    #pages {
+        position: relative;
+
+        width: 100%;
+    }
+
+
+    /* =========================================
+       INDIVIDUAL ELEMENT / PAGE
+       ========================================= */
+
+    .page {
+        display: none;
+
+        position: relative;
+
+        width: 100%;
+
+        /*
+         * Make these different heights if you want.
+         */
+        min-height: 150vh;
+
+        padding:
+            130px
+            clamp(25px, 8vw, 120px)
+            100px;
+
+        color: white;
+    }
+
+
+    /*
+     * Only the currently active page is normally visible.
+     */
+    .page.active-page {
+        display: block;
+    }
+
+
+    /*
+     * During a transition the new page is temporarily
+     * shown below the current page.
+     */
+    .page.transition-page {
+        display: block;
+    }
+
+
+    /*
+     * Add extra padding to the BOTTOM
+     * of the page we're leaving.
+     */
+    .page.transition-from {
+        padding-bottom:
+            calc(100px + var(--transition-padding));
+    }
+
+
+    /*
+     * Add extra padding to the TOP
+     * of the page we're entering.
+     */
+    .page.transition-to {
+        padding-top:
+            calc(130px + var(--transition-padding));
+    }
+
+
+    /* Example colours */
+
+    #element1 {
+        background: #bd3f32;
+    }
+
+    #element2 {
+        background: #286fa7;
+    }
+
+    #element3 {
+        background: #35885a;
+    }
+
+    #element4 {
+        background: #7246a1;
+    }
+
+
+    /* =========================================
+       CONTENT
+       ========================================= */
+
+    .content {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        margin: 0 0 30px;
+
+        font-size:
+            clamp(50px, 10vw, 120px);
+
+        line-height: 0.9;
+    }
+
+    p {
+        max-width: 700px;
+
+        font-size: 20px;
+        line-height: 1.7;
+    }
+
+
+    /* =========================================
+       TRANSITION SHAPE
+       ========================================= */
+
+    .transition-shape {
+        position: absolute;
+
+        left: 0;
+
+        width: 100%;
+        height: var(--shape-height);
+
+        z-index: 20;
+
+        pointer-events: none;
+
+        background: var(--shape-color);
+
+
+        /*
+         * YOUR EXACT SHAPE
+         */
+        clip-path: polygon(
+            50% 0%,
+            100% 32%,
+            100% 43%,
+            100% 82%,
+            100% 100%,
+            48% 78%,
+            0 100%,
+            0% 43%,
+            0 29%
+        );
+    }
+
+
+    /*
+     * Optional text inside shape.
+     */
+    .transition-shape::after {
+        content: " ";
+
+        position: absolute;
+
+        left: 50%;
+        top: 50%;
+
+        transform: translate(-50%, -50%);
+
+        color: white;
+
+        font-size: 12px;
+
+        letter-spacing: 0.4em;
+
+        opacity: 0.5;
+    }
+
+</style>
+
+
+<style>
+  /* Basic styling to make it look like a dropdown */
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  .dropbtn {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+	border-radius: 50px;	
+    cursor: pointer;
+    list-style: none; /* Hides the default arrow */
+  }
+  .dropdown-content {
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  .dropdown-content a:hover { background-color: #ddd; }
+</style>
+
+<head>
+<link rel="icon" type="image/x-icon" href="assets/ui_elements/logo.svg">
+<title>Karl Cook</title>
+</head>
+<body style="margin: 0px;">
+
+
+<nav>
+
+    <button
+        data-target="aboutme"
+        class="active">
+        <h3>About Me</h3>
+    </button>
+
+	<details class="dropdown">
+	<summary class="dropbtn"><h3>What I Can Do For You</h3></summary>
+	  <div class="dropdown-content">
+		<button data-target="elementbathroom"><h3>Bathroom</h3></button><br>
+		<button data-target="elementbedroom"><h3>Bedroom</h3></button><br>
+		<button data-target="elementdecks"><h3>Decks</h3></button>
+	  </div>
+	</details>
+
+    <button
+        data-target="contactForm">
+        <h3>Contact Me</h3>
+    </button>
+	
+	
+</div>
+
+</nav>
+
+<Script>
+// Toggles the dropdown visibility
+function toggleDropdown() {
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    for (var i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+</Script>
+
+<main id="pages">
+
+
+    <!-- About Me-->
+
+    <section
+        id="aboutme"
+        class="page active-page">
+
+        <div class="content">
+			
+			<div>
+				<div style="width: 100%;">
+					<div class="logobackground" style="height: 100px;"><!-- Logo/title -->
+					</div>
+				</div>
+			</div>
+
+
+            <h1>My Name is Karl Cook</h1>
+
+            <p>I am a fourth gen tradesmen, spent myself surround but house getting made as my father and his wife went around building them for a living, which gave me years of exparnes above everyone around me.</p>
+
+            <p>Please give me work, thanks bye. shit and half the time I don't answer my text or emails no worrys tho.</p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- Bathroom -->
+
+    <section id="elementbathroom" class="page">
+
+        <div class="content">
+
+			<div><!-- Infromtion--->
+			<h1>Bathroom Renovations</h1>
+			
+			<p>This is a Bathroom I renovationed for a young couple, they just brought the house they wanted it done before they moved in as I helpped ripped out the bathroom and repaired and got it ready for the new desgin</p>
+			<div class="img-comp-container">
+			  <div class="img-comp-img">
+				<img src="img_snow.jpg" width="300" height="200">
+			  </div>
+			  <div class="img-comp-img img-comp-overlay">
+				<img src="img_forest.jpg" width="300" height="200">
+			  </div>
+			</div>
+			
+			<p>This is my Bathroom that I renovationed ready for the new desgin and a refresh</p>
+			<div class="img-comp-container">
+			  <div class="img-comp-img">
+				<img src="img_snow.jpg" width="300" height="200">
+			  </div>
+			  <div class="img-comp-img img-comp-overlay">
+				<img src="img_forest.jpg" width="300" height="200">
+			  </div>
+			</div>
+		</div>
+        </div>
+
+    </section>
+
+
+
+    <!-- ELEMENT 3 -->
+
+    <section
+        id="contactForm"
+        class="page">
+
+        <div class="content">
+
+			<div class="contact" id="box"><!-- Asking About Job -->
+			<main class="card">
+			
+			<section class="header" style="display: none;">
+			  <h1 id="businessName">Quote Request</h1>
+			</section>
+
+			<form id="quoteForm">
+			  <label>
+				Name
+				<input id="clientName" name="name" autocomplete="name" required maxlength="120" />
+			  </label>
+
+			  <label>
+				Phone Number
+				<input id="clientPhone" name="phone" autocomplete="tel" required maxlength="40" />
+			  </label>
+
+			  <label>
+				Email
+				<input id="clientEmail" name="email" type="email" autocomplete="email" required maxlength="160" />
+			  </label>
+
+			  <label>
+				What The Job Is
+				<textarea id="clientJob" name="job" required maxlength="2000"></textarea>
+			  </label>
+
+			  <div class="button-row">
+				<button id="submitButton" type="submit">Submit</button>
+				<p id="status" class="status info">Ready.</p>
+			  </div>
+			</form>
+
+			<div style="display: none;">
+			  Google Apps Script URL is set near the top of this file as <code>GOOGLE_SCRIPT_URL</code>.
+			</div>
+		  </main>
+
+		
+		</div>
+
+            <h1>
+                Element 3
+            </h1>
+
+            <p>
+                This is Element 3.
+            </p>
+
+            <p>
+                The transition scrolls at a fixed number of
+                pixels per second instead of using normal browser
+                smooth-scroll easing.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- Bedroom -->
+
+    <section id="elementbedroom" class="page">
+
+        <div class="content">
+
+            <h1>Bathroom Renovations</h1>
+
+			<p>A Bedroom</p>
+			<div class="img-comp-container">
+			  <div class="img-comp-img">
+				<img src="img_snow.jpg" width="300" height="200">
+			  </div>
+			  <div class="img-comp-img img-comp-overlay">
+				<img src="img_forest.jpg" width="300" height="200">
+			  </div>
+			</div>
+        </div>
+
+    </section>
+
+
+<!-- ELEMENT 5 -->
+
+    <section id="elementdecks" class="page">
+
+        <div class="content">
+
+            <h1>
+                Element 5
+            </h1>
+
+            <p>
+                This is Element 5.
+            </p>
+
+            <p>
+                When the transition finishes, this becomes the
+                only visible page.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+
+
+
+<script>
+/*Execute a function that will execute an image compare function for each element with the img-comp-overlay class:*/
+initComparisons();
+</script>
+
+
+ 
+  <script>
+    /***************************************************************************
+     * EASY TO FIND / EASY TO CHANGE
+     * Paste your deployed Google Apps Script Web App URL below.
+     **************************************************************************/
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwnvbFAQFxSqpmeopVlFP-7kIns5o1_9lGrucy1j3Xf4irNTLYN1IK6TIYPdKq-47Or/exec";
+
+    const form = document.getElementById("quoteForm");
+    const submitButton = document.getElementById("submitButton");
+    const statusEl = document.getElementById("status");
+    const businessNameEl = document.getElementById("businessName");
+
+    function setStatus(message, type = "info") {
+      statusEl.textContent = message;
+      statusEl.className = `status ${type}`;
+    }
+
+    async function postFormData(data) {
+      const body = new URLSearchParams(data);
+
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+        },
+        body: body.toString()
+      });
+
+      const text = await response.text();
+      try {
+        return JSON.parse(text);
+      } catch (error) {
+        throw new Error("The server answered, but it did not return valid JSON. Response: " + text.slice(0, 180));
+      }
+    }
+
+    async function loadSettings() {
+      try {
+        const url = new URL(GOOGLE_SCRIPT_URL);
+        url.searchParams.set("action", "settings");
+        const response = await fetch(url.toString());
+        const result = await response.json();
+
+        if (result.ok && result.settings && result.settings.names) {
+          businessNameEl.textContent = result.settings.names + " Quote Request";
+        }
+      } catch (error) {
+        // The form can still submit even if reading settings is blocked by hosting/CORS.
+        console.warn("Could not load settings:", error);
+      }
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      submitButton.disabled = true;
+      setStatus("Submitting...", "info");
+
+      const data = {
+        name: document.getElementById("clientName").value.trim(),
+        phone: document.getElementById("clientPhone").value.trim(),
+        email: document.getElementById("clientEmail").value.trim(),
+        job: document.getElementById("clientJob").value.trim()
+      };
+
+      try {
+        const result = await postFormData(data);
+
+        if (!result.ok) {
+          throw new Error(result.error || "Submission failed.");
+        }
+
+        const smsText = result.smsSent ? "Text sent." : "Text not sent.";
+        const emailText = result.emailSent ? "Email sent." : "Email not sent.";
+        setStatus(`Submitted. Job Ref: ${result.jobNumber}. ${smsText} ${emailText}`, "ok");
+        form.reset();
+      } catch (error) {
+        setStatus(error.message || "Something went wrong. Please try again.", "error");
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+
+    loadSettings();
+  </script>
+  <script>
+
+const pageContainer =
+    document.getElementById("pages");
+
+const navButtons =
+    document.querySelectorAll("nav button");
+
+
+
+/*
+ * ===============================================
+ * SETTINGS
+ * ===============================================
+ */
+
+
+/*
+ * Constant animation speed.
+ *
+ * Higher number = faster.
+ *
+ * Examples:
+ *
+ * 600  = slow
+ * 1000 = medium
+ * 1600 = fast
+ */
+const SCROLL_SPEED = 3100;
+
+
+/*
+ * Must match:
+ *
+ * --transition-padding: 200px;
+ *
+ * in the CSS.
+ */
+const TRANSITION_PADDING = 20;
+
+
+
+/*
+ * Currently active element.
+ */
+let currentPage =
+    document.querySelector(".active-page");
+
+
+/*
+ * Stops multiple transitions happening simultaneously.
+ */
+let transitioning = false;
+
+
+
+/*
+ * ===============================================
+ * LOCK MANUAL SCROLLING DURING ANIMATION
+ * ===============================================
+ *
+ * Normally the user can scroll freely through
+ * the active element.
+ *
+ * During an automatic page transition we temporarily
+ * stop wheel/touch/keyboard scrolling so the speed
+ * remains perfectly controlled.
+ */
+
+function stopManualScroll(event) {
+
+    if (!transitioning) {
+        return;
+    }
+
+    event.preventDefault();
+
+}
+
+
+window.addEventListener(
+    "wheel",
+    stopManualScroll,
+    {
+        passive: false
+    }
+);
+
+
+window.addEventListener(
+    "touchmove",
+    stopManualScroll,
+    {
+        passive: false
+    }
+);
+
+
+window.addEventListener(
+    "keydown",
+    event => {
+
+        if (!transitioning) {
+            return;
+        }
+
+        const scrollKeys = [
+            "ArrowUp",
+            "ArrowDown",
+            "PageUp",
+            "PageDown",
+            "Home",
+            "End",
+            " "
+        ];
+
+        if (
+            scrollKeys.includes(event.key)
+        ) {
+
+            event.preventDefault();
+
+        }
+
+    }
+);
+
+
+
+/*
+ * ===============================================
+ * CONSTANT SPEED SCROLL
+ * ===============================================
+ *
+ * Browser:
+ *
+ * behavior: "smooth"
+ *
+ * normally accelerates and decelerates.
+ *
+ * This animation is LINEAR.
+ *
+ * Therefore:
+ *
+ * 1100 pixels / second
+ *
+ * stays approximately 1100 pixels / second for
+ * the whole transition.
+ */
+
+function constantSpeedScroll(
+    targetY,
+    pixelsPerSecond
+) {
+
+    return new Promise(resolve => {
+
+
+        const startY =
+            window.scrollY;
+
+
+        const distance =
+            targetY - startY;
+
+
+        const absoluteDistance =
+            Math.abs(distance);
+
+
+        /*
+         * Already there.
+         */
+        if (absoluteDistance < 1) {
+
+            resolve();
+
+            return;
+
+        }
+
+
+        /*
+         * Calculate animation duration based entirely
+         * on distance.
+         */
+        const duration =
+            (
+                absoluteDistance /
+                pixelsPerSecond
+            ) * 1000;
+
+
+        const startTime =
+            performance.now();
+
+
+
+        function animationFrame(now) {
+
+
+            const elapsed =
+                now - startTime;
+
+
+            /*
+             * Linear progress.
+             *
+             * NO easing.
+             */
+            const progress =
+                Math.min(
+                    elapsed / duration,
+                    1
+                );
+
+
+            const newPosition =
+                startY +
+                distance * progress;
+
+
+            window.scrollTo(
+                0,
+                newPosition
+            );
+
+
+            if (progress < 1) {
+
+                requestAnimationFrame(
+                    animationFrame
+                );
+
+            }
+
+            else {
+
+                resolve();
+
+            }
+
+        }
+
+
+        requestAnimationFrame(
+            animationFrame
+        );
+
+    });
+
+}
+
+
+
+/*
+ * ===============================================
+ * CREATE TRANSITION SHAPE
+ * ===============================================
+ */
+
+function createTransitionShape(
+    incomingPage
+) {
+
+
+    /*
+     * The boundary is where the new element begins.
+     */
+    const boundary =
+        incomingPage.offsetTop;
+
+
+    const shape =
+        document.createElement("div");
+
+
+    shape.className =
+        "transition-shape";
+
+
+    /*
+     * Shape is 400px tall.
+     *
+     * Put its middle exactly over the boundary.
+     *
+     *
+     *       OLD PAGE
+     *
+     *     ┌──────────┐
+     *     │  shape   │
+     * ----│----------│---- page boundary
+     *     │  shape   │
+     *     └──────────┘
+     *
+     *       NEW PAGE
+     */
+    shape.style.top =
+        (
+            boundary -
+            TRANSITION_PADDING
+        ) + "px";
+
+
+    pageContainer.appendChild(
+        shape
+    );
+
+
+    return shape;
+
+}
+
+
+
+/*
+ * ===============================================
+ * REORDER ELEMENTS AFTER TRANSITION
+ * ===============================================
+ *
+ * This reproduces your ordering exactly.
+ *
+ *
+ * Starting:
+ *
+ * 1
+ * 2
+ * 3
+ * 4
+ *
+ *
+ * Click 4:
+ *
+ * 4 ACTIVE
+ * 2
+ * 3
+ * 1 OLD
+ *
+ *
+ * Click 3:
+ *
+ * 3 ACTIVE
+ * 2
+ * 1
+ * 4 OLD
+ *
+ *
+ * Rule:
+ *
+ * NEW ACTIVE
+ * OTHER ELEMENTS
+ * OLD ACTIVE
+ */
+
+function reorderPages(
+    orderBeforeTransition,
+    newPage,
+    oldPage
+) {
+
+
+    /*
+     * Keep every page except old/new in
+     * its current relative order.
+     */
+    const middlePages =
+        orderBeforeTransition.filter(
+            page => {
+
+                return (
+                    page !== newPage &&
+                    page !== oldPage
+                );
+
+            }
+        );
+
+
+    /*
+     * Selected page first.
+     */
+    pageContainer.appendChild(
+        newPage
+    );
+
+
+    /*
+     * Other hidden pages in the middle.
+     */
+    middlePages.forEach(
+        page => {
+
+            pageContainer.appendChild(
+                page
+            );
+
+        }
+    );
+
+
+    /*
+     * Previous page moves to the end.
+     */
+    pageContainer.appendChild(
+        oldPage
+    );
+
+}
+
+
+
+/*
+ * ===============================================
+ * CHANGE ELEMENT
+ * ===============================================
+ */
+
+async function changePage(
+    targetID
+) {
+
+
+    /*
+     * Ignore clicks while already transitioning.
+     */
+    if (transitioning) {
+        return;
+    }
+
+
+    const newPage =
+        document.getElementById(
+            targetID
+        );
+
+
+    /*
+     * User clicked current page.
+     */
+    if (newPage === currentPage) {
+        return;
+    }
+
+
+    transitioning = true;
+
+
+
+    /*
+     * Remember DOM order BEFORE we temporarily
+     * rearrange anything.
+     *
+     * This allows us to recreate your exact
+     * ordering rule afterwards.
+     */
+    const orderBeforeTransition =
+        Array.from(
+            pageContainer.querySelectorAll(
+                ".page"
+            )
+        );
+
+
+    const oldPage =
+        currentPage;
+
+
+
+    /*
+     * ===========================================
+     * STEP 1
+     *
+     * Hide every unrelated page.
+     * ===========================================
+     */
+
+    orderBeforeTransition.forEach(
+        page => {
+
+            if (
+                page !== oldPage &&
+                page !== newPage
+            ) {
+
+                page.classList.remove(
+                    "active-page"
+                );
+
+                page.classList.remove(
+                    "transition-page"
+                );
+
+            }
+
+        }
+    );
+
+
+
+    /*
+     * ===========================================
+     * STEP 2
+     *
+     * Add extra space to the current element's
+     * bottom.
+     * ===========================================
+     */
+
+    oldPage.classList.add(
+        "transition-from"
+    );
+
+
+
+    /*
+     * ===========================================
+     * STEP 3
+     *
+     * Temporarily move requested element directly
+     * underneath the current element.
+     * ===========================================
+     */
+
+    oldPage.insertAdjacentElement(
+        "afterend",
+        newPage
+    );
+
+
+
+    /*
+     * Display new element.
+     */
+    newPage.classList.add(
+        "transition-page"
+    );
+
+
+    newPage.classList.add(
+        "transition-to"
+    );
+
+
+
+    /*
+     * Wait one frame so the browser applies the
+     * new layout before measuring positions.
+     */
+    await new Promise(
+        resolve => {
+
+            requestAnimationFrame(
+                () => {
+
+                    requestAnimationFrame(
+                        resolve
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+
+    /*
+     * ===========================================
+     * STEP 4
+     *
+     * Add clipped polygon over both elements.
+     * ===========================================
+     */
+
+    const transitionShape =
+        createTransitionShape(
+            newPage
+        );
+
+
+
+    /*
+     * ===========================================
+     * STEP 5
+     *
+     * Calculate destination.
+     * ===========================================
+     *
+     * We don't stop exactly at newPage.offsetTop.
+     *
+     * We travel through the extra top padding too.
+     *
+     * This means when we later remove the temporary
+     * padding, the actual content visually stays
+     * in approximately the same place.
+     */
+
+    const destination =
+        newPage.offsetTop +
+        TRANSITION_PADDING;
+
+
+
+    /*
+     * ===========================================
+     * STEP 6
+     *
+     * Scroll from wherever the user currently is,
+     * through the rest of the current page,
+     * through the clipped shape,
+     * and into the requested page.
+     * ===========================================
+     */
+
+    await constantSpeedScroll(
+        destination,
+        SCROLL_SPEED
+    );
+
+
+
+    /*
+     * ===========================================
+     * STEP 7
+     *
+     * Remove transition shape.
+     * ===========================================
+     */
+
+    transitionShape.remove();
+
+
+
+    /*
+     * Remove temporary padding.
+     */
+
+    oldPage.classList.remove(
+        "transition-from"
+    );
+
+
+    newPage.classList.remove(
+        "transition-to"
+    );
+
+
+
+    /*
+     * ===========================================
+     * STEP 8
+     *
+     * Old page becomes hidden.
+     * ===========================================
+     */
+
+    oldPage.classList.remove(
+        "active-page"
+    );
+
+
+    oldPage.classList.remove(
+        "transition-page"
+    );
+
+
+
+    /*
+     * New page becomes active.
+     */
+
+    newPage.classList.remove(
+        "transition-page"
+    );
+
+
+    newPage.classList.add(
+        "active-page"
+    );
+
+
+
+    /*
+     * ===========================================
+     * STEP 9
+     *
+     * Reorder DOM according to your rule.
+     * ===========================================
+     */
+
+    reorderPages(
+        orderBeforeTransition,
+        newPage,
+        oldPage
+    );
+
+
+
+    /*
+     * The new active page has now moved to the
+     * beginning of #pages.
+     *
+     * Reset browser scroll position.
+     *
+     * Visually this should appear almost identical
+     * because we deliberately scrolled through the
+     * temporary top padding before rearranging.
+     */
+
+    window.scrollTo(
+        0,
+        0
+    );
+
+
+
+    /*
+     * ===========================================
+     * STEP 10
+     *
+     * Update current page reference.
+     * ===========================================
+     */
+
+    currentPage =
+        newPage;
+
+
+
+    /*
+     * Update navigation.
+     */
+
+    navButtons.forEach(
+        button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.target === targetID
+            );
+
+        }
+    );
+
+
+
+    transitioning = false;
+
+}
+
+
+
+/*
+ * ===============================================
+ * NAV BUTTON EVENTS
+ * ===============================================
+ */
+
+navButtons.forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                changePage(
+                    button.dataset.target
+                );
+
+            }
+        );
+
+    }
+);
+
+</script>
+</body>
+</html>

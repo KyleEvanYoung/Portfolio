@@ -1,0 +1,3389 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        href="assets/ui_elements/logo.svg"
+    >
+
+    <title>Karl Cook</title>
+
+
+    <style>
+        /* =========================================================
+           GLOBAL
+           ========================================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --transition-padding: 200px;
+            --shape-height: 400px;
+
+            --shape-color: rgba(15, 15, 15, 0.94);
+
+            --nav-background: rgba(0, 0, 0, 0.78);
+
+            --text: #ffffff;
+
+            --button-hover: rgba(255, 255, 255, 0.15);
+
+            --dropdown-background: rgba(20, 20, 20, 0.97);
+
+            --border-color: rgba(255, 255, 255, 0.18);
+
+            --input-background: rgba(255, 255, 255, 0.10);
+        }
+
+
+        html {
+            scroll-behavior: auto;
+        }
+
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+
+            width: 100%;
+            min-height: 100%;
+        }
+
+
+        body {
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #111;
+
+            color: var(--text);
+
+            text-align: center;
+
+            overflow-x: hidden;
+        }
+
+
+        button,
+        input,
+        textarea {
+            font: inherit;
+        }
+
+
+        button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+
+        svg {
+            display: block;
+        }
+
+
+
+        /* =========================================================
+           SVG ICONS
+           ========================================================= */
+
+        .icon {
+            width: 22px;
+            height: 22px;
+
+            flex: 0 0 auto;
+
+            fill: none;
+            stroke: currentColor;
+
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+
+        .heading-icon {
+            width: 46px;
+            height: 46px;
+        }
+
+
+        .title-with-icon {
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            gap: 14px;
+
+            width: 100%;
+
+            text-align: center;
+        }
+
+
+
+        /* =========================================================
+           NAVIGATION
+           ========================================================= */
+
+        nav {
+            position: fixed;
+
+            top: 20px;
+            left: 50%;
+
+            transform: translateX(-50%);
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            gap: 8px;
+
+            width: max-content;
+            max-width: calc(100vw - 30px);
+
+            padding: 8px;
+
+            background: var(--nav-background);
+
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            border-radius: 100px;
+
+            z-index: 1000;
+
+            box-shadow:
+                0 10px 35px rgba(0, 0, 0, 0.25);
+        }
+
+
+        nav button {
+            border: 0;
+
+            outline: none;
+
+            min-height: 48px;
+
+            padding: 11px 18px;
+
+            border-radius: 100px;
+
+            background: transparent;
+
+            color: white;
+
+            cursor: pointer;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            gap: 9px;
+
+            white-space: nowrap;
+
+            text-align: center;
+
+            transition:
+                background 0.25s ease,
+                color 0.25s ease,
+                transform 0.25s ease;
+        }
+
+
+        nav button:hover {
+            background: var(--button-hover);
+
+            transform: translateY(-1px);
+        }
+
+
+        nav button.active {
+            background: white;
+
+            color: black;
+        }
+
+
+        nav button span {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+
+
+        /* =========================================================
+           ANIMATED DROPDOWN
+           ========================================================= */
+
+        .dropdown {
+            position: relative;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .dropdown-toggle {
+            position: relative;
+        }
+
+
+        .dropdown-toggle .arrow {
+            width: 16px;
+            height: 16px;
+
+            transition:
+                transform 0.35s cubic-bezier(
+                    0.22,
+                    1,
+                    0.36,
+                    1
+                );
+        }
+
+
+        .dropdown.open .dropdown-toggle .arrow {
+            transform: rotate(180deg);
+        }
+
+
+        .dropdown.open .dropdown-toggle {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+
+        .dropdown-content {
+            position: absolute;
+
+            top: calc(100% + 16px);
+            left: 50%;
+
+            width: 245px;
+
+            padding: 10px;
+
+            background: var(--dropdown-background);
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.12);
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 18px 55px
+                rgba(0, 0, 0, 0.40);
+
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+
+            /*
+             * CLOSED STATE
+             */
+            opacity: 0;
+
+            visibility: hidden;
+
+            pointer-events: none;
+
+            transform:
+                translateX(-50%)
+                translateY(-12px)
+                scale(0.96);
+
+            transform-origin: top center;
+
+            transition:
+                opacity 0.28s ease,
+                transform 0.38s
+                    cubic-bezier(
+                        0.22,
+                        1,
+                        0.36,
+                        1
+                    ),
+                visibility 0.28s;
+        }
+
+
+        /*
+         * Little arrow above dropdown.
+         */
+        .dropdown-content::before {
+            content: "";
+
+            position: absolute;
+
+            top: -7px;
+            left: 50%;
+
+            width: 14px;
+            height: 14px;
+
+            background: var(--dropdown-background);
+
+            border-left:
+                1px solid
+                rgba(255, 255, 255, 0.12);
+
+            border-top:
+                1px solid
+                rgba(255, 255, 255, 0.12);
+
+            transform:
+                translateX(-50%)
+                rotate(45deg);
+        }
+
+
+        /*
+         * OPEN STATE
+         */
+        .dropdown.open .dropdown-content {
+            opacity: 1;
+
+            visibility: visible;
+
+            pointer-events: auto;
+
+            transform:
+                translateX(-50%)
+                translateY(0)
+                scale(1);
+        }
+
+
+        .dropdown-content button {
+            position: relative;
+
+            width: 100%;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            gap: 10px;
+
+            margin: 0 0 5px;
+
+            padding: 13px 14px;
+
+            border-radius: 14px;
+
+            color: white;
+
+            background: transparent;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+
+        .dropdown-content button:last-child {
+            margin-bottom: 0;
+        }
+
+
+        .dropdown-content button:hover {
+            background: rgba(255, 255, 255, 0.12);
+
+            transform: translateY(0);
+        }
+
+
+        .dropdown-content button.active {
+            background: white;
+
+            color: black;
+        }
+
+
+
+        /* =========================================================
+           PAGE CONTAINER
+           ========================================================= */
+
+        #pages {
+            position: relative;
+
+            width: 100%;
+        }
+
+
+
+        /* =========================================================
+           PAGES
+           ========================================================= */
+
+        .page {
+            display: none;
+
+            position: relative;
+
+            width: 100%;
+
+            min-height: 150vh;
+
+            padding:
+                140px
+                clamp(25px, 8vw, 120px)
+                100px;
+
+            color: white;
+
+            text-align: center;
+        }
+
+
+        .page.active-page,
+        .page.transition-page {
+            display: block;
+        }
+
+
+        .page.transition-from {
+            padding-bottom:
+                calc(
+                    100px +
+                    var(--transition-padding)
+                );
+        }
+
+
+        .page.transition-to {
+            padding-top:
+                calc(
+                    140px +
+                    var(--transition-padding)
+                );
+        }
+
+
+
+        /* =========================================================
+           PAGE COLOURS
+           ========================================================= */
+
+        #aboutme {
+            background:
+                linear-gradient(
+                    145deg,
+                    #bd3f32,
+                    #8f2d24
+                );
+        }
+
+
+        #elementbathroom {
+            background:
+                linear-gradient(
+                    145deg,
+                    #286fa7,
+                    #174b74
+                );
+        }
+
+
+        #elementbedroom {
+            background:
+                linear-gradient(
+                    145deg,
+                    #35885a,
+                    #1e6440
+                );
+        }
+
+
+        #elementdecks {
+            background:
+                linear-gradient(
+                    145deg,
+                    #7246a1,
+                    #4f2b7b
+                );
+        }
+
+
+        #contactForm {
+            background:
+                linear-gradient(
+                    145deg,
+                    #333,
+                    #141414
+                );
+        }
+
+
+
+        /* =========================================================
+           CONTENT
+           ========================================================= */
+
+        .content {
+            width: 100%;
+
+            max-width: 1000px;
+
+            margin: 0 auto;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+        }
+
+
+        h1,
+        h2,
+        h3,
+        p {
+            text-align: center;
+        }
+
+
+        h1 {
+            margin:
+                0
+                auto
+                30px;
+
+            max-width: 900px;
+
+            font-size:
+                clamp(
+                    44px,
+                    9vw,
+                    110px
+                );
+
+            line-height: 0.95;
+
+            text-wrap: balance;
+        }
+
+
+        h2 {
+            margin:
+                30px
+                auto
+                15px;
+
+            font-size:
+                clamp(
+                    26px,
+                    4vw,
+                    42px
+                );
+        }
+
+
+        p {
+            width: 100%;
+
+            max-width: 720px;
+
+            margin:
+                0
+                auto
+                24px;
+
+            font-size:
+                clamp(
+                    17px,
+                    2vw,
+                    20px
+                );
+
+            line-height: 1.7;
+        }
+
+
+
+        /* =========================================================
+           LOGO
+           ========================================================= */
+
+        .logo-wrap {
+            width: 100%;
+
+            display: flex;
+
+            justify-content: center;
+
+            margin-bottom: 35px;
+        }
+
+
+        .logo {
+            width: min(300px, 70vw);
+            height: 120px;
+
+            background-image:
+                url(
+                    "assets/ui_elements/logo.svg"
+                );
+
+            background-repeat: no-repeat;
+
+            background-position: center;
+
+            background-size: contain;
+        }
+
+
+
+        /* =========================================================
+           NOTE BOX
+           ========================================================= */
+
+        .note {
+            width: min(720px, 100%);
+
+            margin:
+                30px
+                auto;
+
+            padding:
+                20px
+                22px;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            gap: 12px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.12
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.20
+                );
+
+            border-radius: 20px;
+
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+
+            text-align: center;
+
+            line-height: 1.5;
+        }
+
+
+        .note .icon {
+            width: 25px;
+            height: 25px;
+
+            flex-shrink: 0;
+        }
+
+
+        .note-text {
+            text-align: center;
+        }
+
+
+        .note strong {
+            display: inline;
+
+            margin-right: 4px;
+        }
+
+
+
+        /* =========================================================
+           BEFORE / AFTER IMAGE COMPARISON
+           ========================================================= */
+
+        .project-block {
+            width: 100%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+            align-items: center;
+
+            margin:
+                35px
+                auto
+                70px;
+        }
+
+
+        .img-comp-container {
+            position: relative;
+
+            width: min(
+                760px,
+                100%
+            );
+
+            aspect-ratio: 3 / 2;
+
+            margin:
+                20px
+                auto;
+
+            overflow: hidden;
+
+            border-radius: 25px;
+
+            box-shadow:
+                0
+                25px
+                65px
+                rgba(0, 0, 0, 0.28);
+
+            cursor: ew-resize;
+
+            touch-action: none;
+
+            user-select: none;
+
+            background: #222;
+        }
+
+
+        .img-comp-img {
+            position: absolute;
+
+            inset: 0;
+
+            width: 100%;
+            height: 100%;
+
+            overflow: hidden;
+        }
+
+
+        .img-comp-img img {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            object-fit: cover;
+
+            pointer-events: none;
+
+            user-select: none;
+        }
+
+
+        .img-comp-overlay {
+            /*
+             * Start at 50%.
+             */
+            clip-path:
+                inset(
+                    0
+                    50%
+                    0
+                    0
+                );
+        }
+
+
+        .img-comp-divider {
+            position: absolute;
+
+            z-index: 8;
+
+            top: 0;
+            bottom: 0;
+
+            left: 50%;
+
+            width: 3px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.9
+                );
+
+            transform:
+                translateX(-50%);
+
+            pointer-events: none;
+        }
+
+
+        .img-comp-slider {
+            position: absolute;
+
+            z-index: 9;
+
+            top: 50%;
+            left: 50%;
+
+            width: 54px;
+            height: 54px;
+
+            padding: 0;
+
+            border:
+                2px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.9
+                );
+
+            border-radius: 50%;
+
+            background:
+                rgba(
+                    20,
+                    20,
+                    20,
+                    0.78
+                );
+
+            color: white;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            transform:
+                translate(
+                    -50%,
+                    -50%
+                );
+
+            pointer-events: none;
+
+            box-shadow:
+                0
+                5px
+                20px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.35
+                );
+        }
+
+
+        .img-comp-slider svg {
+            width: 26px;
+            height: 26px;
+        }
+
+
+
+        /* =========================================================
+           IMAGE LABELS
+           ========================================================= */
+
+        .image-label {
+            position: absolute;
+
+            z-index: 5;
+
+            top: 16px;
+
+            padding:
+                8px
+                13px;
+
+            border-radius: 100px;
+
+            background:
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.60
+                );
+
+            color: white;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            letter-spacing: 0.05em;
+
+            pointer-events: none;
+        }
+
+
+        .image-label.before {
+            left: 16px;
+        }
+
+
+        .image-label.after {
+            right: 16px;
+        }
+
+
+
+        /* =========================================================
+           CONTACT FORM
+           ========================================================= */
+
+        .contact-card {
+            width: min(
+                680px,
+                100%
+            );
+
+            margin:
+                20px
+                auto;
+
+            padding:
+                clamp(
+                    25px,
+                    5vw,
+                    45px
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.08
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.15
+                );
+
+            border-radius: 28px;
+
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+
+            box-shadow:
+                0
+                25px
+                70px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.3
+                );
+
+            text-align: center;
+        }
+
+
+        #quoteForm {
+            width: 100%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            gap: 19px;
+        }
+
+
+        #quoteForm label {
+            width: 100%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            gap: 8px;
+
+            font-weight: 700;
+
+            text-align: center;
+        }
+
+
+        #quoteForm input,
+        #quoteForm textarea {
+            width: 100%;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.16
+                );
+
+            outline: none;
+
+            border-radius: 16px;
+
+            padding:
+                14px
+                16px;
+
+            background:
+                var(--input-background);
+
+            color: white;
+
+            text-align: center;
+
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        #quoteForm textarea {
+            min-height: 150px;
+
+            resize: vertical;
+        }
+
+
+        #quoteForm input:focus,
+        #quoteForm textarea:focus {
+            border-color: white;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.15
+                );
+
+            box-shadow:
+                0
+                0
+                0
+                4px
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.08
+                );
+        }
+
+
+        .button-row {
+            width: 100%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            gap: 14px;
+
+            margin-top: 5px;
+        }
+
+
+        #submitButton {
+            border: 0;
+
+            padding:
+                14px
+                30px;
+
+            border-radius: 100px;
+
+            background: white;
+
+            color: black;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                opacity 0.2s ease;
+        }
+
+
+        #submitButton:hover {
+            transform:
+                translateY(-2px);
+        }
+
+
+        #submitButton:disabled {
+            cursor: wait;
+
+            opacity: 0.6;
+
+            transform: none;
+        }
+
+
+        .message {
+            margin: 0;
+
+            max-width: 100%;
+
+            font-size: 15px;
+
+            text-align: center;
+        }
+
+
+        .message.success {
+            color: #b7ffc9;
+        }
+
+
+        .message.error {
+            color: #ffb3b3;
+        }
+
+
+
+        /* =========================================================
+           PAGE TRANSITION SHAPE
+           ========================================================= */
+
+        .transition-shape {
+            position: absolute;
+
+            left: 0;
+
+            width: 100%;
+            height: var(--shape-height);
+
+            z-index: 20;
+
+            pointer-events: none;
+
+            background:
+                var(--shape-color);
+
+            clip-path:
+                polygon(
+                    50% 0%,
+                    100% 32%,
+                    100% 43%,
+                    100% 82%,
+                    100% 100%,
+                    48% 78%,
+                    0 100%,
+                    0% 43%,
+                    0 29%
+                );
+        }
+
+
+
+        /* =========================================================
+           MOBILE
+           ========================================================= */
+
+        @media (
+            max-width: 850px
+        ) {
+
+            nav {
+                top: 12px;
+
+                width:
+                    calc(
+                        100% -
+                        24px
+                    );
+
+                justify-content:
+                    space-between;
+
+                gap: 4px;
+            }
+
+
+            nav button {
+                padding:
+                    10px
+                    12px;
+            }
+
+
+            nav button span {
+                font-size: 12px;
+            }
+
+
+            nav .icon {
+                width: 18px;
+                height: 18px;
+            }
+
+
+            .dropdown-content {
+                width:
+                    min(
+                        260px,
+                        calc(
+                            100vw -
+                            30px
+                        )
+                    );
+            }
+
+
+            .page {
+                padding:
+                    120px
+                    20px
+                    80px;
+            }
+
+
+            .page.transition-to {
+                padding-top:
+                    calc(
+                        120px +
+                        var(
+                            --transition-padding
+                        )
+                    );
+            }
+
+
+            .heading-icon {
+                width: 35px;
+                height: 35px;
+            }
+
+
+            .title-with-icon {
+                gap: 9px;
+            }
+
+
+            .note {
+                flex-direction: column;
+            }
+        }
+
+
+        @media (
+            max-width: 600px
+        ) {
+
+            nav button span {
+                display: none;
+            }
+
+
+            nav button {
+                width: 50px;
+                height: 50px;
+
+                padding: 0;
+            }
+
+
+            .dropdown-toggle .arrow {
+                display: none;
+            }
+
+
+            .dropdown-content button span {
+                display: inline;
+            }
+
+
+            .dropdown-content button {
+                width: 100%;
+                height: auto;
+
+                padding:
+                    13px
+                    15px;
+            }
+
+
+            .dropdown-content button .icon {
+                display: block;
+            }
+
+
+            .dropdown-content {
+                /*
+                 * Keeps menu from falling
+                 * outside narrow screens.
+                 */
+                left: 50%;
+            }
+        }
+
+
+        /* =========================================================
+           REDUCED MOTION ACCESSIBILITY
+           ========================================================= */
+
+        @media (
+            prefers-reduced-motion: reduce
+        ) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration:
+                    0.01ms !important;
+
+                transition-duration:
+                    0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+
+
+<body>
+
+
+    <!-- =========================================================
+         SVG ICON LIBRARY
+
+         These SVGs are stored once and reused with <use>.
+         ========================================================= -->
+
+    <svg
+        aria-hidden="true"
+        style="
+            position: absolute;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+        "
+    >
+
+        <!-- Person -->
+        <symbol
+            id="icon-user"
+            viewBox="0 0 24 24"
+        >
+            <circle
+                cx="12"
+                cy="8"
+                r="4"
+            />
+
+            <path
+                d="M4 21c0-4.5 3.5-7 8-7s8 2.5 8 7"
+            />
+        </symbol>
+
+
+        <!-- Tools -->
+        <symbol
+            id="icon-tools"
+            viewBox="0 0 24 24"
+        >
+            <path
+                d="M14.7 6.3a4 4 0 0 0-5-5l2.1 2.1-3.4 3.4-2.1-2.1a4 4 0 0 0 5 5L19 17.4a2.1 2.1 0 0 1-3 3l-7.7-7.7"
+            />
+        </symbol>
+
+
+        <!-- Bath -->
+        <symbol
+            id="icon-bath"
+            viewBox="0 0 24 24"
+        >
+            <path
+                d="M4 12V6a3 3 0 0 1 6 0"
+            />
+
+            <path
+                d="M3 12h18v2a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6v-2z"
+            />
+
+            <path d="M7 20v2" />
+            <path d="M17 20v2" />
+        </symbol>
+
+
+        <!-- Bed -->
+        <symbol
+            id="icon-bed"
+            viewBox="0 0 24 24"
+        >
+            <path d="M3 19V8" />
+            <path d="M21 19v-7" />
+            <path d="M3 15h18" />
+
+            <path
+                d="M7 15v-5h4a3 3 0 0 1 3 3v2"
+            />
+
+            <path d="M3 19v2" />
+            <path d="M21 19v2" />
+        </symbol>
+
+
+        <!-- Deck / House -->
+        <symbol
+            id="icon-deck"
+            viewBox="0 0 24 24"
+        >
+            <path
+                d="M3 11 12 4l9 7"
+            />
+
+            <path
+                d="M5 10v10h14V10"
+            />
+
+            <path
+                d="M8 20v-6h8v6"
+            />
+        </symbol>
+
+
+        <!-- Contact -->
+        <symbol
+            id="icon-mail"
+            viewBox="0 0 24 24"
+        >
+            <rect
+                x="3"
+                y="5"
+                width="18"
+                height="14"
+                rx="2"
+            />
+
+            <path
+                d="m3 7 9 6 9-6"
+            />
+        </symbol>
+
+
+        <!-- Note -->
+        <symbol
+            id="icon-note"
+            viewBox="0 0 24 24"
+        >
+            <circle
+                cx="12"
+                cy="12"
+                r="9"
+            />
+
+            <path d="M12 11v6" />
+
+            <path
+                d="M12 7h.01"
+            />
+        </symbol>
+
+
+        <!-- Arrow -->
+        <symbol
+            id="icon-chevron"
+            viewBox="0 0 24 24"
+        >
+            <path d="m6 9 6 6 6-6" />
+        </symbol>
+
+
+        <!-- Slider arrows -->
+        <symbol
+            id="icon-slide"
+            viewBox="0 0 24 24"
+        >
+            <path d="M8 8 4 12l4 4" />
+            <path d="M16 8 20 12l-4 4" />
+        </symbol>
+
+    </svg>
+
+
+
+    <!-- =========================================================
+         NAVIGATION
+         ========================================================= -->
+
+    <nav>
+
+        <button
+            type="button"
+            data-target="aboutme"
+            class="active"
+        >
+            <svg class="icon">
+                <use href="#icon-user"></use>
+            </svg>
+
+            <span>About Me</span>
+        </button>
+
+
+
+        <!-- Animated Dropdown -->
+
+        <div
+            class="dropdown"
+            id="servicesDropdown"
+        >
+
+            <button
+                type="button"
+                class="dropdown-toggle"
+                id="servicesDropdownButton"
+                aria-expanded="false"
+                aria-controls="servicesDropdownContent"
+            >
+
+                <svg class="icon">
+                    <use href="#icon-tools"></use>
+                </svg>
+
+                <span>
+                    What I Can Do For You
+                </span>
+
+                <svg class="icon arrow">
+                    <use href="#icon-chevron"></use>
+                </svg>
+
+            </button>
+
+
+            <div
+                class="dropdown-content"
+                id="servicesDropdownContent"
+            >
+
+                <button
+                    type="button"
+                    data-target="elementbathroom"
+                >
+
+                    <svg class="icon">
+                        <use href="#icon-bath"></use>
+                    </svg>
+
+                    <span>Bathroom</span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    data-target="elementbedroom"
+                >
+
+                    <svg class="icon">
+                        <use href="#icon-bed"></use>
+                    </svg>
+
+                    <span>Bedroom</span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    data-target="elementdecks"
+                >
+
+                    <svg class="icon">
+                        <use href="#icon-deck"></use>
+                    </svg>
+
+                    <span>Decks</span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <button
+            type="button"
+            data-target="contactForm"
+        >
+
+            <svg class="icon">
+                <use href="#icon-mail"></use>
+            </svg>
+
+            <span>Contact Me</span>
+
+        </button>
+
+    </nav>
+
+
+
+
+    <!-- =========================================================
+         PAGES
+         ========================================================= -->
+
+    <main id="pages">
+
+
+        <!-- =====================================================
+             ABOUT ME
+             ===================================================== -->
+
+        <section
+            id="aboutme"
+            class="page active-page"
+        >
+
+            <div class="content">
+
+
+                <div class="logo-wrap">
+
+                    <div
+                        class="logo"
+                        aria-label="Karl Cook logo"
+                    ></div>
+
+                </div>
+
+
+                <div class="title-with-icon">
+
+                    <svg
+                        class="icon heading-icon"
+                    >
+                        <use href="#icon-user"></use>
+                    </svg>
+
+                    <h1>
+                        My Name is Karl Cook
+                    </h1>
+
+                </div>
+
+
+                <p>
+                    I am a fourth-generation tradesman.
+                    I grew up around houses being built
+                    and renovated, with my father and his
+                    wife working in the trade.
+                </p>
+
+
+                <p>
+                    That gave me years of hands-on
+                    experience and an understanding of
+                    how jobs should be prepared, built
+                    and finished properly.
+                </p>
+
+
+                <!--
+                    REUSABLE NOTE
+
+                    Copy this .note block anywhere
+                    you want another note.
+                -->
+
+                <div class="note">
+
+                    <svg class="icon">
+                        <use href="#icon-note"></use>
+                    </svg>
+
+                    <div class="note-text">
+
+                        <strong>Note:</strong>
+
+                        Every job is different.
+                        Final pricing and timing can be
+                        confirmed after discussing the
+                        project and inspecting the work
+                        required.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+
+        <!-- =====================================================
+             BATHROOM
+             ===================================================== -->
+
+        <section
+            id="elementbathroom"
+            class="page"
+        >
+
+            <div class="content">
+
+
+                <div class="title-with-icon">
+
+                    <svg
+                        class="icon heading-icon"
+                    >
+                        <use href="#icon-bath"></use>
+                    </svg>
+
+                    <h1>
+                        Bathroom Renovations
+                    </h1>
+
+                </div>
+
+
+
+                <!-- Project 1 -->
+
+                <div class="project-block">
+
+                    <p>
+                        This bathroom was renovated for
+                        a young couple who had recently
+                        bought their house. They wanted
+                        the work completed before moving
+                        in, so I helped remove the old
+                        bathroom, complete repairs and
+                        prepare everything for the new
+                        design.
+                    </p>
+
+
+                    <div class="img-comp-container">
+
+                        <!-- AFTER IMAGE -->
+
+                        <div class="img-comp-img">
+
+                            <img
+                                src="img_snow.jpg"
+                                alt="Bathroom after renovation"
+                            >
+
+                        </div>
+
+
+                        <!-- BEFORE IMAGE -->
+
+                        <div
+                            class="
+                                img-comp-img
+                                img-comp-overlay
+                            "
+                        >
+
+                            <img
+                                src="img_forest.jpg"
+                                alt="Bathroom before renovation"
+                            >
+
+                        </div>
+
+
+                        <span
+                            class="
+                                image-label
+                                before
+                            "
+                        >
+                            BEFORE
+                        </span>
+
+
+                        <span
+                            class="
+                                image-label
+                                after
+                            "
+                        >
+                            AFTER
+                        </span>
+
+
+                        <div
+                            class="img-comp-divider"
+                        ></div>
+
+
+                        <div
+                            class="img-comp-slider"
+                        >
+
+                            <svg class="icon">
+                                <use href="#icon-slide"></use>
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Project 2 -->
+
+                <div class="project-block">
+
+                    <p>
+                        This is another bathroom
+                        renovation that was stripped
+                        back and prepared for a fresh
+                        new design.
+                    </p>
+
+
+                    <div class="img-comp-container">
+
+                        <div class="img-comp-img">
+
+                            <img
+                                src="img_snow.jpg"
+                                alt="Bathroom after renovation"
+                            >
+
+                        </div>
+
+
+                        <div
+                            class="
+                                img-comp-img
+                                img-comp-overlay
+                            "
+                        >
+
+                            <img
+                                src="img_forest.jpg"
+                                alt="Bathroom before renovation"
+                            >
+
+                        </div>
+
+
+                        <span
+                            class="
+                                image-label
+                                before
+                            "
+                        >
+                            BEFORE
+                        </span>
+
+
+                        <span
+                            class="
+                                image-label
+                                after
+                            "
+                        >
+                            AFTER
+                        </span>
+
+
+                        <div
+                            class="img-comp-divider"
+                        ></div>
+
+
+                        <div
+                            class="img-comp-slider"
+                        >
+
+                            <svg class="icon">
+                                <use href="#icon-slide"></use>
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="note">
+
+                    <svg class="icon">
+                        <use href="#icon-note"></use>
+                    </svg>
+
+                    <div class="note-text">
+
+                        <strong>Note:</strong>
+
+                        Drag the round slider left and
+                        right to compare the before and
+                        after photos.
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+
+        <!-- =====================================================
+             BEDROOM
+             ===================================================== -->
+
+        <section
+            id="elementbedroom"
+            class="page"
+        >
+
+            <div class="content">
+
+
+                <div class="title-with-icon">
+
+                    <svg
+                        class="icon heading-icon"
+                    >
+                        <use href="#icon-bed"></use>
+                    </svg>
+
+                    <h1>
+                        Bedroom Renovations
+                    </h1>
+
+                </div>
+
+
+                <p>
+                    Bedroom renovation and refresh.
+                </p>
+
+
+                <div class="img-comp-container">
+
+                    <div class="img-comp-img">
+
+                        <img
+                            src="img_snow.jpg"
+                            alt="Bedroom after renovation"
+                        >
+
+                    </div>
+
+
+                    <div
+                        class="
+                            img-comp-img
+                            img-comp-overlay
+                        "
+                    >
+
+                        <img
+                            src="img_forest.jpg"
+                            alt="Bedroom before renovation"
+                        >
+
+                    </div>
+
+
+                    <span
+                        class="
+                            image-label
+                            before
+                        "
+                    >
+                        BEFORE
+                    </span>
+
+
+                    <span
+                        class="
+                            image-label
+                            after
+                        "
+                    >
+                        AFTER
+                    </span>
+
+
+                    <div
+                        class="img-comp-divider"
+                    ></div>
+
+
+                    <div
+                        class="img-comp-slider"
+                    >
+
+                        <svg class="icon">
+                            <use href="#icon-slide"></use>
+                        </svg>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+
+        <!-- =====================================================
+             DECKS
+             ===================================================== -->
+
+        <section
+            id="elementdecks"
+            class="page"
+        >
+
+            <div class="content">
+
+
+                <div class="title-with-icon">
+
+                    <svg
+                        class="icon heading-icon"
+                    >
+                        <use href="#icon-deck"></use>
+                    </svg>
+
+                    <h1>
+                        Decks
+                    </h1>
+
+                </div>
+
+
+                <p>
+                    Deck construction, repairs,
+                    upgrades and outdoor renovation
+                    work.
+                </p>
+
+
+                <div class="note">
+
+                    <svg class="icon">
+                        <use href="#icon-note"></use>
+                    </svg>
+
+                    <div class="note-text">
+
+                        <strong>Note:</strong>
+
+                        Add your deck project photos
+                        and description here.
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+
+        <!-- =====================================================
+             CONTACT
+             ===================================================== -->
+
+        <section
+            id="contactForm"
+            class="page"
+        >
+
+            <div class="content">
+
+
+                <div class="title-with-icon">
+
+                    <svg
+                        class="icon heading-icon"
+                    >
+                        <use href="#icon-mail"></use>
+                    </svg>
+
+                    <h1>
+                        Contact Me
+                    </h1>
+
+                </div>
+
+
+                <p>
+                    Tell me a little about the job and
+                    I can get back to you about your
+                    project.
+                </p>
+
+
+
+                <div class="contact-card">
+
+                    <h2 id="businessName">
+                        Quote Request
+                    </h2>
+
+
+                    <form id="quoteForm">
+
+
+                        <label>
+
+                            Name
+
+                            <input
+                                id="clientName"
+                                name="name"
+                                autocomplete="name"
+                                required
+                                maxlength="120"
+                            >
+
+                        </label>
+
+
+
+                        <label>
+
+                            Phone Number
+
+                            <input
+                                id="clientPhone"
+                                name="phone"
+                                autocomplete="tel"
+                                required
+                                maxlength="40"
+                            >
+
+                        </label>
+
+
+
+                        <label>
+
+                            Email
+
+                            <input
+                                id="clientEmail"
+                                name="email"
+                                type="email"
+                                autocomplete="email"
+                                required
+                                maxlength="160"
+                            >
+
+                        </label>
+
+
+
+                        <label>
+
+                            What The Job Is
+
+                            <textarea
+                                id="jobDescription"
+                                name="job"
+                                required
+                                maxlength="2000"
+                            ></textarea>
+
+                        </label>
+
+
+
+                        <div class="button-row">
+
+                            <button
+                                id="submitButton"
+                                type="submit"
+                            >
+                                Submit
+                            </button>
+
+
+                            <p
+                                id="formMessage"
+                                class="message"
+								style="display: none;"
+                            >
+                                Ready.
+                            </p>
+
+                        </div>
+
+                    </form>
+
+
+
+                    <div class="note">
+
+                        <svg class="icon">
+                            <use href="#icon-note"></use>
+                        </svg>
+
+                        <div class="note-text">
+
+                            <strong>Note:</strong>
+
+                            Include as much information
+                            about the job as possible so
+                            I can better understand what
+                            you need.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+
+    <script>
+        /* =========================================================
+           SETTINGS
+           ========================================================= */
+
+        /**********************************************************************
+         * EASY TO FIND / EASY TO EDIT GOOGLE SCRIPT WEB APP LINK
+         * Replace this with your new Apps Script Web App URL if you redeploy.
+         **********************************************************************/
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzMwPUoqoCLdYLCTNG8v-6wgrUVtgtRiFzR_ENwMFQmwvy6dvRB3iVhhxvDYAXfFkB4/exec";
+
+
+        /*
+         * Higher = faster.
+         *
+         * 600  = slow
+         * 1000 = medium
+         * 1600 = fast
+         * 3100 = very fast
+         */
+        const SCROLL_SPEED = 3100;
+
+
+
+        /* =========================================================
+           ELEMENTS
+           ========================================================= */
+
+        const pageContainer =
+            document.getElementById("pages");
+
+
+        /*
+         * Only buttons with data-target change pages.
+         *
+         * This avoids accidentally treating the
+         * dropdown toggle itself as a page button.
+         */
+        const navButtons =
+            document.querySelectorAll(
+                "nav button[data-target]"
+            );
+
+
+        const servicesDropdown =
+            document.getElementById(
+                "servicesDropdown"
+            );
+
+
+        const servicesDropdownButton =
+            document.getElementById(
+                "servicesDropdownButton"
+            );
+
+
+        let currentPage =
+            document.querySelector(
+                ".active-page"
+            );
+
+
+        let transitioning = false;
+
+
+
+        /* =========================================================
+           ANIMATED DROPDOWN
+           ========================================================= */
+
+        function openDropdown() {
+
+            servicesDropdown.classList.add(
+                "open"
+            );
+
+
+            servicesDropdownButton.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+
+        }
+
+
+        function closeDropdown() {
+
+            servicesDropdown.classList.remove(
+                "open"
+            );
+
+
+            servicesDropdownButton.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+        }
+
+
+        function toggleDropdown() {
+
+            const isOpen =
+                servicesDropdown.classList.contains(
+                    "open"
+                );
+
+
+            if (isOpen) {
+
+                closeDropdown();
+
+            }
+
+            else {
+
+                openDropdown();
+
+            }
+
+        }
+
+
+        servicesDropdownButton.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                toggleDropdown();
+
+            }
+        );
+
+
+        /*
+         * Close when clicking anywhere outside.
+         */
+        document.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    !servicesDropdown.contains(
+                        event.target
+                    )
+                ) {
+
+                    closeDropdown();
+
+                }
+
+            }
+        );
+
+
+        /*
+         * Close with Escape key.
+         */
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    closeDropdown();
+
+                }
+
+            }
+        );
+
+
+
+        /* =========================================================
+           BEFORE / AFTER IMAGE SLIDERS
+           ========================================================= */
+
+        const comparisonContainers =
+            document.querySelectorAll(
+                ".img-comp-container"
+            );
+
+
+        comparisonContainers.forEach(
+            container => {
+
+                const overlay =
+                    container.querySelector(
+                        ".img-comp-overlay"
+                    );
+
+
+                const slider =
+                    container.querySelector(
+                        ".img-comp-slider"
+                    );
+
+
+                const divider =
+                    container.querySelector(
+                        ".img-comp-divider"
+                    );
+
+
+                /*
+                 * Change slider using percentage
+                 * instead of fixed pixel width.
+                 *
+                 * This means it continues to work
+                 * correctly on responsive screens
+                 * and on pages that start hidden.
+                 */
+                function updateComparison(
+                    clientX
+                ) {
+
+                    const rect =
+                        container.getBoundingClientRect();
+
+
+                    let position =
+                        clientX - rect.left;
+
+
+                    position =
+                        Math.max(
+                            0,
+                            Math.min(
+                                position,
+                                rect.width
+                            )
+                        );
+
+
+                    const percent =
+                        (
+                            position /
+                            rect.width
+                        ) * 100;
+
+
+                    /*
+                     * Clip overlay from the right.
+                     */
+                    overlay.style.clipPath =
+                        `inset(
+                            0
+                            ${100 - percent}%
+                            0
+                            0
+                        )`;
+
+
+                    slider.style.left =
+                        `${percent}%`;
+
+
+                    divider.style.left =
+                        `${percent}%`;
+
+                }
+
+
+                let dragging = false;
+
+
+                container.addEventListener(
+                    "pointerdown",
+                    event => {
+
+                        dragging = true;
+
+                        container.setPointerCapture(
+                            event.pointerId
+                        );
+
+
+                        updateComparison(
+                            event.clientX
+                        );
+
+                    }
+                );
+
+
+                container.addEventListener(
+                    "pointermove",
+                    event => {
+
+                        if (!dragging) {
+                            return;
+                        }
+
+
+                        updateComparison(
+                            event.clientX
+                        );
+
+                    }
+                );
+
+
+                container.addEventListener(
+                    "pointerup",
+                    () => {
+
+                        dragging = false;
+
+                    }
+                );
+
+
+                container.addEventListener(
+                    "pointercancel",
+                    () => {
+
+                        dragging = false;
+
+                    }
+                );
+
+            }
+        );
+
+
+
+        /* =========================================================
+           QUOTE FORM
+           ========================================================= */
+
+        const form = document.getElementById("quoteForm");
+        const submitButton = document.getElementById("submitButton");
+        const formMessage = document.getElementById("formMessage");
+        const businessNameEl = document.getElementById("businessName");
+
+        function showMessage(type, text) {
+            formMessage.className = "message " + type;
+            formMessage.textContent = text;
+        }
+
+        function submitWithJsonp(data) {
+            return new Promise((resolve, reject) => {
+                const callbackName =
+                    "quoteFormCallback_" +
+                    Date.now() +
+                    "_" +
+                    Math.floor(Math.random() * 1000000);
+
+                const script = document.createElement("script");
+
+                const timeout = setTimeout(() => {
+                    cleanup();
+                    reject(new Error("The request timed out. Please try again."));
+                }, 30000);
+
+                function cleanup() {
+                    clearTimeout(timeout);
+                    delete window[callbackName];
+
+                    if (script.parentNode) {
+                        script.parentNode.removeChild(script);
+                    }
+                }
+
+                window[callbackName] = (response) => {
+                    cleanup();
+
+                    if (response && response.success) {
+                        resolve(response);
+                    } else {
+                        reject(
+                            new Error(
+                                response && response.message
+                                    ? response.message
+                                    : "Something went wrong."
+                            )
+                        );
+                    }
+                };
+
+                const params = new URLSearchParams({
+                    action: "submitQuote",
+                    callback: callbackName,
+                    name: data.name,
+                    phone: data.phone,
+                    email: data.email,
+                    job: data.job
+                });
+
+                script.onerror = () => {
+                    cleanup();
+                    reject(new Error("Could not connect to the Google Script link."));
+                };
+
+                script.src = GOOGLE_SCRIPT_URL + "?" + params.toString();
+                document.body.appendChild(script);
+            });
+        }
+
+        async function loadSettings() {
+            try {
+                const url = new URL(GOOGLE_SCRIPT_URL);
+                url.searchParams.set("action", "settings");
+
+                const response = await fetch(url.toString());
+                const result = await response.json();
+
+                if (
+                    result.ok &&
+                    result.settings &&
+                    result.settings.names
+                ) {
+                    businessNameEl.textContent =
+                        result.settings.names + " Quote Request";
+                }
+            } catch (error) {
+                console.warn("Could not load settings:", error);
+            }
+        }
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            submitButton.disabled = true;
+            showMessage("success", "Sending your quote request...");
+
+            const data = {
+                name: document.getElementById("clientName").value.trim(),
+                phone: document.getElementById("clientPhone").value.trim(),
+                email: document.getElementById("clientEmail").value.trim(),
+                job: document.getElementById("jobDescription").value.trim()
+            };
+
+            try {
+                const response = await submitWithJsonp(data);
+                showMessage(
+                    "success",
+                    "Thank you. Your quote request has been sent. Job Ref Number: " +
+                        response.jobNumber
+                );
+                form.reset();
+            } catch (error) {
+                showMessage("error", error.message);
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
+
+
+
+        /* =========================================================
+           PREVENT MANUAL SCROLL DURING PAGE TRANSITION
+           ========================================================= */
+
+        function stopManualScroll(
+            event
+        ) {
+
+            if (!transitioning) {
+                return;
+            }
+
+
+            event.preventDefault();
+
+        }
+
+
+        window.addEventListener(
+            "wheel",
+            stopManualScroll,
+            {
+                passive: false
+            }
+        );
+
+
+        window.addEventListener(
+            "touchmove",
+            stopManualScroll,
+            {
+                passive: false
+            }
+        );
+
+
+        window.addEventListener(
+            "keydown",
+            event => {
+
+                if (!transitioning) {
+                    return;
+                }
+
+
+                const scrollKeys = [
+
+                    "ArrowUp",
+                    "ArrowDown",
+                    "PageUp",
+                    "PageDown",
+                    "Home",
+                    "End",
+                    " "
+
+                ];
+
+
+                if (
+                    scrollKeys.includes(
+                        event.key
+                    )
+                ) {
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+
+
+        /* =========================================================
+           CONSTANT SPEED SCROLL
+           ========================================================= */
+
+        function constantSpeedScroll(
+            targetY,
+            pixelsPerSecond
+        ) {
+
+            return new Promise(
+                resolve => {
+
+                    const startY =
+                        window.scrollY;
+
+
+                    const distance =
+                        targetY -
+                        startY;
+
+
+                    const absoluteDistance =
+                        Math.abs(
+                            distance
+                        );
+
+
+                    if (
+                        absoluteDistance <
+                        1
+                    ) {
+
+                        resolve();
+
+                        return;
+
+                    }
+
+
+                    const duration =
+                        (
+                            absoluteDistance /
+                            pixelsPerSecond
+                        ) * 1000;
+
+
+                    const startTime =
+                        performance.now();
+
+
+
+                    function animationFrame(
+                        now
+                    ) {
+
+                        const elapsed =
+                            now -
+                            startTime;
+
+
+                        const progress =
+                            Math.min(
+                                elapsed /
+                                duration,
+                                1
+                            );
+
+
+                        const newPosition =
+                            startY +
+                            distance *
+                            progress;
+
+
+                        window.scrollTo(
+                            0,
+                            newPosition
+                        );
+
+
+                        if (
+                            progress <
+                            1
+                        ) {
+
+                            requestAnimationFrame(
+                                animationFrame
+                            );
+
+                        }
+
+                        else {
+
+                            resolve();
+
+                        }
+
+                    }
+
+
+                    requestAnimationFrame(
+                        animationFrame
+                    );
+
+                }
+            );
+
+        }
+
+
+
+        /* =========================================================
+           TRANSITION SHAPE
+           ========================================================= */
+
+        function getTransitionPadding() {
+
+            const value =
+                getComputedStyle(
+                    document.documentElement
+                )
+                .getPropertyValue(
+                    "--transition-padding"
+                );
+
+
+            return (
+                parseFloat(
+                    value
+                ) || 200
+            );
+
+        }
+
+
+
+        function createTransitionShape(
+            incomingPage
+        ) {
+
+            const boundary =
+                incomingPage.offsetTop;
+
+
+            const transitionPadding =
+                getTransitionPadding();
+
+
+            const shape =
+                document.createElement(
+                    "div"
+                );
+
+
+            shape.className =
+                "transition-shape";
+
+
+            shape.style.top =
+                (
+                    boundary -
+                    transitionPadding
+                ) +
+                "px";
+
+
+            pageContainer.appendChild(
+                shape
+            );
+
+
+            return shape;
+
+        }
+
+
+
+        /* =========================================================
+           PAGE REORDERING
+           ========================================================= */
+
+        function reorderPages(
+            orderBeforeTransition,
+            newPage,
+            oldPage
+        ) {
+
+            const middlePages =
+                orderBeforeTransition.filter(
+                    page => {
+
+                        return (
+                            page !== newPage &&
+                            page !== oldPage
+                        );
+
+                    }
+                );
+
+
+            pageContainer.appendChild(
+                newPage
+            );
+
+
+            middlePages.forEach(
+                page => {
+
+                    pageContainer.appendChild(
+                        page
+                    );
+
+                }
+            );
+
+
+            pageContainer.appendChild(
+                oldPage
+            );
+
+        }
+
+
+
+        /* =========================================================
+           UPDATE NAVIGATION STATE
+           ========================================================= */
+
+        function updateNavigation(
+            targetID
+        ) {
+
+            navButtons.forEach(
+                button => {
+
+                    button.classList.toggle(
+                        "active",
+                        button.dataset.target ===
+                        targetID
+                    );
+
+                }
+            );
+
+
+            /*
+             * If one of the service pages
+             * is selected, also highlight
+             * the main service dropdown.
+             */
+            const servicePages = [
+
+                "elementbathroom",
+                "elementbedroom",
+                "elementdecks"
+
+            ];
+
+
+            servicesDropdownButton.classList.toggle(
+                "active",
+                servicePages.includes(
+                    targetID
+                )
+            );
+
+        }
+
+
+
+        /* =========================================================
+           CHANGE PAGE
+           ========================================================= */
+
+        async function changePage(
+            targetID
+        ) {
+
+            if (transitioning) {
+                return;
+            }
+
+
+            const newPage =
+                document.getElementById(
+                    targetID
+                );
+
+
+            if (!newPage) {
+                return;
+            }
+
+
+            if (
+                newPage ===
+                currentPage
+            ) {
+
+                closeDropdown();
+
+                return;
+
+            }
+
+
+            closeDropdown();
+
+
+            transitioning =
+                true;
+
+
+            const orderBeforeTransition =
+                Array.from(
+                    pageContainer.querySelectorAll(
+                        ".page"
+                    )
+                );
+
+
+            const oldPage =
+                currentPage;
+
+
+
+            /*
+             * Hide unrelated pages.
+             */
+            orderBeforeTransition.forEach(
+                page => {
+
+                    if (
+                        page !== oldPage &&
+                        page !== newPage
+                    ) {
+
+                        page.classList.remove(
+                            "active-page"
+                        );
+
+
+                        page.classList.remove(
+                            "transition-page"
+                        );
+
+                    }
+
+                }
+            );
+
+
+
+            /*
+             * Add bottom space
+             * to outgoing page.
+             */
+            oldPage.classList.add(
+                "transition-from"
+            );
+
+
+
+            /*
+             * Put incoming page
+             * directly after outgoing page.
+             */
+            oldPage.insertAdjacentElement(
+                "afterend",
+                newPage
+            );
+
+
+            newPage.classList.add(
+                "transition-page"
+            );
+
+
+            newPage.classList.add(
+                "transition-to"
+            );
+
+
+
+            /*
+             * Wait for browser layout.
+             */
+            await new Promise(
+                resolve => {
+
+                    requestAnimationFrame(
+                        () => {
+
+                            requestAnimationFrame(
+                                resolve
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+
+            /*
+             * Add polygon shape.
+             */
+            const transitionShape =
+                createTransitionShape(
+                    newPage
+                );
+
+
+            const transitionPadding =
+                getTransitionPadding();
+
+
+            const destination =
+                newPage.offsetTop +
+                transitionPadding;
+
+
+
+            /*
+             * Scroll into new page.
+             */
+            await constantSpeedScroll(
+                destination,
+                SCROLL_SPEED
+            );
+
+
+
+            transitionShape.remove();
+
+
+            oldPage.classList.remove(
+                "transition-from"
+            );
+
+
+            newPage.classList.remove(
+                "transition-to"
+            );
+
+
+            oldPage.classList.remove(
+                "active-page"
+            );
+
+
+            oldPage.classList.remove(
+                "transition-page"
+            );
+
+
+            newPage.classList.remove(
+                "transition-page"
+            );
+
+
+            newPage.classList.add(
+                "active-page"
+            );
+
+
+
+            reorderPages(
+                orderBeforeTransition,
+                newPage,
+                oldPage
+            );
+
+
+
+            window.scrollTo(
+                0,
+                0
+            );
+
+
+            currentPage =
+                newPage;
+
+
+            updateNavigation(
+                targetID
+            );
+
+
+            transitioning =
+                false;
+
+        }
+
+
+
+        /* =========================================================
+           NAVIGATION BUTTON EVENTS
+           ========================================================= */
+
+        navButtons.forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    event => {
+
+                        event.stopPropagation();
+
+
+                        changePage(
+                            button.dataset.target
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+
+        /* =========================================================
+           STARTUP
+           ========================================================= */
+
+        loadSettings();
+
+    </script>
+
+
+</body>
+
+</html>
