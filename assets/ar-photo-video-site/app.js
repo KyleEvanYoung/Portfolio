@@ -1,749 +1,558 @@
-(() => {
-  'use strict';
+import { TARGETS, SETTINGS } from './config.js';
 
-  const CONFIG = {
-    maxReferenceWidth: 720,
-    processLongSide: 480,
-    maxFeatures: 950,
-    minRecognitionInliers: 10,
-    minTrackingInliers: 8,
-    maxGoodMatches: 90,
-    searchEveryMs: 115,
-    refreshEveryMs: 700,
-    lostAfterMs: 320,
-    cornerSmoothing: 0.74,
-    minFrameGapMs: 16
-  };
+const $ = (s) => document.querySelector(s);
+const camera = $('#camera');
+const overlay = $('#overlay');
+const processCanvas = $('#process');
+const statusEl = $('#status');
+const permission = $('#permission');
+const startBtn = $('#startBtn');
+const flipBtn = $('#flipBtn');
+const targetsBtn = $('#targetsBtn');
+const closeTargets = $('#closeTargets');
+const targetsDialog = $('#targetsDialog');
+const targetGrid = $('#targetGrid');
+const targetNameEl = $('#targetName');
+const fpsEl = $('#fps');
+const confidenceBar = $('#confidenceBar');
+const flash = $('#flash');
 
-  const els = {
-    camera: document.getElementById('camera'),
-    overlayLayer: document.getElementById('overlayLayer'),
-    canvas: document.getElementById('processCanvas'),
-    statusPill: document.getElementById('statusPill'),
-    statusText: document.getElementById('statusText'),
-    fps: document.getElementById('fpsPill'),
-    startScreen: document.getElementById('startScreen'),
-    startButton: document.getElementById('startButton'),
-    startHint: document.getElementById('startHint'),
-    targetsButton: document.getElementById('targetsButton'),
-    stopButton: document.getElementById('stopButton'),
-    targetsPanel: document.getElementById('targetsPanel'),
-    closeTargets: document.getElementById('closeTargets'),
-    targetsList: document.getElementById('targetsList'),
-    toast: document.getElementById('toast')
-  };
+let cvReady = false;
+let cameraReady = false;
+let running = false;
+let stream = null;
+let facingMode = 'environment';
+let cvx = null;
+let targetData = [];
+let frameIndex = 0;
+let processing = false;
+let lock = null;
+let prevGray = null;
+let lastFrameTs = performance.now();
+let fpsEMA = 0;
+let lastRecognitionScore = 0;
+let glRenderer = null;
 
-  const state = {
-    cv: null,
-    cvReady: false,
-    referencesReady: false,
-    stream: null,
-    running: false,
-    busy: false,
-    orb: null,
-    matcher: null,
-    targets: [],
-    activeIndex: null,
-    activeCorners: null,
-    prevGray: null,
-    prevScenePts: null,
-    trackObjectPoints: [],
-    lastSearch: 0,
-    lastRefresh: 0,
-    lastSeen: 0,
-    lastProcessed: 0,
+function setStatus(text, kind = 'loading') {
+  statusEl.textContent = text;
+  statusEl.className = `status ${kind}`;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function waitForOpenCV() {
+  if (window.cv) {
+    cvx = window.cv instanceof Promise ? await window.cv : window.cv;
+    if (cvx?.Mat) return;
+  }
+  await new Promise(resolve => {
+    const handler = async () => {
+      window.removeEventListener('opencv-runtime-ready', handler);
+      cvx = window.cv instanceof Promise ? await window.cv : window.cv;
+      resolve();
+    };
+    window.addEventListener('opencv-runtime-ready', handler, { once: true });
+  });
+}
+
+function buildTargetGrid() {
+  targetGrid.innerHTML = TARGETS.map(t => `
+    <figure class="target-card">
+      <a href="${t.image}" target="_blank" rel="noopener"><img src="${t.image}" alt="${t.name} target"></a>
+      <figcaption><strong>${t.name}</strong><br><span>${t.image.split('/').pop()} → ${t.video.split('/').pop()}</span></figcaption>
+    </figure>
+  `).join('');
+}
+
+function loadImage(url) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+async function loadTargets() {
+  setStatus('Learning 3 target images…');
+  const orb = new cvx.ORB();
+  if (typeof orb.setMaxFeatures === 'function') orb.setMaxFeatures(SETTINGS.orbFeatures);
+  for (const spec of TARGETS) {
+    const img = await loadImage(spec.image);
+    const rgba = cvx.imread(img);
+    const gray = new cvx.Mat();
+    cvx.cvtColor(rgba, gray, cvx.COLOR_RGBA2GRAY);
+    const keypoints = new cvx.KeyPointVector();
+    const descriptors = new cvx.Mat();
+    const mask = new cvx.Mat();
+    orb.detectAndCompute(gray, mask, keypoints, descriptors);
+
+    const video = document.createElement('video');
+    video.src = spec.video;
+    video.loop = true;
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = 'auto';
+    video.crossOrigin = 'anonymous';
+    video.load();
+
+    targetData.push({
+      ...spec, width: gray.cols, height: gray.rows,
+      img, gray, keypoints, descriptors, video
+    });
+    rgba.delete(); mask.delete();
+  }
+  orb.delete();
+  cvReady = true;
+  setStatus('Vision ready — allow camera', 'ok');
+  startBtn.disabled = false;
+  startBtn.textContent = 'Allow camera & start';
+}
+
+function getCoverCrop(video, outAspect) {
+  const vw = video.videoWidth || 1280;
+  const vh = video.videoHeight || 720;
+  const srcAspect = vw / vh;
+  if (srcAspect > outAspect) {
+    const sw = vh * outAspect;
+    return { sx: (vw - sw) / 2, sy: 0, sw, sh: vh };
+  }
+  const sh = vw / outAspect;
+  return { sx: 0, sy: (vh - sh) / 2, sw: vw, sh };
+}
+
+function sizeCanvases() {
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  const cssW = innerWidth;
+  const cssH = innerHeight;
+  overlay.width = Math.round(cssW * dpr);
+  overlay.height = Math.round(cssH * dpr);
+  overlay.style.width = `${cssW}px`;
+  overlay.style.height = `${cssH}px`;
+  glRenderer?.resize(overlay.width, overlay.height);
+
+  const pw = Math.min(SETTINGS.processWidth, Math.round(cssW * dpr));
+  const ph = Math.max(240, Math.round(pw * cssH / cssW));
+  processCanvas.width = pw;
+  processCanvas.height = ph;
+}
+
+async function startCamera() {
+  if (!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+    throw new Error('Camera access needs HTTPS (or localhost).');
+  }
+  if (!navigator.mediaDevices?.getUserMedia) {
+    throw new Error('Camera API unavailable. Use a modern mobile browser over HTTPS.');
+  }
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  stream = await navigator.mediaDevices.getUserMedia({
+    audio: false,
+    video: {
+      facingMode: { ideal: facingMode },
+      width: { ideal: 1280 },
+      height: { ideal: 720 },
+      frameRate: { ideal: 60, min: 24 }
+    }
+  });
+  camera.srcObject = stream;
+  await camera.play();
+  cameraReady = true;
+  sizeCanvases();
+  permission.classList.add('hidden');
+  setStatus('Scanning for a target…', 'ok');
+}
+
+function frameToGray() {
+  const ctx = processCanvas.getContext('2d', { willReadFrequently: true });
+  const aspect = processCanvas.width / processCanvas.height;
+  const { sx, sy, sw, sh } = getCoverCrop(camera, aspect);
+  ctx.drawImage(camera, sx, sy, sw, sh, 0, 0, processCanvas.width, processCanvas.height);
+  const rgba = cvx.imread(processCanvas);
+  const gray = new cvx.Mat();
+  cvx.cvtColor(rgba, gray, cvx.COLOR_RGBA2GRAY);
+  rgba.delete();
+  return gray;
+}
+
+function quadArea(q) {
+  let sum = 0;
+  for (let i = 0; i < 4; i++) {
+    const a = q[i], b = q[(i + 1) % 4];
+    sum += a.x * b.y - b.x * a.y;
+  }
+  return Math.abs(sum) * 0.5;
+}
+
+function isSaneQuad(q) {
+  if (!q || q.length !== 4) return false;
+  if (q.some(p => !Number.isFinite(p.x) || !Number.isFinite(p.y))) return false;
+  const area = quadArea(q);
+  const full = processCanvas.width * processCanvas.height;
+  if (area < full * 0.012 || area > full * 1.7) return false;
+  const padX = processCanvas.width * 0.35, padY = processCanvas.height * 0.35;
+  return q.every(p => p.x > -padX && p.y > -padY && p.x < processCanvas.width + padX && p.y < processCanvas.height + padY);
+}
+
+function homographyToQuad(H, tw, th) {
+  const src = cvx.matFromArray(4, 1, cvx.CV_32FC2, [0,0, tw,0, tw,th, 0,th]);
+  const dst = new cvx.Mat();
+  cvx.perspectiveTransform(src, dst, H);
+  const d = dst.data32F;
+  const q = [0,1,2,3].map(i => ({ x: d[i*2], y: d[i*2+1] }));
+  src.delete(); dst.delete();
+  return q;
+}
+
+function keypointPt(vec, i) {
+  const kp = vec.get(i);
+  return { x: kp.pt.x, y: kp.pt.y };
+}
+
+function matchTarget(frameKeypoints, frameDescriptors, target) {
+  if (frameDescriptors.empty() || target.descriptors.empty()) return null;
+  const matcher = new cvx.BFMatcher(cvx.NORM_HAMMING, false);
+  const knn = new cvx.DMatchVectorVector();
+  try {
+    matcher.knnMatch(frameDescriptors, target.descriptors, knn, 2);
+    const scenePts = [];
+    const targetPts = [];
+    for (let i = 0; i < knn.size(); i++) {
+      const pair = knn.get(i);
+      if (pair.size() < 2) { pair.delete(); continue; }
+      const m0 = pair.get(0), m1 = pair.get(1);
+      if (m0.distance < SETTINGS.ratioTest * m1.distance) {
+        const sp = keypointPt(frameKeypoints, m0.queryIdx);
+        const tp = keypointPt(target.keypoints, m0.trainIdx);
+        scenePts.push(sp.x, sp.y);
+        targetPts.push(tp.x, tp.y);
+      }
+      pair.delete();
+    }
+    if (scenePts.length / 2 < SETTINGS.minGoodMatches) return null;
+
+    const src = cvx.matFromArray(targetPts.length / 2, 1, cvx.CV_32FC2, targetPts);
+    const dst = cvx.matFromArray(scenePts.length / 2, 1, cvx.CV_32FC2, scenePts);
+    const mask = new cvx.Mat();
+    const H = cvx.findHomography(src, dst, cvx.RANSAC, SETTINGS.ransacThreshold, mask);
+    if (H.empty()) { src.delete(); dst.delete(); mask.delete(); H.delete(); return null; }
+
+    const keptTarget = [];
+    const keptScene = [];
+    let inliers = 0;
+    for (let i = 0; i < mask.rows; i++) {
+      if (mask.data[i]) {
+        inliers++;
+        keptTarget.push(targetPts[i*2], targetPts[i*2+1]);
+        keptScene.push(scenePts[i*2], scenePts[i*2+1]);
+      }
+    }
+    const quad = homographyToQuad(H, target.width, target.height);
+    const score = inliers / Math.max(SETTINGS.minInliers, targetPts.length / 2);
+    src.delete(); dst.delete(); mask.delete(); H.delete();
+    if (inliers < SETTINGS.minInliers || !isSaneQuad(quad)) return null;
+
+    const n = Math.min(keptScene.length / 2, SETTINGS.maxTrackPoints);
+    return {
+      target,
+      inliers,
+      score,
+      quad,
+      targetPts: keptTarget.slice(0, n * 2),
+      scenePts: keptScene.slice(0, n * 2)
+    };
+  } finally {
+    knn.delete(); matcher.delete();
+  }
+}
+
+function detectFeatures(gray) {
+  const orb = new cvx.ORB();
+  if (typeof orb.setMaxFeatures === 'function') orb.setMaxFeatures(SETTINGS.orbFeatures);
+  const kp = new cvx.KeyPointVector();
+  const desc = new cvx.Mat();
+  const mask = new cvx.Mat();
+  orb.detectAndCompute(gray, mask, kp, desc);
+  mask.delete(); orb.delete();
+  return { kp, desc };
+}
+
+function recognise(gray, onlyTarget = null) {
+  const { kp, desc } = detectFeatures(gray);
+  let best = null;
+  const candidates = onlyTarget ? [onlyTarget] : targetData;
+  for (const target of candidates) {
+    const result = matchTarget(kp, desc, target);
+    if (result && (!best || result.inliers > best.inliers)) best = result;
+  }
+  kp.delete(); desc.delete();
+  return best;
+}
+
+function matPoints(flat) { return cvx.matFromArray(flat.length / 2, 1, cvx.CV_32FC2, flat); }
+
+function trackOpticalFlow(gray) {
+  if (!lock || !prevGray || lock.scenePts.length / 2 < SETTINGS.minTrackPoints) return false;
+  const oldPts = matPoints(lock.scenePts);
+  const nextPts = new cvx.Mat();
+  const status = new cvx.Mat();
+  const err = new cvx.Mat();
+  const win = new cvx.Size(21, 21);
+  const criteria = new cvx.TermCriteria(cvx.TermCriteria_COUNT | cvx.TermCriteria_EPS, 20, 0.03);
+  cvx.calcOpticalFlowPyrLK(prevGray, gray, oldPts, nextPts, status, err, win, 3, criteria);
+
+  const scene = [], target = [];
+  const nd = nextPts.data32F;
+  for (let i = 0; i < status.rows; i++) {
+    if (status.data[i]) {
+      const x = nd[i*2], y = nd[i*2+1];
+      if (x >= -10 && y >= -10 && x <= processCanvas.width + 10 && y <= processCanvas.height + 10) {
+        scene.push(x, y);
+        target.push(lock.targetPts[i*2], lock.targetPts[i*2+1]);
+      }
+    }
+  }
+  oldPts.delete(); nextPts.delete(); status.delete(); err.delete();
+  if (scene.length / 2 < SETTINGS.minTrackPoints) return false;
+
+  const src = matPoints(target);
+  const dst = matPoints(scene);
+  const mask = new cvx.Mat();
+  const H = cvx.findHomography(src, dst, cvx.RANSAC, SETTINGS.ransacThreshold, mask);
+  if (H.empty()) { src.delete(); dst.delete(); mask.delete(); H.delete(); return false; }
+  const quad = homographyToQuad(H, lock.target.width, lock.target.height);
+  src.delete(); dst.delete(); mask.delete(); H.delete();
+  if (!isSaneQuad(quad)) return false;
+  lock.scenePts = scene;
+  lock.targetPts = target;
+  lock.rawQuad = quad;
+  lock.lostFrames = 0;
+  return true;
+}
+
+function smoothQuad(raw) {
+  if (!lock.smoothedQuad) {
+    lock.smoothedQuad = raw.map(p => ({ ...p }));
+    return;
+  }
+  const a = SETTINGS.smoothing;
+  for (let i = 0; i < 4; i++) {
+    lock.smoothedQuad[i].x += (raw[i].x - lock.smoothedQuad[i].x) * a;
+    lock.smoothedQuad[i].y += (raw[i].y - lock.smoothedQuad[i].y) * a;
+  }
+}
+
+async function setLock(result) {
+  const changed = !lock || lock.target.id !== result.target.id;
+  if (changed && lock?.target?.video) lock.target.video.pause();
+  lock = {
+    target: result.target,
+    targetPts: result.targetPts,
+    scenePts: result.scenePts,
+    rawQuad: result.quad,
+    smoothedQuad: result.quad.map(p => ({ ...p })),
     lostFrames: 0,
-    processedFrames: 0,
-    fpsWindowStart: performance.now(),
-    avgProcessMs: 12,
-    frameHandle: null,
-    usingVideoFrameCallback: false
+    age: 0,
   };
-
-  const ctx = els.canvas.getContext('2d', { willReadFrequently: true, alpha: false });
-
-  buildTargetPanel();
-  bindUI();
-
-  // Emscripten callback used by the official OpenCV.js build.
-  window.Module = window.Module || {};
-  window.Module.onRuntimeInitialized = () => prepareOpenCv();
-  window.onOpenCvScriptLoaded = () => prepareOpenCv();
-
-  async function prepareOpenCv() {
-    if (state.cvReady) return;
-    try {
-      let candidate = window.cv;
-      if (!candidate) return;
-      candidate = candidate instanceof Promise ? await candidate : candidate;
-      if (!candidate || !candidate.Mat) return;
-      state.cv = candidate;
-      window.cv = candidate;
-      state.cvReady = true;
-      setStatus('Preparing image library…', 'live');
-      await prepareReferences();
-      els.startButton.disabled = false;
-      els.startButton.textContent = 'Start AR camera';
-      els.startHint.textContent = 'Tap Start, then allow camera access.';
-      setStatus('Ready', 'live');
-    } catch (error) {
-      console.error(error);
-      fatal('OpenCV could not start. Check your internet connection and reload.');
-    }
+  lastRecognitionScore = Math.min(1, result.inliers / 28);
+  if (changed) {
+    try { await result.target.video.play(); } catch (_) {}
+    flash.classList.add('on');
+    setTimeout(() => flash.classList.remove('on'), 180);
   }
+  targetNameEl.textContent = `${result.target.name} • ${result.inliers} inliers`;
+  setStatus(`Tracking ${result.target.name}`, 'ok');
+}
 
-  function bindUI() {
-    els.startButton.addEventListener('click', startCamera);
-    els.stopButton.addEventListener('click', stopCamera);
-    els.targetsButton.addEventListener('click', () => setTargetsPanel(true));
-    els.closeTargets.addEventListener('click', () => setTargetsPanel(false));
-    els.targetsPanel.addEventListener('click', e => {
-      if (e.target === els.targetsPanel) setTargetsPanel(false);
-    });
-    window.addEventListener('resize', () => {
-      if (state.activeCorners && state.activeIndex !== null) {
-        updateOverlay(state.activeCorners, state.targets[state.activeIndex]);
-      }
-    }, { passive: true });
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden && state.running) hideAllOverlays(false);
-    });
-  }
+function loseLock() {
+  if (lock?.target?.video) lock.target.video.pause();
+  lock = null;
+  lastRecognitionScore = 0;
+  targetNameEl.textContent = 'Searching for a target…';
+  setStatus('Scanning for a target…', 'ok');
+}
 
-  function buildTargetPanel() {
-    const defs = window.AR_TARGETS || [];
-    els.targetsList.innerHTML = defs.map((target, i) => `
-      <article class="target-card">
-        <img src="${target.image}" alt="Target ${i + 1}: ${escapeHtml(target.name)}" loading="eager" />
-        <div class="target-copy">
-          <div class="target-name">${i + 1}. ${escapeHtml(target.name)}</div>
-          <div class="target-path">${escapeHtml(target.image)} → ${escapeHtml(target.video)}</div>
-        </div>
-      </article>
-    `).join('');
-  }
-
-  async function prepareReferences() {
-    if (state.referencesReady) return;
-    const cv = state.cv;
-    const defs = window.AR_TARGETS || [];
-    if (!defs.length) throw new Error('No AR_TARGETS configured.');
-
-    state.orb = cv.ORB.create ? cv.ORB.create(CONFIG.maxFeatures) : new cv.ORB(CONFIG.maxFeatures);
-    state.matcher = cv.BFMatcher.create ? cv.BFMatcher.create(cv.NORM_HAMMING, true) : new cv.BFMatcher(cv.NORM_HAMMING, true);
-
-    for (let i = 0; i < defs.length; i++) {
-      setStatus(`Indexing target ${i + 1}/${defs.length}…`, 'live');
-      const img = await loadImage(defs[i].image);
-      const src = cv.imread(img);
-      const gray = new cv.Mat();
-      cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
-
-      const scale = Math.min(1, CONFIG.maxReferenceWidth / gray.cols);
-      const work = new cv.Mat();
-      if (scale < 1) {
-        cv.resize(gray, work, new cv.Size(Math.max(1, Math.round(gray.cols * scale)), Math.max(1, Math.round(gray.rows * scale))), 0, 0, cv.INTER_AREA);
-      } else {
-        gray.copyTo(work);
-      }
-
-      const keypoints = new cv.KeyPointVector();
-      const descriptors = new cv.Mat();
-      const emptyMask = new cv.Mat();
-      state.orb.detectAndCompute(work, emptyMask, keypoints, descriptors);
-      emptyMask.delete();
-
-      if (descriptors.empty() || keypoints.size() < 20) {
-        src.delete(); gray.delete(); work.delete(); keypoints.delete(); descriptors.delete();
-        throw new Error(`Target ${defs[i].image} does not contain enough visual features.`);
-      }
-
-      const video = document.createElement('video');
-      video.className = 'ar-video';
-      video.src = defs[i].video;
-      video.loop = true;
-      video.muted = true;
-      video.autoplay = false;
-      video.playsInline = true;
-      video.setAttribute('playsinline', '');
-      video.setAttribute('webkit-playsinline', '');
-      video.preload = 'auto';
-      video.style.width = `${work.cols}px`;
-      video.style.height = `${work.rows}px`;
-      els.overlayLayer.appendChild(video);
-
-      state.targets.push({
-        ...defs[i],
-        keypoints,
-        descriptors,
-        cvWidth: work.cols,
-        cvHeight: work.rows,
-        video
-      });
-
-      src.delete();
-      gray.delete();
-      work.delete();
-    }
-
-    state.referencesReady = true;
-  }
-
-  async function startCamera() {
-    if (!state.cvReady || !state.referencesReady || state.running) return;
-    if (!navigator.mediaDevices?.getUserMedia) {
-      fatal('This browser does not provide camera access. Use a current Safari, Chrome, Edge, or Firefox browser.');
-      return;
-    }
-
-    els.startButton.disabled = true;
-    els.startButton.textContent = 'Waiting for camera permission…';
-    setStatus('Waiting for camera permission…', 'live');
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: {
-          facingMode: { ideal: 'environment' },
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          frameRate: { ideal: 60, max: 60 }
-        }
-      });
-      state.stream = stream;
-      els.camera.srcObject = stream;
-      await els.camera.play();
-      await waitForVideoDimensions(els.camera);
-      configureProcessCanvas();
-
-      state.running = true;
-      state.lastSearch = 0;
-      state.lastRefresh = 0;
-      state.lastSeen = performance.now();
-      state.lastProcessed = 0;
-      state.fpsWindowStart = performance.now();
-      state.processedFrames = 0;
-
-      els.startScreen.classList.add('hidden');
-      els.stopButton.disabled = false;
-      els.startButton.textContent = 'Start AR camera';
-      els.startButton.disabled = false;
-      setStatus('Searching for a target image…', 'live');
-      showToast('Camera active — point it at one of the 3 target images.');
-      scheduleFrame();
-    } catch (error) {
-      console.error(error);
-      els.startButton.disabled = false;
-      els.startButton.textContent = 'Try camera again';
-      if (error?.name === 'NotAllowedError') {
-        setStatus('Camera permission denied', '');
-        els.startHint.textContent = 'Camera access was blocked. Allow camera permission for this site, then try again.';
-      } else {
-        setStatus('Camera could not start', '');
-        els.startHint.textContent = `${error?.message || 'Camera error'}`;
-      }
-    }
-  }
-
-  function stopCamera() {
-    state.running = false;
-    if (state.frameHandle && !state.usingVideoFrameCallback) cancelAnimationFrame(state.frameHandle);
-    state.frameHandle = null;
-    if (state.stream) state.stream.getTracks().forEach(track => track.stop());
-    state.stream = null;
-    els.camera.srcObject = null;
-    resetTracking(true);
-    hideAllOverlays(true);
-    els.stopButton.disabled = true;
-    els.startScreen.classList.remove('hidden');
-    els.startButton.disabled = false;
-    els.startButton.textContent = 'Start AR camera';
-    setStatus('Ready', 'live');
-    els.fps.textContent = '-- fps';
-  }
-
-  function configureProcessCanvas() {
-    const w = els.camera.videoWidth;
-    const h = els.camera.videoHeight;
-    if (w >= h) {
-      els.canvas.width = CONFIG.processLongSide;
-      els.canvas.height = Math.max(1, Math.round(CONFIG.processLongSide * h / w));
-    } else {
-      els.canvas.height = CONFIG.processLongSide;
-      els.canvas.width = Math.max(1, Math.round(CONFIG.processLongSide * w / h));
-    }
-  }
-
-  function scheduleFrame() {
-    if (!state.running) return;
-    if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
-      state.usingVideoFrameCallback = true;
-      els.camera.requestVideoFrameCallback(frameTick);
-    } else {
-      state.usingVideoFrameCallback = false;
-      state.frameHandle = requestAnimationFrame(frameTick);
-    }
-  }
-
-  function frameTick(now) {
-    if (!state.running) return;
-    const gap = Math.max(CONFIG.minFrameGapMs, Math.min(45, state.avgProcessMs * 0.92));
-    if (!state.busy && now - state.lastProcessed >= gap) {
-      state.busy = true;
-      const started = performance.now();
-      try {
-        processFrame(started);
-      } catch (error) {
-        console.error('Frame processing error:', error);
-      } finally {
-        const elapsed = performance.now() - started;
-        state.avgProcessMs = state.avgProcessMs * 0.88 + elapsed * 0.12;
-        state.lastProcessed = now;
-        state.busy = false;
-      }
-    }
-    scheduleFrame();
-  }
-
-  function processFrame(now) {
-    const cv = state.cv;
-    ctx.drawImage(els.camera, 0, 0, els.canvas.width, els.canvas.height);
-    const rgba = cv.imread(els.canvas);
-    const gray = new cv.Mat();
-    cv.cvtColor(rgba, gray, cv.COLOR_RGBA2GRAY);
-    rgba.delete();
-
+async function processFrame() {
+  if (!running || processing || !cameraReady || !cvReady || camera.readyState < 2) return;
+  processing = true;
+  let gray = null;
+  try {
+    gray = frameToGray();
+    frameIndex++;
     let tracked = false;
-    if (state.activeIndex !== null && state.prevGray && state.prevScenePts && state.trackObjectPoints.length >= CONFIG.minTrackingInliers) {
-      tracked = trackWithOpticalFlow(state.prevGray, gray);
-      if (tracked) {
-        state.lastSeen = now;
-        state.lostFrames = 0;
+
+    if (lock) {
+      tracked = trackOpticalFlow(gray);
+      lock.age++;
+      if (!tracked) lock.lostFrames++;
+      if (tracked) smoothQuad(lock.rawQuad);
+
+      if (lock.age % SETTINGS.refreshLockEveryFrames === 0) {
+        const refreshed = recognise(gray, lock.target);
+        if (refreshed) await setLock(refreshed);
+      }
+      if (lock && lock.lostFrames > SETTINGS.lostFrameLimit) loseLock();
+    }
+
+    if (!lock && frameIndex % SETTINGS.recognitionEveryFrames === 0) {
+      const result = recognise(gray);
+      if (result) await setLock(result);
+    }
+
+    if (prevGray) prevGray.delete();
+    prevGray = gray.clone();
+  } catch (err) {
+    console.error(err);
+    setStatus(`Tracking error: ${err.message || err}`, 'bad');
+  } finally {
+    gray?.delete();
+    processing = false;
+  }
+}
+
+function toOverlayQuad(q) {
+  if (!q) return null;
+  const sx = overlay.width / processCanvas.width;
+  const sy = overlay.height / processCanvas.height;
+  return q.map(p => ({ x: p.x * sx, y: p.y * sy }));
+}
+
+function render() {
+  const now = performance.now();
+  const inst = 1000 / Math.max(1, now - lastFrameTs);
+  fpsEMA = fpsEMA ? fpsEMA * 0.9 + inst * 0.1 : inst;
+  lastFrameTs = now;
+  fpsEl.textContent = `${Math.round(fpsEMA)} fps`;
+  confidenceBar.style.width = `${Math.round(lastRecognitionScore * 100)}%`;
+
+  if (lock?.smoothedQuad && lock.target.video.readyState >= 2) {
+    glRenderer.draw(lock.target.video, toOverlayQuad(lock.smoothedQuad));
+  } else {
+    glRenderer.clear();
+  }
+  requestAnimationFrame(render);
+}
+
+function makeGLRenderer(canvas) {
+  const gl = canvas.getContext('webgl', { alpha: true, antialias: true, premultipliedAlpha: true });
+  if (!gl) throw new Error('WebGL is required for the video overlay.');
+  const vs = `
+    attribute vec2 a_pos;
+    attribute vec2 a_uv;
+    varying vec2 v_uv;
+    void main(){ gl_Position = vec4(a_pos, 0.0, 1.0); v_uv = a_uv; }
+  `;
+  const fs = `
+    precision mediump float;
+    varying vec2 v_uv;
+    uniform sampler2D u_tex;
+    void main(){ gl_FragColor = texture2D(u_tex, v_uv); }
+  `;
+  function shader(type, src) {
+    const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+    return s;
+  }
+  const program = gl.createProgram();
+  gl.attachShader(program, shader(gl.VERTEX_SHADER, vs));
+  gl.attachShader(program, shader(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(program);
+  gl.useProgram(program);
+  const posLoc = gl.getAttribLocation(program, 'a_pos');
+  const uvLoc = gl.getAttribLocation(program, 'a_uv');
+  const posBuf = gl.createBuffer();
+  const uvBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, uvBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0, 1,0, 1,1, 0,0, 1,1, 0,1]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(uvLoc);
+  gl.vertexAttribPointer(uvLoc, 2, gl.FLOAT, false, 0, 0);
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+  gl.clearColor(0,0,0,0);
+
+  return {
+    resize(w, h) { gl.viewport(0,0,w,h); },
+    clear() { gl.clear(gl.COLOR_BUFFER_BIT); },
+    draw(video, q) {
+      if (!q || q.length !== 4) return this.clear();
+      const W = canvas.width, H = canvas.height;
+      const clip = q.map(p => [p.x / W * 2 - 1, 1 - p.y / H * 2]);
+      // TL,TR,BR + TL,BR,BL
+      const v = new Float32Array([
+        ...clip[0], ...clip[1], ...clip[2],
+        ...clip[0], ...clip[2], ...clip[3]
+      ]);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.useProgram(program);
+      gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, v, gl.DYNAMIC_DRAW);
+      gl.enableVertexAttribArray(posLoc);
+      gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, uvBuf);
+      gl.enableVertexAttribArray(uvLoc);
+      gl.vertexAttribPointer(uvLoc, 2, gl.FLOAT, false, 0, 0);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video); } catch (_) { return; }
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
+  };
+}
+
+async function boot() {
+  buildTargetGrid();
+  try {
+    glRenderer = makeGLRenderer(overlay);
+    sizeCanvases();
+    await waitForOpenCV();
+    await loadTargets();
+  } catch (err) {
+    console.error(err);
+    setStatus(`Could not start: ${err.message || err}`, 'bad');
+    startBtn.textContent = 'Reload page';
+    startBtn.disabled = false;
+    startBtn.onclick = () => location.reload();
+  }
+}
+
+startBtn.addEventListener('click', async () => {
+  startBtn.disabled = true;
+  startBtn.textContent = 'Requesting camera…';
+  try {
+    await startCamera();
+    running = true;
+    render();
+    const loop = async () => {
+      if (!running) return;
+      await processFrame();
+      if ('requestVideoFrameCallback' in HTMLVideoElement.prototype && camera.requestVideoFrameCallback) {
+        camera.requestVideoFrameCallback(() => loop());
       } else {
-        state.lostFrames += 1;
+        requestAnimationFrame(loop);
       }
-    }
-
-    if (state.activeIndex !== null && now - state.lastRefresh >= CONFIG.refreshEveryMs) {
-      const refreshed = recognize(gray, [state.activeIndex]);
-      state.lastRefresh = now;
-      if (refreshed) {
-        adoptRecognition(refreshed, false);
-        tracked = true;
-        state.lastSeen = now;
-        state.lostFrames = 0;
-      }
-    }
-
-    if (state.activeIndex === null && now - state.lastSearch >= CONFIG.searchEveryMs) {
-      const recognized = recognize(gray, state.targets.map((_, i) => i));
-      state.lastSearch = now;
-      if (recognized) {
-        adoptRecognition(recognized, true);
-        state.lastRefresh = now;
-        state.lastSeen = now;
-        tracked = true;
-      }
-    }
-
-    if (state.activeIndex !== null && !tracked && state.lostFrames >= 3 && now - state.lastSeen > CONFIG.lostAfterMs) {
-      resetTracking(false);
-      setStatus('Searching for a target image…', 'live');
-    }
-
-    replacePrevGray(gray);
-    gray.delete();
-    updateFps(now);
+    };
+    loop();
+  } catch (err) {
+    console.error(err);
+    startBtn.disabled = false;
+    startBtn.textContent = 'Try camera again';
+    setStatus(`Camera unavailable: ${err.message || err}`, 'bad');
   }
+});
 
-  function recognize(gray, targetIndexes) {
-    const cv = state.cv;
-    const frameKeypoints = new cv.KeyPointVector();
-    const frameDescriptors = new cv.Mat();
-    const emptyMask = new cv.Mat();
-    state.orb.detectAndCompute(gray, emptyMask, frameKeypoints, frameDescriptors);
-    emptyMask.delete();
+flipBtn.addEventListener('click', async () => {
+  facingMode = facingMode === 'environment' ? 'user' : 'environment';
+  loseLock();
+  try { await startCamera(); } catch (err) { setStatus(`Could not flip camera: ${err.message || err}`, 'bad'); }
+});
 
-    if (frameDescriptors.empty() || frameKeypoints.size() < 12) {
-      frameKeypoints.delete();
-      frameDescriptors.delete();
-      return null;
-    }
+targetsBtn.addEventListener('click', () => targetsDialog.showModal());
+closeTargets.addEventListener('click', () => targetsDialog.close());
+addEventListener('resize', sizeCanvases);
+addEventListener('pagehide', () => stream?.getTracks().forEach(t => t.stop()));
 
-    let best = null;
-
-    for (const targetIndex of targetIndexes) {
-      const target = state.targets[targetIndex];
-      const matches = new cv.DMatchVector();
-      state.matcher.match(target.descriptors, frameDescriptors, matches);
-
-      const sorted = [];
-      for (let i = 0; i < matches.size(); i++) {
-        const m = matches.get(i);
-        sorted.push({ queryIdx: m.queryIdx, trainIdx: m.trainIdx, distance: m.distance });
-      }
-      matches.delete();
-      sorted.sort((a, b) => a.distance - b.distance);
-      if (sorted.length < CONFIG.minRecognitionInliers) continue;
-
-      const bestDistance = sorted[0].distance;
-      const cutoff = Math.min(78, Math.max(38, bestDistance * 2.15));
-      const good = sorted.filter(m => m.distance <= cutoff).slice(0, CONFIG.maxGoodMatches);
-      if (good.length < CONFIG.minRecognitionInliers) continue;
-
-      const srcData = [];
-      const dstData = [];
-      for (const m of good) {
-        const a = target.keypoints.get(m.queryIdx).pt;
-        const b = frameKeypoints.get(m.trainIdx).pt;
-        srcData.push(a.x, a.y);
-        dstData.push(b.x, b.y);
-      }
-
-      const srcPts = cv.matFromArray(good.length, 1, cv.CV_32FC2, srcData);
-      const dstPts = cv.matFromArray(good.length, 1, cv.CV_32FC2, dstData);
-      const H = cv.findHomography(srcPts, dstPts, cv.RANSAC, 3.2);
-
-      if (H.empty()) {
-        srcPts.delete(); dstPts.delete(); H.delete();
-        continue;
-      }
-
-      // Compute our own reprojection inliers. This avoids depending on the
-      // optional findHomography output-mask overload, which varies between
-      // OpenCV.js builds.
-      const projected = new cv.Mat();
-      cv.perspectiveTransform(srcPts, projected, H);
-      const projectedData = projected.data32F;
-      let inliers = 0;
-      const objectPoints = [];
-      const scenePoints = [];
-      for (let i = 0; i < good.length; i++) {
-        const dx = projectedData[i * 2] - dstData[i * 2];
-        const dy = projectedData[i * 2 + 1] - dstData[i * 2 + 1];
-        if (dx * dx + dy * dy <= 4.2 * 4.2) {
-          inliers++;
-          objectPoints.push({ x: srcData[i * 2], y: srcData[i * 2 + 1] });
-          scenePoints.push({ x: dstData[i * 2], y: dstData[i * 2 + 1] });
-        }
-      }
-      projected.delete();
-      const ratio = inliers / good.length;
-      const corners = projectTargetCorners(H, target.cvWidth, target.cvHeight);
-      const valid = inliers >= CONFIG.minRecognitionInliers && ratio >= 0.34 && validateQuad(corners, gray.cols, gray.rows);
-
-      if (valid) {
-        const medianDistance = good[Math.floor(good.length / 2)].distance;
-        const score = inliers * 2.1 + ratio * 18 - medianDistance * 0.08;
-        if (!best || score > best.score) {
-          best = { targetIndex, corners, objectPoints, scenePoints, score, inliers };
-        }
-      }
-
-      srcPts.delete(); dstPts.delete(); H.delete();
-    }
-
-    frameKeypoints.delete();
-    frameDescriptors.delete();
-    return best;
-  }
-
-  function trackWithOpticalFlow(prevGray, gray) {
-    const cv = state.cv;
-    const nextPts = new cv.Mat();
-    const status = new cv.Mat();
-    const err = new cv.Mat();
-
-    cv.calcOpticalFlowPyrLK(prevGray, gray, state.prevScenePts, nextPts, status, err);
-
-    const objectPoints = [];
-    const scenePoints = [];
-    const nextData = nextPts.data32F;
-    for (let i = 0; i < state.trackObjectPoints.length; i++) {
-      if (status.data[i]) {
-        const x = nextData[i * 2];
-        const y = nextData[i * 2 + 1];
-        if (Number.isFinite(x) && Number.isFinite(y) && x >= -8 && y >= -8 && x <= gray.cols + 8 && y <= gray.rows + 8) {
-          objectPoints.push(state.trackObjectPoints[i]);
-          scenePoints.push({ x, y });
-        }
-      }
-    }
-
-    nextPts.delete(); status.delete(); err.delete();
-    if (objectPoints.length < CONFIG.minTrackingInliers) return false;
-
-    const srcData = objectPoints.flatMap(p => [p.x, p.y]);
-    const dstData = scenePoints.flatMap(p => [p.x, p.y]);
-    const srcPts = cv.matFromArray(objectPoints.length, 1, cv.CV_32FC2, srcData);
-    const dstPts = cv.matFromArray(scenePoints.length, 1, cv.CV_32FC2, dstData);
-    const H = cv.findHomography(srcPts, dstPts, cv.RANSAC, 3.5);
-
-    if (H.empty()) {
-      srcPts.delete(); dstPts.delete(); H.delete();
-      return false;
-    }
-
-    const projected = new cv.Mat();
-    cv.perspectiveTransform(srcPts, projected, H);
-    const projectedData = projected.data32F;
-    const filteredObject = [];
-    const filteredScene = [];
-    for (let i = 0; i < objectPoints.length; i++) {
-      const dx = projectedData[i * 2] - dstData[i * 2];
-      const dy = projectedData[i * 2 + 1] - dstData[i * 2 + 1];
-      if (dx * dx + dy * dy <= 4.5 * 4.5) {
-        filteredObject.push(objectPoints[i]);
-        filteredScene.push(scenePoints[i]);
-      }
-    }
-    projected.delete();
-
-    const target = state.targets[state.activeIndex];
-    const corners = projectTargetCorners(H, target.cvWidth, target.cvHeight);
-    const valid = filteredObject.length >= CONFIG.minTrackingInliers && validateQuad(corners, gray.cols, gray.rows);
-
-    if (valid) {
-      setTrackingPoints(filteredObject, filteredScene);
-      applyCorners(corners, target);
-    }
-
-    srcPts.delete(); dstPts.delete(); H.delete();
-    return valid;
-  }
-
-  function projectTargetCorners(H, width, height) {
-    const cv = state.cv;
-    const src = cv.matFromArray(4, 1, cv.CV_32FC2, [0, 0, width, 0, width, height, 0, height]);
-    const dst = new cv.Mat();
-    cv.perspectiveTransform(src, dst, H);
-    const d = dst.data32F;
-    const corners = [
-      { x: d[0], y: d[1] },
-      { x: d[2], y: d[3] },
-      { x: d[4], y: d[5] },
-      { x: d[6], y: d[7] }
-    ];
-    src.delete(); dst.delete();
-    return corners;
-  }
-
-  function adoptRecognition(result, announce) {
-    if (state.activeIndex !== result.targetIndex) {
-      hideAllOverlays(false);
-      state.activeIndex = result.targetIndex;
-      state.activeCorners = null;
-    }
-    setTrackingPoints(result.objectPoints, result.scenePoints);
-    applyCorners(result.corners, state.targets[result.targetIndex]);
-    if (announce) {
-      const name = state.targets[result.targetIndex].name;
-      setStatus(`${name} recognized`, 'found');
-      showToast(`${name} → playing its paired video`);
-    }
-  }
-
-  function setTrackingPoints(objectPoints, scenePoints) {
-    const cv = state.cv;
-    state.trackObjectPoints = objectPoints.map(p => ({ x: p.x, y: p.y }));
-    if (state.prevScenePts) state.prevScenePts.delete();
-    const data = scenePoints.flatMap(p => [p.x, p.y]);
-    state.prevScenePts = cv.matFromArray(scenePoints.length, 1, cv.CV_32FC2, data);
-  }
-
-  function applyCorners(corners, target) {
-    if (!state.activeCorners) {
-      state.activeCorners = corners.map(p => ({ ...p }));
-    } else {
-      const a = CONFIG.cornerSmoothing;
-      state.activeCorners = corners.map((p, i) => ({
-        x: state.activeCorners[i].x * (1 - a) + p.x * a,
-        y: state.activeCorners[i].y * (1 - a) + p.y * a
-      }));
-    }
-    updateOverlay(state.activeCorners, target);
-    if (target.video.paused) target.video.play().catch(() => {});
-    target.video.classList.add('visible');
-  }
-
-  function updateOverlay(processCorners, target) {
-    const screenCorners = processCorners.map(processPointToScreen);
-    const H = homographyFromFourPoints(
-      [
-        { x: 0, y: 0 },
-        { x: target.cvWidth, y: 0 },
-        { x: target.cvWidth, y: target.cvHeight },
-        { x: 0, y: target.cvHeight }
-      ],
-      screenCorners
-    );
-    if (!H) return;
-    const [h11,h12,h13,h21,h22,h23,h31,h32] = H;
-    target.video.style.transform = `matrix3d(${h11},${h21},0,${h31},${h12},${h22},0,${h32},0,0,1,0,${h13},${h23},0,1)`;
-  }
-
-  function processPointToScreen(p) {
-    const rawW = els.camera.videoWidth;
-    const rawH = els.camera.videoHeight;
-    const procW = els.canvas.width;
-    const procH = els.canvas.height;
-    const viewportW = window.innerWidth;
-    const viewportH = window.innerHeight;
-
-    const rawX = p.x * rawW / procW;
-    const rawY = p.y * rawH / procH;
-    const scale = Math.max(viewportW / rawW, viewportH / rawH);
-    const offsetX = (viewportW - rawW * scale) / 2;
-    const offsetY = (viewportH - rawH * scale) / 2;
-    return { x: rawX * scale + offsetX, y: rawY * scale + offsetY };
-  }
-
-  function homographyFromFourPoints(src, dst) {
-    const A = [];
-    const b = [];
-    for (let i = 0; i < 4; i++) {
-      const { x, y } = src[i];
-      const { x: u, y: v } = dst[i];
-      A.push([x, y, 1, 0, 0, 0, -u*x, -u*y]); b.push(u);
-      A.push([0, 0, 0, x, y, 1, -v*x, -v*y]); b.push(v);
-    }
-    return solveLinearSystem(A, b);
-  }
-
-  function solveLinearSystem(A, b) {
-    const n = b.length;
-    const M = A.map((row, i) => row.slice().concat(b[i]));
-    for (let col = 0; col < n; col++) {
-      let pivot = col;
-      for (let row = col + 1; row < n; row++) {
-        if (Math.abs(M[row][col]) > Math.abs(M[pivot][col])) pivot = row;
-      }
-      if (Math.abs(M[pivot][col]) < 1e-9) return null;
-      [M[col], M[pivot]] = [M[pivot], M[col]];
-      const div = M[col][col];
-      for (let j = col; j <= n; j++) M[col][j] /= div;
-      for (let row = 0; row < n; row++) {
-        if (row === col) continue;
-        const factor = M[row][col];
-        for (let j = col; j <= n; j++) M[row][j] -= factor * M[col][j];
-      }
-    }
-    return M.map(row => row[n]);
-  }
-
-  function validateQuad(corners, frameW, frameH) {
-    if (!corners || corners.some(p => !Number.isFinite(p.x) || !Number.isFinite(p.y))) return false;
-    const area = polygonArea(corners);
-    const frameArea = frameW * frameH;
-    if (area < frameArea * 0.008 || area > frameArea * 1.18) return false;
-
-    let sign = 0;
-    for (let i = 0; i < 4; i++) {
-      const a = corners[i], b = corners[(i+1)%4], c = corners[(i+2)%4];
-      const cross = (b.x-a.x)*(c.y-b.y) - (b.y-a.y)*(c.x-b.x);
-      if (Math.abs(cross) < 1e-4) return false;
-      const s = Math.sign(cross);
-      if (sign === 0) sign = s;
-      else if (s !== sign) return false;
-    }
-    return true;
-  }
-
-  function polygonArea(points) {
-    let sum = 0;
-    for (let i = 0; i < points.length; i++) {
-      const a = points[i], b = points[(i + 1) % points.length];
-      sum += a.x * b.y - b.x * a.y;
-    }
-    return Math.abs(sum) / 2;
-  }
-
-  function replacePrevGray(gray) {
-    if (state.prevGray) state.prevGray.delete();
-    state.prevGray = gray.clone();
-  }
-
-  function resetTracking(full) {
-    state.activeIndex = null;
-    state.activeCorners = null;
-    state.trackObjectPoints = [];
-    state.lostFrames = 0;
-    if (state.prevScenePts) { state.prevScenePts.delete(); state.prevScenePts = null; }
-    if (full && state.prevGray) { state.prevGray.delete(); state.prevGray = null; }
-    hideAllOverlays(false);
-  }
-
-  function hideAllOverlays(resetTime) {
-    for (const target of state.targets) {
-      target.video.classList.remove('visible');
-      target.video.pause();
-      if (resetTime) {
-        try { target.video.currentTime = 0; } catch (_) {}
-      }
-    }
-  }
-
-  function updateFps(now) {
-    state.processedFrames++;
-    const elapsed = now - state.fpsWindowStart;
-    if (elapsed >= 700) {
-      const fps = Math.round(state.processedFrames * 1000 / elapsed);
-      els.fps.textContent = `${fps} fps`;
-      state.processedFrames = 0;
-      state.fpsWindowStart = now;
-    }
-  }
-
-  function setStatus(text, mode) {
-    els.statusText.textContent = text;
-    els.statusPill.classList.remove('live', 'found');
-    if (mode) els.statusPill.classList.add(mode);
-  }
-
-  function setTargetsPanel(open) {
-    els.targetsPanel.classList.toggle('open', open);
-    els.targetsPanel.setAttribute('aria-hidden', String(!open));
-  }
-
-  let toastTimer = 0;
-  function showToast(message) {
-    clearTimeout(toastTimer);
-    els.toast.textContent = message;
-    els.toast.classList.add('show');
-    toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2200);
-  }
-
-  function fatal(message) {
-    setStatus('Setup error', '');
-    els.startButton.disabled = true;
-    els.startButton.textContent = 'Unable to start';
-    els.startHint.textContent = message;
-    showToast(message);
-  }
-
-  function loadImage(src) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = () => reject(new Error(`Could not load ${src}`));
-      img.src = src;
-    });
-  }
-
-  function waitForVideoDimensions(video) {
-    if (video.videoWidth && video.videoHeight) return Promise.resolve();
-    return new Promise(resolve => {
-      const handler = () => {
-        if (video.videoWidth && video.videoHeight) {
-          video.removeEventListener('loadedmetadata', handler);
-          resolve();
-        }
-      };
-      video.addEventListener('loadedmetadata', handler);
-    });
-  }
-
-  function escapeHtml(value) {
-    return String(value).replace(/[&<>'"]/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[ch]));
-  }
-})();
+boot();

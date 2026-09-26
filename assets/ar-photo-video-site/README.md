@@ -1,88 +1,74 @@
-# Fast Image → Video WebAR demo
+# Image → Video AR (mobile web demo)
 
-This is a static, phone-first website that:
+This folder contains a phone-friendly web demo that:
 
-1. asks for rear-camera access,
-2. recognizes one of 3 reference images,
-3. looks up the paired video in `targets.js`,
-4. tracks the flat image through camera perspective changes,
-5. replaces the target image with the video in the same perspective.
+- asks for the rear camera,
+- recognises one of 3 included flat target images,
+- finds the video paired with that target,
+- tracks the target from frame to frame,
+- draws the video over the target with perspective and smoothing.
 
-## Folder layout
+## Run it
 
-```text
-webar-image-video/
-  index.html
-  styles.css
-  app.js
-  targets.js
-  assets/
-    targets/
-      target-1.png
-      target-2.png
-      target-3.png
-    videos/
-      video-1.mp4
-      video-2.mp4
-      video-3.mp4
-```
+Camera access normally requires **HTTPS** or **localhost**. Do not double-click `index.html` and expect camera permissions to work on every phone.
 
-## Test it
+### Easy local test on a computer
 
-Camera access on a phone requires a secure context. Use **HTTPS** when opening it on a phone.
-
-Fastest simple deployment options are any static HTTPS host (GitHub Pages, Netlify, Cloudflare Pages, Vercel, etc.). Upload this folder as-is.
-
-For desktop development, `localhost` is also treated as a secure context:
+From this folder:
 
 ```bash
-cd webar-image-video
 python3 -m http.server 8080
 ```
 
-Then open `http://localhost:8080` on that same computer.
+Open `http://localhost:8080` in the browser.
 
-To test recognition, open one of the PNGs in `assets/targets/` on another screen or print it, then point the phone camera at it.
+### Test on a phone
 
-## How it works
+For a phone, host this folder on any HTTPS static host (GitHub Pages, Netlify, Cloudflare Pages, Vercel, etc.). Then open the HTTPS URL on the phone and allow camera access.
 
-- OpenCV.js ORB descriptors recognize each reference image.
-- RANSAC homography estimates the target's planar pose/perspective.
-- Once recognized, pyramidal Lucas–Kanade optical flow tracks the matched points frame-to-frame for faster updates.
-- The matched video is a normal HTML `<video>` element transformed with a CSS `matrix3d`, so the browser/GPU animates the video independently of the vision update rate.
-- Recognition is refreshed periodically to reduce optical-flow drift.
+The page currently loads OpenCV.js 4.13 from the official OpenCV CDN. The test images/videos are local in this folder.
 
-## Change the image/video pairs
+## Test targets
 
-Edit `targets.js`:
+Open or print these on another screen/device:
+
+- `assets/images/target-1.png` → `assets/videos/video-1.mp4`
+- `assets/images/target-2.png` → `assets/videos/video-2.mp4`
+- `assets/images/target-3.png` → `assets/videos/video-3.mp4`
+
+## Add your own images/videos
+
+1. Put each image in `assets/images/`.
+2. Put its video in `assets/videos/`.
+3. Add a row to `TARGETS` in `config.js`.
+4. Reload the site.
+
+Example:
 
 ```js
-window.AR_TARGETS = [
-  {
-    id: 'my-target',
-    name: 'My Target',
-    image: 'assets/targets/my-image.jpg',
-    video: 'assets/videos/my-video.mp4'
-  }
-];
+{ id: 'poster', name: 'My Poster', image: 'assets/images/poster.jpg', video: 'assets/videos/poster.mp4' }
 ```
 
-Use high-detail, high-contrast target images. Photos, posters, textured artwork, and product packaging usually work better than flat logos or large blank areas.
+No pre-compilation step is needed; target features are learned in the browser when the page loads.
 
-For phone compatibility, use MP4/H.264 video with `yuv420p` pixel format. Videos are muted in this demo so they can play inline/autoplay once a target is recognized.
+## Tracking design
 
-## Performance tuning
+Recognition uses ORB feature matching + RANSAC homography. Once a target is found, Lucas–Kanade optical flow carries matched points forward between camera frames, and a fresh homography updates the four target corners. An exponential filter smooths the corner positions. The video is rendered as a WebGL textured quad.
 
-The main settings are at the top of `app.js` in `CONFIG`:
+This is planar image tracking: the target should be a reasonably flat image/poster/card. Highly detailed, non-repeating images work much better than blank images, simple logos, glossy reflections, or repeated geometric patterns.
 
-- `processLongSide: 480` — camera analysis resolution. 360 is faster; 640 can recognize smaller/farther targets but costs more CPU.
-- `maxFeatures: 950` — ORB feature budget.
-- `searchEveryMs: 115` — recognition frequency while searching.
-- `refreshEveryMs: 700` — full recognition refresh while tracking.
-- `minFrameGapMs: 16` — fastest requested tracking interval; actual speed adapts to device processing time.
+## Speed tuning
 
-The visible `fps` value is the computer-vision processing rate, not the video playback frame rate.
+Settings are in `config.js`:
 
-## Dependency
+- `processWidth`: lower = faster, higher = more recognition detail.
+- `orbFeatures`: lower = faster feature detection.
+- `recognitionEveryFrames`: higher = less CPU while searching.
+- `refreshLockEveryFrames`: higher = less CPU while already tracking.
+- `smoothing`: lower = steadier but more lag; higher = more responsive but shakier.
 
-`index.html` loads the official OpenCV.js 4.13.0 build from `docs.opencv.org`. That keeps this ZIP small, but means the first page load needs internet access. If you want a fully offline deployment, download that OpenCV.js build into the folder and change the final `<script>` tag in `index.html` to point at the local file.
+The camera requests up to 60 fps, but actual rate depends on the phone/browser. Processing runs on a downscaled frame while the video overlay is WebGL-rendered at screen resolution.
+
+## Important limitation
+
+A browser cannot guarantee recognition of literally *any* image. Feature tracking needs visible texture/corners. For production-grade markerless AR, consider a commercial WebAR SDK or a dedicated image-tracking engine, especially if you need severe angles, occlusion, low light, or many hundreds of targets.

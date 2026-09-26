@@ -1,8 +1,0 @@
-{
-  "name": "Fast Image Video AR",
-  "short_name": "ImageAR",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#070911",
-  "theme_color": "#070911"
-}
