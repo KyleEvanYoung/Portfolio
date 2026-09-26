@@ -1,54 +1,28 @@
 # Image → Video AR demo
 
-A downloadable, static mobile website that recognizes one of three reference images and overlays its associated video on the detected image. It uses OpenCV.js ORB feature matching + RANSAC homography, then applies that projective transform to an HTML video element. This gives planar 3D/perspective tracking as the phone moves around the image.
+A mobile-browser prototype that recognizes one of three planar images, estimates its camera-space perspective with feature matching + homography, and overlays the paired video on top of it.
 
-## Included test pairs
+## Run
+Camera access requires HTTPS or localhost. Do not double-click `index.html` on a phone.
 
+From this folder, run one of these on your computer:
+
+    python3 -m http.server 8080
+
+Then use localhost on the same computer, or serve the folder with an HTTPS-capable host/tunnel for a phone.
+
+## Test pairs
 - `assets/images/target-1.png` → `assets/videos/video-1.mp4`
 - `assets/images/target-2.png` → `assets/videos/video-2.mp4`
 - `assets/images/target-3.png` → `assets/videos/video-3.mp4`
 
-The mapping is the `PAIRS` array at the top of `app.js`.
+Print/show a target on another screen and point the phone camera at it.
 
-## Run it
+## Tracking rate
+`app.js` throttles recognition/pose updates to about 30 Hz (`33 ms`). Actual delivered FPS depends on phone CPU, camera resolution, browser, lighting, and target visibility.
 
-Camera APIs require a secure browser context. `localhost` works for development; a phone opening another computer's plain `http://192.168...` address usually does **not** count as secure.
+## Important technical note
+This is planar AR tracking: the target's four corners are estimated with a homography, which gives perspective-consistent placement for a flat image. It is not full world-scale SLAM/6DoF tracking after the image leaves view. For persistent world tracking, use WebXR + an image-tracking implementation/device that supports it, or a commercial WebAR SDK.
 
-Desktop test:
-
-```bash
-cd image-video-ar
-python3 -m http.server 8080
-```
-
-Open `http://localhost:8080` and allow the webcam. Show one of the target PNGs on another screen.
-
-Phone test: deploy this folder to any HTTPS static host (GitHub Pages, Netlify, Cloudflare Pages, Vercel, etc.), open that HTTPS URL on the phone, tap **Start camera**, and point at a printed target or a target displayed on another device.
-
-## How it works
-
-1. Loads the 3 reference images and computes ORB feature descriptors.
-2. Samples camera frames and computes descriptors for the live view.
-3. Compares the live descriptors against every image in `PAIRS`.
-4. Uses RANSAC to reject bad matches and estimate a homography for the best target.
-5. Projects the target's four corners into camera space.
-6. Converts those corners to the phone screen's `object-fit: cover` coordinates.
-7. Applies a CSS `matrix3d()` projective transform to the paired video.
-8. Pauses/hides the video when the target is lost and resumes when reacquired.
-
-## Add your own image/video
-
-Copy a high-detail JPG/PNG into `assets/images/` and its MP4 into `assets/videos/`, then add another object to `PAIRS` in `app.js`:
-
-```js
-{ name: 'My target', image: 'assets/images/my-target.jpg', video: 'assets/videos/my-video.mp4' }
-```
-
-High-detail, non-repeating images work much better than logos, blank areas, gradients, or simple geometric art.
-
-## Notes
-
-- OpenCV.js is loaded from `https://docs.opencv.org/4.x/opencv.js`, so the first load needs internet access.
-- The demo processes a reduced camera frame every few animation frames to keep phone CPU use reasonable.
-- The videos begin muted because mobile browsers commonly block audible autoplay. Use **Sound off/on** after starting the camera.
-- This is planar image tracking. It estimates the target plane's perspective in camera space; it is not general-purpose SLAM/world tracking after the image disappears.
+## Dependency
+The page loads OpenCV.js 4.x from the official OpenCV documentation CDN, so first load requires internet access. The image/video assets themselves are local.

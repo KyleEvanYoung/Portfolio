@@ -2,35 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-  <meta name="theme-color" content="#090b10" />
-  <title>Image → Video AR</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0d12" />
+  <title>Image Target Video AR</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main id="app">
-    <section id="intro" class="panel">
-      <p class="eyebrow">WEB AR DEMO</p>
-      <h1>Point the camera at a test image.</h1>
-      <p>The page searches its image list, identifies the target, then pins that target's video over the image using planar perspective tracking.</p>
-      <button id="startBtn">Start camera</button>
-      <p class="small">Camera access requires HTTPS or localhost. For easiest testing, show a target image on a second screen or print it.</p>
-      <div id="targets"></div>
+  <main class="app">
+    <header>
+      <div><h1>Image → Video AR</h1><p>Point the camera at one of the three test targets.</p></div>
+      <div id="status" class="pill">Loading OpenCV…</div>
+    </header>
+
+    <section class="stage" id="stage">
+      <video id="camera" autoplay playsinline muted></video>
+      <canvas id="overlay"></canvas>
+      <div class="hud"><span id="match">No target</span><span id="fps">0 FPS</span></div>
+      <button id="start">Start camera</button>
     </section>
 
-    <section id="ar" hidden>
-      <video id="camera" playsinline muted></video>
-      <canvas id="workCanvas"></canvas>
-      <div id="videoOverlay" aria-hidden="true"><video id="arVideo" playsinline muted loop preload="auto"></video></div>
-      <div class="hud">
-        <div><span id="dot"></span><strong id="status">Starting camera…</strong><small id="detail">Loading computer vision</small></div>
-        <button id="soundBtn" type="button">Sound off</button>
+    <section class="targets">
+      <h2>Test targets</h2>
+      <div class="grid">
+        <article><img src="assets/images/target-1.png" alt="Target 1"><b>Target 1</b><small>plays video-1.mp4</small></article>
+        <article><img src="assets/images/target-2.png" alt="Target 2"><b>Target 2</b><small>plays video-2.mp4</small></article>
+        <article><img src="assets/images/target-3.png" alt="Target 3"><b>Target 3</b><small>plays video-3.mp4</small></article>
       </div>
-      <div class="reticle"><i></i><i></i><i></i><i></i></div>
-      <button id="stopBtn" class="stop" type="button">×</button>
     </section>
   </main>
-  <script async src="https://docs.opencv.org/4.x/opencv.js" onload="window.dispatchEvent(new Event('opencv-script-loaded'))"></script>
+
+  <div id="videoBank" hidden>
+    <video id="v1" src="assets/videos/video-1.mp4" loop muted playsinline preload="auto"></video>
+    <video id="v2" src="assets/videos/video-2.mp4" loop muted playsinline preload="auto"></video>
+    <video id="v3" src="assets/videos/video-3.mp4" loop muted playsinline preload="auto"></video>
+  </div>
+
+  <script async src="https://docs.opencv.org/4.x/opencv.js" onload="window.cvScriptLoaded=true"></script>
   <script src="app.js"></script>
 </body>
 </html>
