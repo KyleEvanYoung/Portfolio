@@ -2,32 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#050505" />
-  <title>Photo to Video AR</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#090b10" />
+  <title>Image → Video AR</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main id="app">
-    <video id="camera" autoplay playsinline muted></video>
-    <canvas id="overlay"></canvas>
-    <video id="arVideo" src="video.mp4" playsinline loop preload="auto"></video>
-
-    <header class="topbar">
-      <div><strong>Photo → Video</strong><span>WebAR prototype</span></div>
-      <button id="soundBtn" type="button">Sound: off</button>
-    </header>
-
-    <section id="startPanel" class="panel">
-      <h1>Bring a printed photo to life</h1>
-      <p>Point your phone at the registered picture. When it is recognised, its matching video appears.</p>
-      <button id="startBtn" class="primary" type="button">Start camera</button>
-      <p class="small">Camera access normally requires HTTPS or localhost.</p>
+    <section id="intro" class="panel">
+      <p class="eyebrow">WEB AR DEMO</p>
+      <h1>Point the camera at a test image.</h1>
+      <p>The page searches its image list, identifies the target, then pins that target's video over the image using planar perspective tracking.</p>
+      <button id="startBtn">Start camera</button>
+      <p class="small">Camera access requires HTTPS or localhost. For easiest testing, show a target image on a second screen or print it.</p>
+      <div id="targets"></div>
     </section>
 
-    <div id="status" class="status">Ready</div>
+    <section id="ar" hidden>
+      <video id="camera" playsinline muted></video>
+      <canvas id="workCanvas"></canvas>
+      <div id="videoOverlay" aria-hidden="true"><video id="arVideo" playsinline muted loop preload="auto"></video></div>
+      <div class="hud">
+        <div><span id="dot"></span><strong id="status">Starting camera…</strong><small id="detail">Loading computer vision</small></div>
+        <button id="soundBtn" type="button">Sound off</button>
+      </div>
+      <div class="reticle"><i></i><i></i><i></i><i></i></div>
+      <button id="stopBtn" class="stop" type="button">×</button>
+    </section>
   </main>
-
+  <script async src="https://docs.opencv.org/4.x/opencv.js" onload="window.dispatchEvent(new Event('opencv-script-loaded'))"></script>
   <script src="app.js"></script>
 </body>
 </html>
