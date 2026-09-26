@@ -2,42 +2,66 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#0b0d12" />
-  <title>Image Target Video AR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0d12" />
+  <title>Image → Video AR Tracker</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="app">
-    <header>
-      <div><h1>Image → Video AR</h1><p>Point the camera at one of the three test targets.</p></div>
-      <div id="status" class="pill">Loading OpenCV…</div>
-    </header>
+  <main class="app-shell">
+    <section class="viewer" aria-label="AR camera viewer">
+      <canvas id="outputCanvas"></canvas>
+      <canvas id="warpCanvas" hidden></canvas>
+      <canvas id="overlaySourceCanvas" hidden></canvas>
+      <video id="cameraVideo" playsinline muted aria-hidden="true"></video>
 
-    <section class="stage" id="stage">
-      <video id="camera" autoplay playsinline muted></video>
-      <canvas id="overlay"></canvas>
-      <div class="hud"><span id="match">No target</span><span id="fps">0 FPS</span></div>
-      <button id="start">Start camera</button>
-    </section>
+      <div class="topbar glass">
+        <div>
+          <div class="eyebrow">IMAGE → VIDEO AR</div>
+          <div id="statusText" class="status">Loading OpenCV…</div>
+        </div>
+        <div class="live-stats">
+          <span><b id="fpsValue">0</b> fps</span>
+          <span><b id="matchValue">0</b> matches</span>
+        </div>
+      </div>
 
-    <section class="targets">
-      <h2>Test targets</h2>
-      <div class="grid">
-        <article><img src="assets/images/target-1.png" alt="Target 1"><b>Target 1</b><small>plays video-1.mp4</small></article>
-        <article><img src="assets/images/target-2.png" alt="Target 2"><b>Target 2</b><small>plays video-2.mp4</small></article>
-        <article><img src="assets/images/target-3.png" alt="Target 3"><b>Target 3</b><small>plays video-3.mp4</small></article>
+      <div id="posePanel" class="pose-panel glass" hidden>
+        <div class="pose-title">Approx. planar pose</div>
+        <div class="pose-grid">
+          <span>Yaw <b id="yawValue">0°</b></span>
+          <span>Pitch <b id="pitchValue">0°</b></span>
+          <span>Roll <b id="rollValue">0°</b></span>
+          <span>Depth <b id="depthValue">—</b></span>
+        </div>
+      </div>
+
+      <div class="reticle" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+
+      <div class="controls glass">
+        <button id="startButton" class="primary" disabled>Start camera</button>
+        <button id="stopButton" class="secondary" disabled>Stop</button>
       </div>
     </section>
+
+    <aside class="library">
+      <div class="library-head">
+        <div>
+          <div class="eyebrow">TARGET LIBRARY</div>
+          <h1>Point the camera at a test image</h1>
+        </div>
+        <p>Each image is paired with one video. Once recognized, the video is warped over the printed/screen target and follows its perspective.</p>
+      </div>
+      <div id="targetList" class="target-list"></div>
+      <div class="hint">
+        <strong>Tip:</strong> open one of the target PNGs on another screen or print it. Keep the full border visible for the first lock.
+      </div>
+    </aside>
   </main>
 
-  <div id="videoBank" hidden>
-    <video id="v1" src="assets/videos/video-1.mp4" loop muted playsinline preload="auto"></video>
-    <video id="v2" src="assets/videos/video-2.mp4" loop muted playsinline preload="auto"></video>
-    <video id="v3" src="assets/videos/video-3.mp4" loop muted playsinline preload="auto"></video>
-  </div>
-
-  <script async src="https://docs.opencv.org/4.x/opencv.js" onload="window.cvScriptLoaded=true"></script>
-  <script src="app.js"></script>
+  <script src="https://docs.opencv.org/4.13.0/opencv.js" async></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
