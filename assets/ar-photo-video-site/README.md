@@ -53,7 +53,9 @@ No pre-compilation step is needed; target features are learned in the browser wh
 
 ## Tracking design
 
-Recognition uses ORB feature matching + RANSAC homography. Once a target is found, Lucas–Kanade optical flow carries matched points forward between camera frames, and a fresh homography updates the four target corners. An exponential filter smooths the corner positions. The video is rendered as a WebGL textured quad.
+Recognition uses ORB feature matching + RANSAC homography. Once a target is found, Lucas–Kanade optical flow carries matched points forward between camera frames. The tracker now runs optical flow forward and backward and rejects points that do not return to the same place, then runs another RANSAC homography on the surviving points. A periodic ORB refresh replenishes points and corrects slow drift.
+
+The four target corners use adaptive One-Euro smoothing: low movement is heavily stabilized while fast movement is allowed through with much less lag. Implausible single-frame jumps and scale changes are rejected. The video overlay uses a true projective homography in a WebGL fragment shader rather than approximating perspective with two affine triangles.
 
 This is planar image tracking: the target should be a reasonably flat image/poster/card. Highly detailed, non-repeating images work much better than blank images, simple logos, glossy reflections, or repeated geometric patterns.
 
@@ -65,9 +67,26 @@ Settings are in `config.js`:
 - `orbFeatures`: lower = faster feature detection.
 - `recognitionEveryFrames`: higher = less CPU while searching.
 - `refreshLockEveryFrames`: higher = less CPU while already tracking.
-- `smoothing`: lower = steadier but more lag; higher = more responsive but shakier.
+- `lkForwardBackwardMaxError`: lower rejects more drifting optical-flow points.
+- `oneEuroMinCutoff`: lower is steadier when nearly still, but adds some lag.
+- `oneEuroBeta`: higher makes smoothing respond faster during deliberate motion.
+- `maxFrameCenterJumpRatio`: lower rejects more sudden bad poses.
 
 The camera requests up to 60 fps, but actual rate depends on the phone/browser. Processing runs on a downscaled frame while the video overlay is WebGL-rendered at screen resolution.
+
+## Tracking improvements in this version
+
+Compared with the first demo, this version fixes several causes of visible sliding/jitter:
+
+- true projective GPU video warping instead of two affine triangles,
+- forward/backward Lucas–Kanade validation,
+- RANSAC filtering on every tracked pose,
+- better spatial distribution of target feature points,
+- synchronized optical-flow points and reference camera frames after failures,
+- immediate same-target reacquisition when optical flow breaks,
+- frequent feature refresh to reduce long-term drift,
+- adaptive One-Euro corner smoothing, and
+- rejection of impossible one-frame jumps.
 
 ## Important limitation
 
