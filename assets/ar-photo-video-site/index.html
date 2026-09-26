@@ -2,66 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0a0d12" />
-  <title>Image → Video AR Tracker</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#070911" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Fast Image → Video AR</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="app-shell">
-    <section class="viewer" aria-label="AR camera viewer">
-      <canvas id="outputCanvas"></canvas>
-      <canvas id="warpCanvas" hidden></canvas>
-      <canvas id="overlaySourceCanvas" hidden></canvas>
-      <video id="cameraVideo" playsinline muted aria-hidden="true"></video>
+  <main id="app" class="app-shell">
+    <video id="camera" class="camera-feed" autoplay muted playsinline webkit-playsinline></video>
+    <div id="overlayLayer" class="overlay-layer" aria-hidden="true"></div>
+    <canvas id="processCanvas" class="process-canvas"></canvas>
 
-      <div class="topbar glass">
-        <div>
-          <div class="eyebrow">IMAGE → VIDEO AR</div>
-          <div id="statusText" class="status">Loading OpenCV…</div>
-        </div>
-        <div class="live-stats">
-          <span><b id="fpsValue">0</b> fps</span>
-          <span><b id="matchValue">0</b> matches</span>
-        </div>
-      </div>
+    <header class="hud top-hud">
+      <div class="brand">IMAGE<span>AR</span></div>
+      <div id="statusPill" class="status-pill"><span class="dot"></span><span id="statusText">Loading vision engine…</span></div>
+      <div id="fpsPill" class="fps-pill">-- fps</div>
+    </header>
 
-      <div id="posePanel" class="pose-panel glass" hidden>
-        <div class="pose-title">Approx. planar pose</div>
-        <div class="pose-grid">
-          <span>Yaw <b id="yawValue">0°</b></span>
-          <span>Pitch <b id="pitchValue">0°</b></span>
-          <span>Roll <b id="rollValue">0°</b></span>
-          <span>Depth <b id="depthValue">—</b></span>
-        </div>
-      </div>
+    <footer class="hud bottom-hud">
+      <button id="targetsButton" class="hud-button" type="button">Targets</button>
+      <button id="stopButton" class="hud-button" type="button" disabled>Stop camera</button>
+    </footer>
 
-      <div class="reticle" aria-hidden="true">
-        <span></span><span></span><span></span><span></span>
-      </div>
-
-      <div class="controls glass">
-        <button id="startButton" class="primary" disabled>Start camera</button>
-        <button id="stopButton" class="secondary" disabled>Stop</button>
+    <section id="startScreen" class="start-screen">
+      <div class="start-card">
+        <div class="eyebrow">PHONE CAMERA IMAGE TRACKING</div>
+        <h1>Point at an image.<br><span>See its video replace it.</span></h1>
+        <p>The browser asks for rear-camera access. Recognition and tracking happen on your device.</p>
+        <button id="startButton" class="primary-button" type="button" disabled>Loading vision engine…</button>
+        <div id="startHint" class="start-hint">For phone camera access, open this site over HTTPS.</div>
       </div>
     </section>
 
-    <aside class="library">
-      <div class="library-head">
+    <aside id="targetsPanel" class="targets-panel" aria-hidden="true">
+      <div class="panel-header">
         <div>
-          <div class="eyebrow">TARGET LIBRARY</div>
-          <h1>Point the camera at a test image</h1>
+          <div class="eyebrow">REFERENCE LIBRARY</div>
+          <h2>3 image → video pairs</h2>
         </div>
-        <p>Each image is paired with one video. Once recognized, the video is warped over the printed/screen target and follows its perspective.</p>
+        <button id="closeTargets" class="icon-button" type="button" aria-label="Close">×</button>
       </div>
-      <div id="targetList" class="target-list"></div>
-      <div class="hint">
-        <strong>Tip:</strong> open one of the target PNGs on another screen or print it. Keep the full border visible for the first lock.
-      </div>
+      <div id="targetsList" class="targets-list"></div>
+      <p class="panel-note">Open one of these target images on another screen or print it, then point the camera at it.</p>
     </aside>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
 
-  <script src="https://docs.opencv.org/4.13.0/opencv.js" async></script>
-  <script src="app.js" defer></script>
+  <script src="targets.js"></script>
+  <script src="app.js"></script>
+  <script async src="https://docs.opencv.org/4.13.0/opencv.js" onload="window.onOpenCvScriptLoaded()"></script>
 </body>
 </html>

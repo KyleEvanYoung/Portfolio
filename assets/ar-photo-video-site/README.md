@@ -1,75 +1,88 @@
-# Image → Video AR Tracker demo
+# Fast Image → Video WebAR demo
 
-A browser-only demo that:
+This is a static, phone-first website that:
 
-1. Uses the phone camera.
-2. Recognizes one of three target images with ORB feature matching.
-3. Looks up the video associated with that target.
-4. Estimates a planar homography every tracking frame.
-5. Perspective-warps the paired video over the target image.
-6. Shows an approximate planar 3D pose (yaw, pitch, roll, and a depth proxy).
-7. Aims for a 30 FPS update loop (`requestAnimationFrame` throttled to ~33.3 ms).
+1. asks for rear-camera access,
+2. recognizes one of 3 reference images,
+3. looks up the paired video in `targets.js`,
+4. tracks the flat image through camera perspective changes,
+5. replaces the target image with the video in the same perspective.
 
-## Included test mappings
+## Folder layout
 
-- `assets/images/target-1.png` → `assets/videos/video-1.mp4` (ORBIT)
-- `assets/images/target-2.png` → `assets/videos/video-2.mp4` (PULSE)
-- `assets/images/target-3.png` → `assets/videos/video-3.mp4` (GRID)
-
-All three MP4s are encoded at 30 FPS.
-
-## Run it
-
-Camera access requires a secure browser context.
-
-### Desktop test
-
-From this folder:
-
-```bash
-python -m http.server 8000
+```text
+webar-image-video/
+  index.html
+  styles.css
+  app.js
+  targets.js
+  assets/
+    targets/
+      target-1.png
+      target-2.png
+      target-3.png
+    videos/
+      video-1.mp4
+      video-2.mp4
+      video-3.mp4
 ```
 
-Then open `http://localhost:8000`.
+## Test it
 
-### Phone test
+Camera access on a phone requires a secure context. Use **HTTPS** when opening it on a phone.
 
-The easiest option is to upload this folder to any HTTPS static host (for example GitHub Pages, Netlify, Vercel, Cloudflare Pages, or your own HTTPS server) and open the HTTPS URL on your phone.
+Fastest simple deployment options are any static HTTPS host (GitHub Pages, Netlify, Cloudflare Pages, Vercel, etc.). Upload this folder as-is.
 
-Plain `http://<your-lan-ip>:8000` may be blocked from using the camera on mobile because it is not a secure origin.
+For desktop development, `localhost` is also treated as a secure context:
 
-## How to test recognition
+```bash
+cd webar-image-video
+python3 -m http.server 8080
+```
 
-Open or print one target PNG. Point the phone camera at it and keep the whole outer border visible. The status will change to the target name, its paired video will start, and the video will be perspective-warped over the image.
+Then open `http://localhost:8080` on that same computer.
 
-For easiest testing, show the target on a second device rather than showing it on the same phone that is running the camera.
+To test recognition, open one of the PNGs in `assets/targets/` on another screen or print it, then point the phone camera at it.
 
-## Important implementation notes
+## How it works
 
-- This is planar image tracking, so it works best on flat images/posters/cards.
-- The overlay follows the projective pose of the target using a homography. That is enough for a convincing "replace this image with this video" effect.
-- The displayed 3D pose is approximate because the demo guesses the phone camera intrinsics. For metric 3D position, calibrate the camera and provide the real target width.
-- Actual FPS depends on phone speed, camera resolution, browser, lighting, and the number of target features. The loop targets 30 FPS but cannot guarantee 30 FPS on every device.
-- The page currently loads OpenCV.js 4.13.0 from the official OpenCV documentation CDN. To make the site fully offline, download that `opencv.js` file into `vendor/opencv.js` and change the script tag in `index.html` to `vendor/opencv.js`.
+- OpenCV.js ORB descriptors recognize each reference image.
+- RANSAC homography estimates the target's planar pose/perspective.
+- Once recognized, pyramidal Lucas–Kanade optical flow tracks the matched points frame-to-frame for faster updates.
+- The matched video is a normal HTML `<video>` element transformed with a CSS `matrix3d`, so the browser/GPU animates the video independently of the vision update rate.
+- Recognition is refreshed periodically to reduce optical-flow drift.
 
-## Customize your own image/video list
+## Change the image/video pairs
 
-Edit the `TARGETS` array near the top of `app.js`:
+Edit `targets.js`:
 
 ```js
-const TARGETS = [
-  { id: 'my-target', name: 'MY TARGET', image: 'assets/images/my-target.png', video: 'assets/videos/my-video.mp4' },
+window.AR_TARGETS = [
+  {
+    id: 'my-target',
+    name: 'My Target',
+    image: 'assets/targets/my-image.jpg',
+    video: 'assets/videos/my-video.mp4'
+  }
 ];
 ```
 
-Use target images with lots of unique corners, texture, text, and asymmetry. Avoid blank gradients, repeating patterns, or nearly featureless artwork.
+Use high-detail, high-contrast target images. Photos, posters, textured artwork, and product packaging usually work better than flat logos or large blank areas.
 
-## Tuning
+For phone compatibility, use MP4/H.264 video with `yuv420p` pixel format. Videos are muted in this demo so they can play inline/autoplay once a target is recognized.
 
-At the top of `app.js` you can adjust:
+## Performance tuning
 
-- `PROCESSING_MAX_WIDTH` — lower this if a phone is too slow.
-- `RATIO_TEST` — lower = stricter feature matches.
-- `MIN_GOOD_MATCHES` / `MIN_INLIERS` — lower = easier recognition but more false positives.
-- `MAX_REPROJECTION_ERROR` — lower = stricter geometric verification.
-- `LOST_FRAME_LIMIT` — number of weak frames before returning to scan mode.
+The main settings are at the top of `app.js` in `CONFIG`:
+
+- `processLongSide: 480` — camera analysis resolution. 360 is faster; 640 can recognize smaller/farther targets but costs more CPU.
+- `maxFeatures: 950` — ORB feature budget.
+- `searchEveryMs: 115` — recognition frequency while searching.
+- `refreshEveryMs: 700` — full recognition refresh while tracking.
+- `minFrameGapMs: 16` — fastest requested tracking interval; actual speed adapts to device processing time.
+
+The visible `fps` value is the computer-vision processing rate, not the video playback frame rate.
+
+## Dependency
+
+`index.html` loads the official OpenCV.js 4.13.0 build from `docs.opencv.org`. That keeps this ZIP small, but means the first page load needs internet access. If you want a fully offline deployment, download that OpenCV.js build into the folder and change the final `<script>` tag in `index.html` to point at the local file.
